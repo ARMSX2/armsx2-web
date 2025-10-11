@@ -1,0 +1,650 @@
+import React, { useEffect, useRef, useState } from "react";
+
+import images from "../data/images.json";
+import blog from "../data/blog.json";
+import faq from "../data/faq.json";
+
+import {
+  FaDownload,
+  FaDiscord,
+  FaMicrochip,
+  FaRocket,
+  FaChevronRight,
+} from "react-icons/fa6";
+
+const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
+  const [downloadURL, setApkUrl] = useState(null);
+  const [version, setVersion] = useState(null) || "0";
+
+  useEffect(() => {
+    fetch("https://api.github.com/repos/PCSX2/PCSX2/releases/latest") // replace with ARMSX2 on launch it wont work for now
+      .then((res) => {
+        setVersion("0.0.0");
+        if (!res.ok) throw new Error("No information about releases");
+        return res.json();
+      })
+      .then((data) => {
+        setVersion("0.0.0");
+
+        setVersion(data.tag_name.replace("v", ""));
+
+        const found = data.assets.find((asset) =>
+          asset.name.toLowerCase().endsWith(".apk")
+        );
+
+        if (found) setApkUrl(found.browser_download_url);
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  }, []);
+
+  const [primaryButtonScale, setPrimaryButtonScale] = useState(1);
+  const [secondaryButtonScale, setSecondaryButtonScale] = useState(1);
+  const [activeSection, setActiveSection] = useState("main");
+  const [expandedUpdate, setExpandedUpdate] = useState(null);
+
+  const handleButtonMouseDown = (e, setScale) => {
+    setScale(0.92);
+    setTimeout(() => {
+      setScale(1.01);
+      setTimeout(() => {
+        setScale(1);
+      }, 120);
+    }, 90);
+  };
+
+  const handleButtonMouseUp = (e, setScale) => {
+    setScale(1.01);
+    setTimeout(() => {
+      setScale(1);
+    }, 100);
+  };
+
+  const [primaryButtonPosition, setPrimaryButtonPosition] = React.useState({
+    x: 0,
+    y: 0,
+  });
+  const [secondaryButtonPosition, setSecondaryButtonPosition] = React.useState({
+    x: 0,
+    y: 0,
+  });
+
+  const handleMouseMove = (e, setPosition) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    setPosition({ x: x * 0.1, y: y * 0.1 });
+  };
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const nextSlide = () => setCurrentIndex((i) => (i + 1) % images.length);
+  const prevSlide = () =>
+    setCurrentIndex((i) => (i - 1 + images.length) % images.length);
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCurrentIndex((i) => (i + 1) % images.length);
+    }, 7000);
+    return () => clearInterval(id);
+  }, []);
+
+  const touchStartXRef = useRef(0);
+  const touchStartYRef = useRef(0);
+  const hasMovedRef = useRef(false);
+  const handleTouchStart = (e) => {
+    const t = e.touches[0];
+    touchStartXRef.current = t.clientX;
+    touchStartYRef.current = t.clientY;
+    hasMovedRef.current = false;
+  };
+  const handleTouchMove = (e) => {
+    hasMovedRef.current = true;
+  };
+  const handleTouchEnd = (e) => {
+    if (!hasMovedRef.current) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartXRef.current;
+    const dy = t.clientY - touchStartYRef.current;
+    if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+      if (dx < 0) nextSlide();
+      else prevSlide();
+    }
+  };
+  useEffect(() => {
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, {
+      root: null,
+      threshold: 0.5,
+    });
+
+    const sections = document.querySelectorAll("#main, #updates, #about");
+    sections.forEach((section) => observer.observe(section));
+
+    return () => sections.forEach((section) => observer.unobserve(section));
+  }, []);
+
+  // i wouldve done something extra with this but im keeping it ;like this for now ig
+  const handleDiscordClick = () => {
+    window.open("https://discord.gg/S7VxwfS8w9", "_blank");
+  };
+  const handleSourceClick = () => {
+    window.open("https://github.com/ARMSX2", "_blank");
+  };
+
+  return (
+    <>
+      <a href={`#main`}>
+        <img
+          src="/icon.png"
+          alt="logo"
+          onMouseEnter={(e) => {
+            e.target.style.opacity =
+              activeSection === "updates" ? "0.4" : "0.6";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.opacity =
+              activeSection === "updates" ? "0.2" : "0.4";
+          }}
+          className="fixed top-10 opacity-40 left-10 w-12 h-12 z-50"
+          style={{
+            filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
+            animation: "sway 8s ease-in-out infinite",
+            opacity:
+              window.innerWidth <= 770
+                ? 0
+                : activeSection === "updates"
+                ? 0.2
+                : 1,
+            transition: "1s cubic-bezier(.17,.67,.86,.43)",
+          }}
+        />
+      </a>
+
+      <nav className="fixed opacity-70 right-8 top-1/2 transform -translate-y-1/2 z-50 hidden md:block">
+        <ul className="space-y-4">
+          {["main", "updates", "about"].map((section) => (
+            <li key={section}>
+              <a
+                href={`#${section}`}
+                className={`w-3 h-3 block rounded-full transition-all duration-300 ${
+                  activeSection === section
+                    ? "bg-white/80 scale-105 shadow-[0_0_10px_rgba(255,255,255,0.2)]"
+                    : "bg-white/30 hover:bg-white/80"
+                }`}
+                aria-label={`Scroll to ${section} section`}
+                aria-current={activeSection === section ? "true" : "false"}
+              />
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <div
+        className={`relative overflow-x-hidden transition-all duration-500 ease-out ${
+          isthetransitioninghappening
+            ? "opacity-0 transform translate-x-12 scale-95 blur-sm"
+            : isEntering
+            ? "opacity-100 transform translate-x-0 scale-100 blur-0"
+            : "opacity-100 transform translate-x-0 scale-100 blur-0"
+        } md:overflow-y-auto md:scroll-smooth snap-y snap-mandatory touch-pan-y h-screen`}
+        style={{ scrollBehavior: "smooth", scrollSnapType: "y mandatory" }}
+      >
+        <div className="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-gradient-to-br from-[#8d76cc]/40 to-[#3e4d84]/30 bloom" />
+        <div className="pointer-events-none fixed left-40 top-64 h-[34rem] w-[34rem] rounded-full bg-gradient-to-tr from-[#3e4d84]/25 to-[#8d76cc]/25 bloom-strong" />
+
+        <div
+          className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center px-6 py-10 md:py-16 w-full mobile-container overflow-x-hidden transition-all duration-700 delay-100 snap-start ${
+            isEntering
+              ? "opacity-100 transform translate-y-0"
+              : "opacity-0 transform translate-y-4"
+          }`}
+          id="main"
+        >
+          <div className="w-full max-w-2xl left-content snap-start">
+            <div className="hidden md:flex mt-1 items-center gap-3">
+              <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
+                ARMSX2 is currently on v{version}
+              </span>
+            </div>
+            <div className="flex items-center gap-3 mt-5 md:mt-5">
+              <h1 className="title text-4xl md:text-5xl font-semibold leading-tight text-white text-glow">
+                ARMSX2
+              </h1>
+              <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow md:hidden">
+                {window.innerWidth < 380
+                  ? "currently at v" + version
+                  : "latest release at v" + version}
+              </span>
+            </div>
+            <p className="mt-4 text-base md:text-lg text-white/80">
+              ARMSX2 is a new open source emulator for the PS2, it is based on
+              the PCSX2 emulator and aims to be the next step in PS2 emulation
+              on Android, as well as cross platform support for iOS and MacOS.
+            </p>
+            <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3">
+              <a
+                onMouseMove={(e) =>
+                  handleMouseMove(e, setPrimaryButtonPosition)
+                }
+                onMouseLeave={() => setPrimaryButtonPosition({ x: 0, y: 0 })}
+                onMouseDown={(e) =>
+                  handleButtonMouseDown(e, setPrimaryButtonScale)
+                }
+                onMouseUp={(e) => handleButtonMouseUp(e, setPrimaryButtonScale)}
+                className="ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white transition-colors duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-full md:w-auto text-center"
+                style={{
+                  transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
+                  transition:
+                    "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+                  animation: "subtleSway 12s ease-in-out infinite",
+                }}
+                href={downloadURL}
+                download
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <FaDownload
+                    className="text-xs text-[#fff]"
+                    aria-hidden="true"
+                  />
+                  Download APK
+                </div>
+              </a>
+              <button
+                onMouseMove={(e) =>
+                  handleMouseMove(e, setSecondaryButtonPosition)
+                }
+                onMouseLeave={() => setSecondaryButtonPosition({ x: 0, y: 0 })}
+                onMouseDown={(e) =>
+                  handleButtonMouseDown(e, setSecondaryButtonScale)
+                }
+                onClick={handleSourceClick}
+                onMouseUp={(e) =>
+                  handleButtonMouseUp(e, setSecondaryButtonScale)
+                }
+                style={{
+                  transform: `translate(${secondaryButtonPosition.x}px, ${secondaryButtonPosition.y}px) scale(${secondaryButtonScale})`,
+                  transition:
+                    "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+                  animation: "subtleSway 14s ease-in-out infinite",
+                }}
+                className="ring-glow glint rounded-xl px-8 py-3 text-sm font-medium text-white bg-[#3e4d84] hover:bg-[#384476] transition-colors duration-300 ease-out shadow-[0_0_14px_rgba(62,77,132,0.25)] hover:shadow-[0_0_24px_rgba(62,77,132,0.4)] transition-shadow w-full md:w-auto text-center"
+              >
+                Source Code
+              </button>
+            </div>
+
+            <div className="relative w-full max-w-full mt-6 md:mt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 md:w-[26rem] z-30 mobile-full-width carousel-container">
+              <div
+                className="relative mx-auto h-64 md:h-80 rounded-2xl overflow-hidden carousel w-full max-w-full"
+                style={{
+                  transformStyle: "preserve-3d",
+                  transformOrigin: "center left",
+                }}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+              >
+                {images.map(({ src, title }, i) => {
+                  const n = images.length;
+                  const pos = (i - currentIndex + n) % n;
+                  let style = "";
+                  if (pos === 0)
+                    style = "z-20 scale-100 opacity-100 translate-x-0";
+                  else if (pos === 1)
+                    style = "z-10 scale-90 opacity-85 translate-x-16";
+                  else style = "z-10 scale-90 opacity-85 -translate-x-16";
+                  return (
+                    <img
+                      key={src}
+                      src={src}
+                      alt={title}
+                      className={` ring-glow absolute inset-0 m-auto h-full w-full object-cover transition-all duration-500 ease-out ${style}`}
+                    />
+                  );
+                })}
+
+                <button
+                  aria-label="Previous slide"
+                  onClick={prevSlide}
+                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 hover:bg-black/50 text-white px-2 py-1 text-xs z-30"
+                >
+                  ‹
+                </button>
+                <button
+                  aria-label="Next slide"
+                  onClick={nextSlide}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 hover:bg-black/50 text-white px-2 py-1 text-xs z-30"
+                >
+                  ›
+                </button>
+
+                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
+                  {images.map((_, i) => (
+                    <span
+                      key={i}
+                      className={`h-1.5 w-1.5 rounded-full transition-colors ${
+                        i === currentIndex ? "bg-white" : "bg-white/40"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <div className="mt-3 text-center">
+                <p className="text-xs text-white/60">
+                  {images[currentIndex].description}
+                </p>
+                <h3 className="text-sm by font-semibold text-white/90">
+                  {images[currentIndex].title}{" "}
+                  <span className="text-xs text-white/60">
+                    {" "}
+                    — by {images[currentIndex].credits}
+                  </span>
+                </h3>
+              </div>
+            </div>
+
+            <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-3 opacity-90">
+              <div
+                className="glassish h-24 rounded-xl flex items-center justify-between gap-3 px-4 group cursor-pointer transform-gpu transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] ring-glow shadow-[0_0_10px_rgba(141,118,204,0.18)] hover:shadow-[0_0_20px_rgba(141,118,204,0.3)] transition-shadow"
+                role="button"
+                onClick={handleDiscordClick}
+                tabIndex={0}
+              >
+                <div className="flex items-center gap-3">
+                  <FaDiscord
+                    className="text-2xl text-[#8d76cc]"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <div className="text-sm font-semibold">Discord</div>
+                    <div className="text-xs text-white/70">
+                      Join our community
+                    </div>
+                  </div>
+                </div>
+                <FaChevronRight
+                  className="text-white/60 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white/80"
+                  aria-hidden="true"
+                />
+              </div>
+              <div
+                className="glassish h-24 rounded-xl flex items-center justify-between gap-3 px-4 group cursor-pointer transform-gpu transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] ring-glow shadow-[0_0_10px_rgba(141,118,204,0.18)] hover:shadow-[0_0_20px_rgba(141,118,204,0.3)] hover:bg-gradient-to-r hover:from-[#8d76cc]/10 hover:to-[#3e4d84]/10"
+                role="button"
+                tabIndex={0}
+                onClick={() => onNavigate("compatibility")}
+              >
+                <div className="flex items-center gap-3">
+                  <FaRocket
+                    className="text-2xl text-[#8d76cc]"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <div className="text-sm font-semibold">
+                      Compatibility List
+                    </div>
+                    <div className="text-xs text-white/70">Can we run it?</div>
+                  </div>
+                </div>
+                <FaChevronRight
+                  className="text-white/60 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white/80"
+                  aria-hidden="true"
+                />
+              </div>
+
+              <div
+                className="glassish h-24 rounded-xl flex items-center justify-between gap-3 px-4 group cursor-pointer transform-gpu transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] ring-glow shadow-[0_0_10px_rgba(141,118,204,0.18)] hover:shadow-[0_0_20px_rgba(141,118,204,0.3)] transition-shadow"
+                role="button"
+                tabIndex={0}
+              >
+                <div className="flex items-center gap-3">
+                  <FaMicrochip
+                    className="text-2xl text-[#8d76cc]"
+                    aria-hidden="true"
+                  />
+                  <div>
+                    <div className="text-sm font-semibold">Performance</div>
+                    <div className="text-xs text-white/70">
+                      Specifically made for ARM64
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
+        <div className="relative w-full space-y-6">
+          <div className="relative w-full snap-start">
+            <div
+              className="relative mx-auto max-w-7xl px-6 min-h-screen flex flex-col justify-center snap-start py-24 md:py-0"
+              id="updates"
+            >
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
+              <div className="relative w-full space-y-6">
+                <h2 className="text-2xl font-semibold text-white">
+                  Latest Updates
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {blog.updates.map((update, index) => (
+                    <div
+                      key={index}
+                      className={`grid-item p-6 rounded-xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10 hover:ring-[#8d76cc]/30 cursor-pointer group min-h-[180px] flex flex-col ${
+                        expandedUpdate === index ? "expanded" : ""
+                      }`}
+                      onClick={() =>
+                        setExpandedUpdate(
+                          expandedUpdate === index ? null : index
+                        )
+                      }
+                    >
+                      <h3 className="text-lg font-semibold text-white group-hover:text-[#8d76cc] transition-colors">
+                        {update.title}
+                      </h3>
+                      <p className="mt-2 text-white/70">{update.content}</p>
+
+                      <div
+                        className={`expanded-content transition-all duration-300 overflow-hidden ${
+                          expandedUpdate === index
+                            ? "max-h-[500px] opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`}
+                      >
+                        {(update.extended_content ||
+                          update.extended_content_img) && (
+                          <div className="mt-4 border-t border-white/10 pt-4">
+                            {update.extended_content && (
+                              <p className="text-white/70 mb-4 transition-opacity duration-300">
+                                {update.extended_content}
+                              </p>
+                            )}
+                            {update.extended_content_img && (
+                              <div className="mt-2 transition-opacity duration-300 w-full flex flex-col items-center">
+                                <div className="w-full max-w-[600px] min-h-[200px] max-h-[300px] rounded-2xl overflow-hidden shadow-lg bg-white/5">
+                                  <img
+                                    src={update.extended_content_img}
+                                    alt="Update thumbnail"
+                                    className="w-full h-full object-cover"
+                                  />
+                                </div>
+                                <a
+                                  href={update.extended_content_img}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="hidden md:block mt-2 text-sm text-white/60 hover:text-white/90 transition-colors underline underline-offset-2"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                  }}
+                                >
+                                  {(() => {
+                                    try {
+                                      return (
+                                        "Media from " +
+                                        new URL(
+                                          update.extended_content_img
+                                        ).hostname.replace(/^www\./, "")
+                                      );
+                                    } catch {
+                                      return "View source";
+                                    }
+                                  })()}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <div className="mt-auto flex items-center justify-between">
+                        <div className="flex items-center text-xs text-white/50">
+                          <span>{update.date}</span>
+                          <span className="mx-2">•</span>
+                          <span>by {update.author}</span>
+                        </div>
+                        <div className="text-white/50">
+                          <svg
+                            className={`w-5 h-5 transition-transform duration-500 ${
+                              expandedUpdate === index ? "rotate-180" : ""
+                            }`}
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M19 9l-7 7-7-7"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="relative w-full snap-start">
+          <div
+            className="relative mx-auto max-w-7xl px-6 py-24 md:py-0 md:flex md:items-center min-h-screen snap-start flex flex-col justify-center"
+            id="about"
+          >
+            <div className="w-full flex flex-col md:flex-row md:gap-8 md:max-w-6xl">
+              <div className="w-full md:w-1/2 space-y-8">
+                <h2 className="text-2xl font-semibold text-white">
+                  About ARMSX2
+                </h2>
+                <div className="space-y-6 text-white/80">
+                  <p>
+                    ARMSX2 began after years of there being no open source PS2
+                    emulator for ARM systems, and so developer MoonPower with
+                    the support of jpolo1224 decided to try their hand at
+                    porting a new PS2 emulator for Android, forking from the
+                    repository PCSX2_ARM64 by developer Pontos.
+                  </p>
+                  <p>
+                    Moon has and will continue doing his best to fill in the
+                    gaps and make this into a complete emulator, with the goal
+                    to have version parity with PCSX2. This project is not
+                    officially associated with PCSX2, and we are not associated
+                    with any other forks made from the original repository.{" "}
+                  </p>
+                  <p>
+                    This is our own attempt at continuing PS2 emulation on
+                    Android, iOS, and MacOS. The emulator currently operates as
+                    x86 to arm64, not native arm64, so the performance will not
+                    be as good as AetherSX2 currently, however things are
+                    subject to change as development goes on.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className="w-full md:w-1/2 space-y-8 mt-8 md:mt-0"
+                style={{
+                  marginLeft: window.innerWidth >= 768 ? "15px" : "0",
+                }}
+              >
+                <h2 className="text-2xl font-semibold text-white">FAQ</h2>
+                <div className="space-y-4">
+                  {faq.map((item, index) => (
+                    <details
+                      key={index}
+                      className="group rounded-lg bg-white/5 backdrop-blur-sm ring-1 ring-white/10 p-4 transition-all duration-300"
+                    >
+                      <summary className="flex cursor-pointer items-center justify-between text-white font-medium group-hover:text-[#8d76cc] transition-colors">
+                        {item.question}
+                        <svg
+                          className="h-5 w-5 shrink-0 transition duration-300 group-open:-rotate-180"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M19 9l-7 7-7-7"
+                          />
+                        </svg>
+                      </summary>
+                      <p className="mt-4 leading-relaxed text-white/70">
+                        {item.answer}
+                      </p>
+                    </details>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <a
+        href="https://github.com/tanosshi"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-4 right-4 text-white/70 cursor-pointer select-none"
+        style={{
+          zIndex: 9999,
+          transition: "text-shadow 0.3s ease",
+          padding: "0.8rem",
+          paddingRight: "2rem",
+          opacity:
+            activeSection === "updates"
+              ? 0.2
+              : activeSection !== "about" && window.innerWidth <= 500
+              ? 0.4
+              : 0.7,
+          textShadow: "0 5px 10px rgba(255, 255, 255, 0.39)",
+          animation: "sway 20s ease-in-out infinite",
+        }}
+        onMouseEnter={(e) => {
+          e.target.style.textShadow = "0 0 10px rgba(255, 255, 255, 0.7)";
+        }}
+        onMouseLeave={(e) => {
+          e.target.style.textShadow = "0 0 0px rgba(255, 255, 255, 0)";
+        }}
+      >
+        {window.innerWidth < 600
+          ? "©2025 ARMSX2 All rights reserved"
+          : "©2025 ARMSX2 All rights reserved, site by tanos"}
+      </a>
+    </>
+  );
+};
+
+export default Front;

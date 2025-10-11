@@ -1,0 +1,20 @@
+[
+  {
+    "src": "https://tanos.is-a.dev/images/puresakura.png",
+    "title": "UI Showcase",
+    "description": "A look at ARMSX2's modern interface and layout.",
+    "credits": "tanos"
+  },
+  {
+    "src": "https://tanos.is-a.dev/images/red.jpg",
+    "title": "Gameplay Demo",
+    "description": "Smooth PS2 gameplay running natively on ARM64.",
+    "credits": "tanos"
+  },
+  {
+    "src": "https://tanos.is-a.dev/images/asdasa.jpg",
+    "title": "Performance Statistics",
+    "description": "Frame pacing and rendering stats on average devices.",
+    "credits": "tanos"
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "games": [
+    {
+      "title": "Final Fantasy X",
+      "status": "Perfect",
+      "notes": "Runs at full speed with no graphical issues",
+      "region": "NTSC-U"
+    },
+    {
+      "title": "Kingdom Hearts",
+      "status": "Playable",
+      "notes": "Minor audio glitches in cutscenes",
+      "region": "PAL"
+    },
+    {
+      "title": "Metal Gear Solid 2",
+      "status": "In-Game",
+      "notes": "Some graphical glitches in certain areas",
+      "region": "NTSC-J"
+    }
+  ]
+}
