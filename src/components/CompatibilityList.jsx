@@ -9,9 +9,10 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
     fetch(url)
       .then((res) => res.text())
       .then((text) => {
-        const json = JSON.parse(text);
+        const cleaned = text.replace(/,\s*([}\]])/g, "$1");
+        const json = JSON.parse(cleaned);
         setGamesData(json);
-      });
+      })
   }, []);
 
   const getcorrespondingColor = (status) => {
