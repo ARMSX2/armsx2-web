@@ -12,6 +12,8 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
         return "bg-yellow-400/20 text-yellow-400";
       case "in-game":
         return "bg-orange-400/20 text-orange-400";
+      case "menu":
+        return "bg-blue-400/20 text-blue-400";
       default:
         return "bg-red-400/20 text-red-400";
     }
@@ -65,6 +67,9 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
                     </h2>
                     <p className="text-gray-400 text-base mb-2">
                       Region: {game.region}
+                    </p>
+                    <p className="text-gray-400 text-base mb-2">
+                      Title ID: {game["title-id"]}
                     </p>
                     <p className="text-gray-400 text-base">{game.notes}</p>
                   </div>

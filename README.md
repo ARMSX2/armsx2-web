@@ -27,19 +27,26 @@ _a special delivery, an armsx2 site made by tanos._
 
 ### Prerequisites
 
-- **Node.js** (v16.0.0 or higher)
-- **npm**
+- **Node.js 22+** _or_ **Bun 1.1+**
+- **npm**, **pnpm**, or **bun**
 
-> React.js is used for this site, parts taken from tanos.fm
+> Now powered by Vite + React 19 for a faster dev experience, parts taken from tanos.fm.
 
 ### 🔧 Installation
 
 ```bash
-# 📦 Install all dependencies
+# 📦 Install dependencies (npm or bun)
 npm install
+# or
+bun install
 
-# 🚀 Build and launch
-npm start
+# 🚀 Start the dev server
+npm run dev
+# or
+bun run dev
+
+# 🏗 Build for production
+npm run build
 ```
 
 ---
