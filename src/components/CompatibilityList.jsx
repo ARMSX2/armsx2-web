@@ -1,8 +1,18 @@
-import React, { useState } from "react";
-import games from "../data/compatibility.json";
+import React, { useState, useEffect } from "react";
 
 const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate }) => {
   const [searchTerm, setSearchTerm] = useState("");
+  const [gamesData, setGamesData] = useState({ games: [] });
+
+  useEffect(() => {
+    const url = "https://raw.githubusercontent.com/ARMSX2/ARMSX2-compat/refs/heads/main/compatibility.json";
+    fetch(url)
+      .then((res) => res.text())
+      .then((text) => {
+        const json = JSON.parse(text);
+        setGamesData(json);
+      });
+  }, []);
 
   const getcorrespondingColor = (status) => {
     switch (status.toLowerCase()) {
@@ -51,7 +61,7 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
           />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {games.games
+          {gamesData.games
             .filter((game) =>
               game.title.toLowerCase().includes(searchTerm.toLowerCase())
             )
