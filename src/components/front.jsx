@@ -7,7 +7,7 @@ import faq from "../data/faq.json";
 import {
   FaDownload,
   FaDiscord,
-  FaMicrochip,
+  FaFile,
   FaRocket,
   FaChevronRight,
 } from "react-icons/fa6";
@@ -134,6 +134,9 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   // i wouldve done something extra with this but im keeping it ;like this for now ig
   const handleDiscordClick = () => {
     window.open("https://discord.gg/S7VxwfS8w9", "_blank");
+  };
+  const handleDocumentationClick = () => {
+    window.open("https://docs.armsx2.net", "_blank");
   };
   const handleSourceClick = () => {
     window.open("https://github.com/ARMSX2", "_blank");
@@ -402,20 +405,26 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               <div
                 className="glassish h-24 rounded-xl flex items-center justify-between gap-3 px-4 group cursor-pointer transform-gpu transition-transform duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] ring-glow shadow-[0_0_10px_rgba(141,118,204,0.18)] hover:shadow-[0_0_20px_rgba(141,118,204,0.3)] transition-shadow"
                 role="button"
+                onClick={handleDocumentationClick}
                 tabIndex={0}
               >
                 <div className="flex items-center gap-3">
-                  <FaMicrochip
+                  <FaFile
                     className="text-2xl text-[#8d76cc]"
                     aria-hidden="true"
                   />
                   <div>
-                    <div className="text-sm font-semibold">Performance</div>
+                    <div className="text-sm font-semibold">Documentation</div>
                     <div className="text-xs text-white/70">
-                      Specifically made for ARM64
+                      Get started quickly
                     </div>
                   </div>
                 </div>
+
+                <FaChevronRight
+                  className="text-white/60 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-white/80"
+                  aria-hidden="true"
+                />
               </div>
             </div>
           </div>
