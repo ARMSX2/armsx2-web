@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from "react";
+import { FaFilter } from "react-icons/fa6";
 
-const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate }) => {
+const CompatibilityList = ({
+  isthetransitioninghappening,
+  isEntering,
+  onNavigate,
+}) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [gamesData, setGamesData] = useState({ games: [] });
 
+  const [statusFilter, setFilterTo] = useState("all");
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
   useEffect(() => {
-    const url = "https://raw.githubusercontent.com/ARMSX2/ARMSX2-compat/refs/heads/main/compatibility.json";
+    const url =
+      "https://raw.githubusercontent.com/ARMSX2/ARMSX2-compat/refs/heads/main/compatibility.json";
     fetch(url)
       .then((res) => res.text())
       .then((text) => {
         const cleaned = text.replace(/,\s*([}\]])/g, "$1");
-        const json = JSON.parse(cleaned);
-        setGamesData(json);
-      })
+        setGamesData(JSON.parse(cleaned));
+      });
   }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isFilterOpen && !event.target.closest(".filter-dropdown"))
+        setIsFilterOpen(false);
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isFilterOpen]);
 
   const getcorrespondingColor = (status) => {
     switch (status.toLowerCase()) {
@@ -41,10 +61,11 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
       <img
         src="/icon.png"
         alt="ARMSX2 Logo"
-        style={{ opacity: window.innerWidth <= 550 ? 0.64582 : 0.8,
+        style={{
+          opacity: window.innerWidth <= 550 ? 0.64582 : 0.8,
           transform: window.innerWidth <= 550 ? "scale(0.8)" : "scale(1)",
-          filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))"
-         }}
+          filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
+        }}
         className="fixed top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200"
         onClick={() => onNavigate && onNavigate("home")}
       />
@@ -52,20 +73,103 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
         <h1 className="text-4xl text-center font-bold text-white mt-5 mb-6">
           Compatibility List
         </h1>
+
         <div className="mb-10 max-w mx-auto">
-          <input
-            type="text"
-            placeholder="Search games..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full px-6 py-4 text-lg bg-[#2a2a2f] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg transition-all duration-200 hover:bg-[#323237]"
-          />
+          <div className="flex gap-4">
+            <input
+              type="text"
+              placeholder="Search games..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="flex-1 px-6 py-3 text-lg bg-[#2a2a2f] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg transition-all duration-200 hover:bg-[#323237]"
+            />
+            <div className="relative filter-dropdown">
+              <button
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="px-6 py-4 bg-[#2a2a2f] text-white rounded-lg hover:bg-[#323237] transition-all duration-200 shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <FaFilter className="text-lg" />
+                <span className="hidden sm:inline">Filter</span>
+              </button>
+              {isFilterOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-[#2a2a2f] rounded-lg shadow-xl border border-gray-700 z-10">
+                  <div className="py-3 px-2">
+                    <button
+                      onClick={() => {
+                        setFilterTo("all");
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full text-left rounded-lg px-4 py-2 text-white hover:bg-[#323237] transition-colors duration-200 ${
+                        statusFilter === "all" ? "bg-blue-700/30" : ""
+                      }`}
+                    >
+                      All Games
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFilterTo("perfect");
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full rounded-lg text-left px-4 py-2 text-green-400 hover:bg-[#323237] transition-colors duration-200 ${
+                        statusFilter === "perfect" ? "bg-green-600/20" : ""
+                      }`}
+                    >
+                      Perfect
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFilterTo("playable");
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full text-left rounded-lg px-4 py-2 text-yellow-400 hover:bg-[#323237] transition-colors duration-200 ${
+                        statusFilter === "playable" ? "bg-yellow-600/20" : ""
+                      }`}
+                    >
+                      Playable
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFilterTo("in-game");
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full text-left rounded-lg px-4 py-2 text-orange-400 hover:bg-[#323237] transition-colors duration-200 ${
+                        statusFilter === "in-game" ? "bg-orange-600/20" : ""
+                      }`}
+                    >
+                      In-Game
+                    </button>
+                    <button
+                      onClick={() => {
+                        setFilterTo("menu");
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full text-left rounded-lg px-4 py-2 text-blue-400 hover:bg-[#323237] transition-colors duration-200 ${
+                        statusFilter === "menu" ? "bg-blue-600/20" : ""
+                      }`}
+                    >
+                      Menu
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {gamesData.games
-            .filter((game) =>
-              game.title.toLowerCase().includes(searchTerm.toLowerCase())
-            )
+            .sort((a, b) => a.title.localeCompare(b.title))
+            .filter((game) => {
+              const matchesSearch = game.title
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase());
+
+              const matchesStatus =
+                statusFilter === "all" ||
+                game.status.toLowerCase() === statusFilter.toLowerCase();
+
+              return matchesSearch && matchesStatus;
+            })
             .map((game, index) => (
               <div
                 key={index}
@@ -90,7 +194,11 @@ const CompatibilityList = ({ isthetransitioninghappening, isEntering, onNavigate
                         game.status
                       )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
                     >
-                      {game.status}
+                      {game.status.replace(
+                        /(^|-)(\w)/g,
+                        (_, sep, char) => sep + char.toUpperCase()
+                      )}{" "}
+                      {/* makes uppercase incase som1 forgot */}
                     </span>
                   </div>
                 </div>

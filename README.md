@@ -17,7 +17,7 @@ _a special delivery, an armsx2 site made by tanos._
 | JSON               | Functionality                           | Requires editing? |
 | ------------------ | --------------------------------------- | ----------------- |
 | blog.json          | Data/news from/about the developers     | Yes               |
-| compatibility.json | Data about the compatibility            | Yes               |
+| compatibility.json | Data about the compatibility            | <Deleted>         |
 | faq.json           | Contains a small faq (5 max preferably) | Yes               |
 | images.json        | Contains front page image demos         | Yes               |
 
@@ -62,13 +62,15 @@ npm run build
 | Finished main page UI                              | ✅ **Complete**      | Low       |
 | Images                                             | ✅ **Complete**      | Low       |
 | More content                                       | ✅ **Complete**      | Lowered   |
-| Direct Download                                    | 🔄 **Before Launch** | Important |
+| Change line 21                                     | ✅ **Complete**      | Important |
+| Direct Download                                    | ✅ **Complete**      | Important |
 | Change favicon                                     | 🔄 **Before Launch** | Important |
-| Change line 21                                     | 🔄 **Before Launch** | Important |
 | Fix image scaling in Latest Updates (blog) section | 🔄 **Before Launch** | Important |
 | Compatbility page UI                               | 🔄 **Before Launch** | Medium    |
 | Less static page (More interactions)               | 🔄 **Planned**       | Low       |
 | Split front.jsx in to multiple files               | 🔄 **Planned**       | Low       |
+
+> also take a look at line 330 // honestly height: "16rem", would work too but idk im lowk tweaking
 
 </div>
 

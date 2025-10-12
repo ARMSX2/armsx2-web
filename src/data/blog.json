@@ -1,26 +1,24 @@
 {
   "updates": [
     {
+      "title": "Fake Websites",
+      "content": "Please be careful of the fake websites out there, we are not affiliated with any of them and they may try to make you download a fake APK.",
+      "extended_content": "examples are like uhhh ",
+      "date": "October 12, 2025",
+      "author": "ARMSX2 team",
+      "extraicon": "warning"
+    },
+    {
       "title": "Site Update",
       "content": "The site has been created and is being maintained by @tanossh.i on Discord or tanosshi on GitHub",
-      "extended_content": "extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here ",
-      "extended_content_img": "https://lifehacker.com/imagery/articles/01J7KPR6C66PDHEPD2QJXSH788/images-4.fill.size_2000x1173.v1726167698.png",
+      "extended_content": "extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here ",
       "date": "October 5, 2025",
       "author": "tanosshi"
     },
     {
       "title": "Demo",
       "content": "ARMSX2 is a new open source emulator for the PS2, it is based on the PCSX2 emulator and aims to be the next step in PS2 emulation on Android, as well as cross platform support for iOS and Mac OS.",
-      "extended_content": "extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here ",
-      "extended_content_img": "https://tanos.is-a.dev/images/hero-bg.jpg",
-      "date": "October 1, 2025",
-      "author": "moonpower"
-    },
-    {
-      "title": "Demo",
-      "content": "ARMSX2 is a new open source emulator for the PS2, it is based on the PCSX2 emulator and aims to be the next step in PS2 emulation on Android, as well as cross platform support for iOS and Mac OS.",
       "extended_content": "extra_content_appears_here",
-      "extended_content_img": "https://www.codewizardshq.com/wp-content/uploads/2022/08/roblox_obby_cowboy.jpg",
       "date": "September 28, 2025",
       "author": "polo j"
     },
@@ -28,7 +26,6 @@
       "title": "im gone",
       "content": "stern left",
       "extended_content": "extra_content_appears_here",
-      "extended_content_img": "https://dbknews.s3.amazonaws.com/uploads/2022/05/ow_gp.png",
       "date": "September 25, 2025",
       "author": "stern"
     }

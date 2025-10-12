@@ -10,6 +10,8 @@ import {
   FaFile,
   FaRocket,
   FaChevronRight,
+  FaTriangleExclamation,
+  FaLock,
 } from "react-icons/fa6";
 
 const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
@@ -17,24 +19,26 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const [version, setVersion] = useState(null) || "0";
 
   useEffect(() => {
-    fetch("https://api.github.com/repos/PCSX2/PCSX2/releases/latest") // replace with ARMSX2 on launch it wont work for now
+    fetch("https://api.github.com/repos/ARMSX2/ARMSX2/releases/latest")
       .then((res) => {
         setVersion("0.0.0");
         if (!res.ok) throw new Error("No information about releases");
         return res.json();
       })
       .then((data) => {
-        setVersion("0.0.0");
-
         setVersion(data.tag_name.replace("v", ""));
 
         const found = data.assets.find((asset) =>
           asset.name.toLowerCase().endsWith(".apk")
         );
+        console.log(data);
 
         if (found) setApkUrl(found.browser_download_url);
+        else setApkUrl("LOCK");
       })
       .catch((err) => {
+        setVersion("unreleased");
+        setApkUrl("LOCK");
         console.error(err);
       });
   }, []);
@@ -214,7 +218,8 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
           <div className="w-full max-w-2xl left-content snap-start">
             <div className="hidden md:flex mt-1 items-center gap-3">
               <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
-                ARMSX2 is currently on v{version}
+                ARMSX2 is currently{" "}
+                {version === "unreleased" ? "unreleased" : "on v" + version}
               </span>
             </div>
             <div className="flex items-center gap-3 mt-5 md:mt-5">
@@ -223,8 +228,12 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               </h1>
               <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow md:hidden">
                 {window.innerWidth < 380
-                  ? "currently at v" + version
-                  : "latest release at v" + version}
+                  ? version === "unreleased"
+                    ? "unreleased"
+                    : "currently on v" + version
+                  : version === "unreleased"
+                  ? "is currently unreleased"
+                  : "latest release on v" + version}
               </span>
             </div>
             <p className="mt-4 text-base md:text-lg text-white/80">
@@ -242,22 +251,40 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                   handleButtonMouseDown(e, setPrimaryButtonScale)
                 }
                 onMouseUp={(e) => handleButtonMouseUp(e, setPrimaryButtonScale)}
-                className="ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white transition-colors duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-full md:w-auto text-center"
+                onClick={(e) => {
+                  if (downloadURL === "LOCK") {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }
+                }}
+                className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white transition-colors duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-full md:w-auto text-center ${
+                  downloadURL === "LOCK" ? "disabledAPK" : ""
+                }`}
                 style={{
                   transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
                   transition:
                     "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
                   animation: "subtleSway 12s ease-in-out infinite",
+                  cursor: downloadURL === "LOCK" ? "not-allowed" : "pointer",
                 }}
-                href={downloadURL}
-                download
+                href={downloadURL === "LOCK" ? "#" : downloadURL}
+                {...(downloadURL !== "LOCK" && { download: true })}
               >
                 <div className="flex items-center justify-center gap-2">
-                  <FaDownload
-                    className="text-xs text-[#fff]"
-                    aria-hidden="true"
-                  />
-                  Download APK
+                  {downloadURL === "LOCK" ? (
+                    <FaLock
+                      className="text-xs text-[#fff]"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <FaDownload
+                      className="text-xs text-[#fff]"
+                      aria-hidden="true"
+                    />
+                  )}
+                  {downloadURL === "LOCK"
+                    ? "Download Unavailable"
+                    : "Download APK"}
                 </div>
               </a>
               <button
@@ -284,12 +311,23 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               </button>
             </div>
 
-            <div className="relative w-full max-w-full mt-6 md:mt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 md:w-[26rem] z-30 mobile-full-width carousel-container">
+            <div
+              className={`relative w-full mt-6 md:mt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 md:w-[26rem] z-30 carousel-container ${
+                window.innerWidth < 500
+                  ? "absolute left-0 right-0 w-screen"
+                  : "max-w-full"
+              }`}
+            >
               <div
-                className="relative mx-auto h-64 md:h-80 rounded-2xl overflow-hidden carousel w-full max-w-full"
+                className={`relative mx-auto overflow-hidden carousel w-full ${
+                  window.innerWidth < 500
+                    ? "h-48 rounded-none"
+                    : "h-80 md:h-80 rounded-2xl"
+                }`}
                 style={{
                   transformStyle: "preserve-3d",
                   transformOrigin: "center left",
+                  // honestly height: "16rem", would work too but idk im lowk tweaking
                 }}
                 onTouchStart={handleTouchStart}
                 onTouchMove={handleTouchMove}
@@ -299,17 +337,29 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                   const n = images.length;
                   const pos = (i - currentIndex + n) % n;
                   let style = "";
-                  if (pos === 0)
-                    style = "z-20 scale-100 opacity-100 translate-x-0";
-                  else if (pos === 1)
-                    style = "z-10 scale-90 opacity-85 translate-x-16";
-                  else style = "z-10 scale-90 opacity-85 -translate-x-16";
+
+                  if (window.innerWidth < 500) {
+                    if (pos === 0)
+                      style = "z-20 scale-100 opacity-100 translate-x-0";
+                    else style = "z-0 scale-100 opacity-0 translate-x-0";
+                  } else {
+                    if (pos === 0)
+                      style = "z-20 scale-100 opacity-100 translate-x-0";
+                    else if (pos === 1)
+                      style = "z-10 scale-90 opacity-85 translate-x-16";
+                    else style = "z-10 scale-90 opacity-85 -translate-x-16";
+                  }
+
                   return (
                     <img
                       key={src}
                       src={src}
                       alt={title}
-                      className={` ring-glow absolute inset-0 m-auto h-full w-full object-cover transition-all duration-500 ease-out ${style}`}
+                      className={`ring-glow transition-all duration-500 ease-out ${
+                        window.innerWidth < 500
+                          ? "absolute inset-0 m-auto h-full w-full object-cover"
+                          : "absolute inset-0 m-auto h-full w-full object-cover"
+                      } ${style}`}
                     />
                   );
                 })}
@@ -341,7 +391,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                 </div>
               </div>
               <div className="mt-3 text-center">
-                <p className="text-xs text-white/60">
+                <p id="descrip" className="text-xs text-white/60">
                   {images[currentIndex].description}
                 </p>
                 <h3 className="text-sm by font-semibold text-white/90">
@@ -456,8 +506,11 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         )
                       }
                     >
-                      <h3 className="text-lg font-semibold text-white group-hover:text-[#8d76cc] transition-colors">
+                      <h3 className="text-lg font-semibold text-white group-hover:text-[#8d76cc] transition-colors flex items-center gap-2">
                         {update.title}
+                        {update.extraicon === "warning" && (
+                          <FaTriangleExclamation className="text-yellow-400 text-sm" />
+                        )}
                       </h3>
                       <p className="mt-2 text-white/70">{update.content}</p>
 
@@ -615,6 +668,19 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                       </p>
                     </details>
                   ))}
+
+                  {window.innerWidth < 767 && (
+                    <div className="text-center py-4 text-white/70 text-sm bg-transparent">
+                      <a
+                        href="https://github.com/tanosshi"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="hover:text-white/90 transition-colors"
+                      >
+                        ©2025 ARMSX2 All rights reserved, site by tanos
+                      </a>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -622,36 +688,36 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         </div>
       </div>
 
-      <a
-        href="https://github.com/tanosshi"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 text-white/70 cursor-pointer select-none"
-        style={{
-          zIndex: 9999,
-          transition: "text-shadow 0.3s ease",
-          padding: "0.8rem",
-          paddingRight: "2rem",
-          opacity:
-            activeSection === "updates"
-              ? 0.2
-              : activeSection !== "about" && window.innerWidth <= 500
-              ? 0.4
-              : 0.7,
-          textShadow: "0 5px 10px rgba(255, 255, 255, 0.39)",
-          animation: "sway 20s ease-in-out infinite",
-        }}
-        onMouseEnter={(e) => {
-          e.target.style.textShadow = "0 0 10px rgba(255, 255, 255, 0.7)";
-        }}
-        onMouseLeave={(e) => {
-          e.target.style.textShadow = "0 0 0px rgba(255, 255, 255, 0)";
-        }}
-      >
-        {window.innerWidth < 600
-          ? "©2025 ARMSX2 All rights reserved"
-          : "©2025 ARMSX2 All rights reserved, site by tanos"}
-      </a>
+      {window.innerWidth >= 767 && (
+        <a
+          href="https://github.com/tanosshi"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="fixed bottom-4 right-4 text-white/70 cursor-pointer select-none"
+          style={{
+            zIndex: 9999,
+            transition: "text-shadow 0.3s ease",
+            padding: "0.8rem",
+            paddingRight: "2rem",
+            opacity:
+              activeSection === "updates"
+                ? 0.2
+                : activeSection !== "about" && window.innerWidth <= 500
+                ? 0.4
+                : 0.7,
+            textShadow: "0 5px 10px rgba(255, 255, 255, 0.39)",
+            animation: "sway 20s ease-in-out infinite",
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.textShadow = "0 0 10px rgba(255, 255, 255, 0.7)";
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.textShadow = "0 0 0px rgba(255, 255, 255, 0)";
+          }}
+        >
+          ©2025 ARMSX2 All rights reserved, site by tanos
+        </a>
+      )}
     </>
   );
 };

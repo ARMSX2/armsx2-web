@@ -224,7 +224,7 @@ button {
 
 @media (max-width: 767px) {
   .mobile-container {
-    max-width: 100vw;
+    max-width: 130vw;
     overflow-x: hidden;
     padding-top: 4rem;
   }
@@ -245,11 +245,19 @@ button {
   .carousel-container,
   .carousel {
     display: block !important;
-    padding-left: 4rem;
+    margin-left: 1rem !important;
     margin-bottom: 0.2rem;
+  }
+  #descrip {
+    margin-left: 2rem;
   }
 }
 
 img {
   border-radius: 25px;
+}
+
+.disabledAPK {
+  filter: grayscale(1);
+  cursor: not-allowed !important;
 }
