@@ -1,33 +1,34 @@
 {
   "updates": [
     {
-      "title": "Fake Websites",
-      "content": "Please be careful of the fake websites out there, we are not affiliated with any of them and they may try to make you download a fake APK.",
-      "extended_content": "examples are like uhhh ",
-      "date": "October 12, 2025",
-      "author": "ARMSX2 team",
+      "title": "Website Release!",
+      "content": "The ARMSX2 official website has now been released!",
+      "extended_content": "Thank you to Tanos and jpolo1224",
+      "date": "October 13, 2025",
+      "author": "ARMSX2 Team",
       "extraicon": "warning"
+    },
+    {
+      "title": "Fake Websites",
+      "content": "Please be careful of the fake websites out there, we are not affiliated with any of them and they may try to make you download a fake or malicious APK.",
+      "extended_content": "A prime example is ARMSX2.com",
+      "date": "October 12, 2025",
+      "author": "ARMSX2 Team",
     },
     {
       "title": "Site Update",
       "content": "The site has been created and is being maintained by @tanossh.i on Discord or tanosshi on GitHub",
-      "extended_content": "extra_content_appears_here extra_content_appears_here extra_content_appears_here extra_content_appears_here ",
-      "date": "October 5, 2025",
+      "extended_content": "Thanks to jpolo1224 for assisting with the website content",
+      "date": "October 10, 2025",
       "author": "tanosshi"
     },
     {
-      "title": "Demo",
+      "title": "Details",
       "content": "ARMSX2 is a new open source emulator for the PS2, it is based on the PCSX2 emulator and aims to be the next step in PS2 emulation on Android, as well as cross platform support for iOS and Mac OS.",
-      "extended_content": "extra_content_appears_here",
+      "extended_content": "COMING SOON!",
       "date": "September 28, 2025",
-      "author": "polo j"
+      "author": "jpolo1224"
     },
-    {
-      "title": "im gone",
-      "content": "stern left",
-      "extended_content": "extra_content_appears_here",
-      "date": "September 25, 2025",
-      "author": "stern"
-    }
-  ]
-}
+  
+  
+
