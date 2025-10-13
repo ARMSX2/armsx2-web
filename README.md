@@ -102,6 +102,6 @@ npm run build
 
 <div align="center">
 
-_Always made with ❤️ by THE tanos_
+_Always made with ❤️ by THE LEGEND tanos_
 
 </div>
