@@ -8,7 +8,7 @@ const CompatibilityList = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [gamesData, setGamesData] = useState({ games: [] });
-
+  const [error, setError] = useState(null);
   const [statusFilter, setFilterTo] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
@@ -16,10 +16,24 @@ const CompatibilityList = ({
     const url =
       "https://raw.githubusercontent.com/ARMSX2/ARMSX2-compat/refs/heads/main/compatibility.json";
     fetch(url)
-      .then((res) => res.text())
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Failed to fetch compatibility list");
+        }
+        return res.text();
+      })
       .then((text) => {
         const cleaned = text.replace(/,\s*([}\]])/g, "$1");
-        setGamesData(JSON.parse(cleaned));
+        const parsed = JSON.parse(cleaned);
+        if (!parsed.games || !Array.isArray(parsed.games)) {
+          throw new Error("Invalid compatibility data format");
+        }
+        setGamesData(parsed);
+        setError(null);
+      })
+      .catch((err) => {
+        console.error("Error fetching compatibility list:", err);
+        setError(err.message);
       });
   }, []);
 
@@ -157,53 +171,68 @@ const CompatibilityList = ({
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {gamesData.games
-            .sort((a, b) => a.title.localeCompare(b.title))
-            .filter((game) => {
-              const matchesSearch = game.title
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase());
+          {error ? (
+            <div className="col-span-2 text-center py-12">
+              <div className="text-xl text-red-400 mb-4">
+                Failed to load compatibility list
+              </div>
+              <div className="text-gray-400">{error}</div>
+            </div>
+          ) : gamesData.games.length === 0 ? (
+            <div className="col-span-2 text-center py-12">
+              <div className="text-xl text-gray-400">
+                No games found in the compatibility list
+              </div>
+            </div>
+          ) : (
+            gamesData.games
+              .sort((a, b) => a.title.localeCompare(b.title))
+              .filter((game) => {
+                const matchesSearch = game.title
+                  .toLowerCase()
+                  .includes(searchTerm.toLowerCase());
 
-              const matchesStatus =
-                statusFilter === "all" ||
-                game.status.toLowerCase() === statusFilter.toLowerCase();
+                const matchesStatus =
+                  statusFilter === "all" ||
+                  game.status.toLowerCase() === statusFilter.toLowerCase();
 
-              return matchesSearch && matchesStatus;
-            })
-            .map((game, index) => (
-              <div
-                key={index}
-                className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
-              >
-                <div className="flex justify-between items-start gap-4">
-                  <div className="flex-1">
-                    <h2 className="text-2xl text-white font-bold mb-3">
-                      {game.title}
-                    </h2>
-                    <p className="text-gray-400 text-base mb-2">
-                      Region: {game.region}
-                    </p>
-                    <p className="text-gray-400 text-base mb-2">
-                      Title ID: {game["title-id"]}
-                    </p>
-                    <p className="text-gray-400 text-base">{game.notes}</p>
-                  </div>
-                  <div>
-                    <span
-                      className={`${getcorrespondingColor(
-                        game.status
-                      )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
-                    >
-                      {game.status.replace(
-                        /(^|-)(\w)/g,
-                        (_, sep, char) => sep + char.toUpperCase()
-                      )}{" "}
-                      {/* makes uppercase incase som1 forgot */}
-                    </span>
+                return matchesSearch && matchesStatus;
+              })
+              .map((game, index) => (
+                <div
+                  key={index}
+                  className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
+                >
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1">
+                      <h2 className="text-2xl text-white font-bold mb-3">
+                        {game.title}
+                      </h2>
+                      <p className="text-gray-400 text-base mb-2">
+                        Region: {game.region}
+                      </p>
+                      <p className="text-gray-400 text-base mb-2">
+                        Title ID: {game["title-id"]}
+                      </p>
+                      <p className="text-gray-400 text-base">{game.notes}</p>
+                    </div>
+                    <div>
+                      <span
+                        className={`${getcorrespondingColor(
+                          game.status
+                        )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
+                      >
+                        {game.status.replace(
+                          /(^|-)(\w)/g,
+                          (_, sep, char) => sep + char.toUpperCase()
+                        )}{" "}
+                        {/* makes uppercase incase som1 forgot */}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))
+          )}
         </div>
       </div>
     </div>

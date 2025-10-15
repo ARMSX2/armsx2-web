@@ -68,7 +68,7 @@ npm run build
 | Fix image scaling in Latest Updates (blog) section | 🔄 **Before Launch** | Important |
 | Compatbility page UI                               | 🔄 **Before Launch** | Medium    |
 | Less static page (More interactions)               | 🔄 **Planned**       | Low       |
-| Split front.jsx in to multiple files               | 🔄 **Planned**       | Low       |
+| Split front.jsx in to multiple files               | 🔄 **Planned**       | Lowest    |
 
 > also take a look at line 330 // honestly height: "16rem", would work too but idk im lowk tweaking
 
@@ -81,11 +81,26 @@ npm run build
 <div align="center">
 <table>
 <tr>
+
+<td align="center" width="200px">
+<img src="https://github.com/momo-AUX1.png" width="100px" style="border-radius: 50%"><br>
+<strong>MoonPower</strong><br>
+<sub>🔍 Management</sub><br>
+<em>Code reviewer/converter</em>
+</td>
+
 <td align="center" width="200px">
 <img src="https://github.com/tanosshi.png" width="100px" style="border-radius: 50%"><br>
 <strong>tanos</strong><br>
-<sub>🎯 Lead (Web) Developer</sub><br>
+<sub>🎯 Lead Web Developer</sub><br>
 <em>Frontend & Backend Developer</em>
+</td>
+
+<td align="center" width="200px">
+<img src="https://github.com/jpolo1224.png" width="100px" style="border-radius: 50%"><br>
+<strong>jpolo1224</strong><br>
+<sub>💬 Lead Text Writer</sub><br>
+<em>Frontend text writer</em>
 </td>
 </tr>
 </table>

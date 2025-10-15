@@ -19,9 +19,9 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const [version, setVersion] = useState(null) || "0";
 
   useEffect(() => {
+    setVersion("0.0.0");
     fetch("https://api.github.com/repos/ARMSX2/ARMSX2/releases/latest")
       .then((res) => {
-        setVersion("0.0.0");
         if (!res.ok) throw new Error("No information about releases");
         return res.json();
       })
@@ -31,7 +31,6 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         const found = data.assets.find((asset) =>
           asset.name.toLowerCase().endsWith(".apk")
         );
-        console.log(data);
 
         if (found) setApkUrl(found.browser_download_url);
         else setApkUrl("LOCK");
@@ -367,14 +366,14 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                 <button
                   aria-label="Previous slide"
                   onClick={prevSlide}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 hover:bg-black/50 text-white px-2 py-1 text-xs z-30"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 hover:bg-black/80 text-white px-2 py-1 text-xs z-30"
                 >
                   ‹
                 </button>
                 <button
                   aria-label="Next slide"
                   onClick={nextSlide}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/30 hover:bg-black/50 text-white px-2 py-1 text-xs z-30"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 hover:bg-black/80 text-white px-2 py-1 text-xs z-30"
                 >
                   ›
                 </button>

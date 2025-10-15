@@ -3,17 +3,17 @@
     {
       "title": "Website Release!",
       "content": "The ARMSX2 official website has now been released!",
-      "extended_content": "Thank you to Tanos and jpolo1224",
-      "date": "October 13, 2025",
-      "author": "ARMSX2 Team",
-      "extraicon": "warning"
+      "extended_content": "Thank you to tanos and jpolo1224",
+      "date": "October 16, 2025",
+      "author": "ARMSX2 Team"
     },
     {
       "title": "Fake Websites",
       "content": "Please be careful of the fake websites out there, we are not affiliated with any of them and they may try to make you download a fake or malicious APK.",
       "extended_content": "A prime example is ARMSX2.com",
       "date": "October 12, 2025",
-      "author": "ARMSX2 Team"
+      "author": "ARMSX2 Team",
+      "extraicon": "warning"
     },
     {
       "title": "Site Update",
@@ -23,7 +23,7 @@
       "author": "tanosshi"
     },
     {
-      "title": "Details",
+      "title": "Announcement",
       "content": "ARMSX2 is a new open source emulator for the PS2, it is based on the PCSX2 emulator and aims to be the next step in PS2 emulation on Android, as well as cross platform support for iOS and Mac OS.",
       "extended_content": "COMING SOON!",
       "date": "September 28, 2025",
@@ -31,6 +31,3 @@
     }
   ]
 }
-  
-  
-
