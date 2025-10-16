@@ -1,20 +1,20 @@
 [
   {
-    "src": "https://tanos.is-a.dev/images/puresakura.png",
-    "title": "UI Showcase",
-    "description": "A look at ARMSX2's modern interface and layout.",
-    "credits": "tanos"
-  },
-  {
-    "src": "https://tanos.is-a.dev/images/red.jpg",
+    "src": "/Screenshot_20251005-214713.png",
     "title": "Gameplay Demo",
-    "description": "Smooth PS2 gameplay running natively on ARM64.",
-    "credits": "tanos"
+    "description": "A look at ARMSX2's running Yakuza 1.",
+    "credits": "Google play tester"
   },
   {
-    "src": "https://tanos.is-a.dev/images/asdasa.jpg",
-    "title": "Performance Statistics",
-    "description": "Frame pacing and rendering stats on average devices.",
-    "credits": "tanos"
+    "src": "/Screenshot_20251006-020627.png",
+    "title": "Gameplay Demo",
+    "description": "Smooth PS2 gameplay running natively on ARM64 Devil May Cry.",
+    "credits": "Google play tester"
+  },
+  {
+    "src": "/Screenshot_20251015_214612_ARMSX2.png",
+    "title": "Gameplay Demo",
+    "description": "Stunning fidelity and performance.",
+    "credits": "Alex"
   }
 ]
