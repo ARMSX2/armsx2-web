@@ -12,19 +12,6 @@ _a special delivery, an armsx2 site made by tanos._
 
 ---
 
-### Append or add to the text by editing the json files
-
-| JSON               | Functionality                           | Requires editing? |
-| ------------------ | --------------------------------------- | ----------------- |
-| blog.json          | Data/news from/about the developers     | Yes               |
-| compatibility.json | Data about the compatibility            | <Deleted>         |
-| faq.json           | Contains a small faq (5 max preferably) | Yes               |
-| images.json        | Contains front page image demos         | Yes               |
-
-> Interact with the src/data/\*.json files
-
----
-
 ### Prerequisites
 
 - **Node.js 22+** _or_ **Bun 1.1+**
@@ -64,9 +51,9 @@ npm run build
 | More content                                       | ✅ **Complete**      | Lowered   |
 | Change line 21                                     | ✅ **Complete**      | Important |
 | Direct Download                                    | ✅ **Complete**      | Important |
-| Change favicon                                     | 🔄 **Before Launch** | Important |
+| Change favicon                                     | ✅ **Complete** | Important |
 | Fix image scaling in Latest Updates (blog) section | 🔄 **Before Launch** | Important |
-| Compatbility page UI                               | 🔄 **Before Launch** | Medium    |
+| Better Compatibility page                              | 🔄 **Planned** | Medium    |
 | Less static page (More interactions)               | 🔄 **Planned**       | Low       |
 | Split front.jsx in to multiple files               | 🔄 **Planned**       | Lowest    |
 
