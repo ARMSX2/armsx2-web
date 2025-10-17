@@ -200,8 +200,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
             : isEntering
             ? "opacity-100 transform translate-x-0 scale-100 blur-0"
             : "opacity-100 transform translate-x-0 scale-100 blur-0"
-        } md:overflow-y-auto md:scroll-smooth snap-y snap-mandatory touch-pan-y h-screen`}
-        style={{ scrollBehavior: "smooth", scrollSnapType: "y mandatory" }}
+        } md:overflow-y-auto md:scroll-smooth md:snap-y md:snap-mandatory md:touch-pan-y h-screen }`}
       >
         <div className="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-gradient-to-br from-[#8d76cc]/40 to-[#3e4d84]/30 bloom" />
         <div className="pointer-events-none fixed left-40 top-64 h-[34rem] w-[34rem] rounded-full bg-gradient-to-tr from-[#3e4d84]/25 to-[#8d76cc]/25 bloom-strong" />
