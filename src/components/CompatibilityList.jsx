@@ -100,16 +100,19 @@ const CompatibilityList = ({
   };
 
   const getFlagIcon = (region) => {
+    if (!region) {
+      return "/flags/glb.svg";
+    }
     const lowerRegion = region.toUpperCase();
     if (lowerRegion.includes("NTSC-U")) {
       return "/flags/us.svg";
     } else if (lowerRegion.includes("PAL-E")) {
       return "/flags/eu.svg";
-    } else if (upperRegion.includes("PAL-A")) {
+    } else if (lowerRegion.includes("PAL-A")) {
       return "/flags/au.svg";
     } else if (lowerRegion.includes("NTSC-J")) {
       return "/flags/jp.svg";
-    } else if (upperRegion.includes("PAL")) {
+    } else if (lowerRegion.includes("PAL")) {
       return "/flags/eu.svg";
     }
     return "/flags/glb.svg";
