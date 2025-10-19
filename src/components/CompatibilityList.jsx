@@ -11,6 +11,8 @@ const CompatibilityList = ({
   const [error, setError] = useState(null);
   const [statusFilter, setFilterTo] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const gamesPerPage = 10;
   const calculateStats = () => {
     const allGames = gamesData.games;
     const totalGames = allGames.length;
@@ -97,6 +99,22 @@ const CompatibilityList = ({
     }
   };
 
+  const getFlagIcon = (region) => {
+    const lowerRegion = region.toUpperCase();
+    if (lowerRegion.includes("NTSC-U")) {
+      return "/flags/us.svg";
+    } else if (lowerRegion.includes("PAL-E")) {
+      return "/flags/eu.svg";
+    } else if (upperRegion.includes("PAL-A")) {
+      return "/flags/au.svg";
+    } else if (lowerRegion.includes("NTSC-J")) {
+      return "/flags/jp.svg";
+    } else if (upperRegion.includes("PAL")) {
+      return "/flags/eu.svg";
+    }
+    return "/flags/glb.svg";
+  };
+
   return (
     <div
       className={`min-h-screen px-8 py-12 transition-all duration-500 relative ${
@@ -121,10 +139,10 @@ const CompatibilityList = ({
           Compatibility List
         </h1>
         {gamesData.games.length > 0 && (
-          <div className="mb-8 p-4 bg-[#1a1a1f] rounded-lg shadow-xl border border-gray-700">
-            <h3 className="text-xl font-semibold text-white mb-4">
-              Total Games Tested: {calculateStats().total}
-            </h3>
+          <div className="mb-8 p-4 bg-[#1a1a1f] rounded-lg shadow-xl border border-gray-700">
+            <h3 className="text-xl font-semibold text-white mb-4">
+              Total Games Tested: {calculateStats().total}
+            </h3>
             <div className="flex flex-wrap gap-4 justify-between">
               {Object.entries(calculateStats()).map(([key, stat]) => {
                 if (key === 'total') return null;
@@ -246,7 +264,7 @@ const CompatibilityList = ({
             </div>
           </div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div>
           {error ? (
             <div className="col-span-2 text-center py-12">
               <div className="text-xl text-red-400 mb-4">
@@ -261,50 +279,113 @@ const CompatibilityList = ({
               </div>
             </div>
           ) : (
-            gamesData.games
-              .sort((a, b) => a.title.localeCompare(b.title))
-              .filter((game) => {
-                const matchesSearch = game.title
-                  .toLowerCase()
-                  .includes(searchTerm.toLowerCase());
-                const matchesStatus =
-                  statusFilter === "all" ||
-                  game.status.toLowerCase() === statusFilter.toLowerCase();
-                return matchesSearch && matchesStatus;
-              })
-              .map((game, index) => (
-                <div
-                  key={index}
-                  className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
-                >
-                  <div className="flex justify-between items-start gap-4">
-                    <div className="flex-1">
-                      <h2 className="text-2xl text-white font-bold mb-3">
-                        {game.title}
-                      </h2>
-                      <p className="text-gray-400 text-base mb-2">
-                        Region: {game.region}
-                      </p>
-                      <p className="text-gray-400 text-base mb-2">
-                        Title ID: {game["title-id"]}
-                      </p>
-                      <p className="text-gray-400 text-base">{game.notes}</p>
+            <div>
+              {(() => {
+                const filteredGames = gamesData.games
+                  .sort((a, b) => a.title.localeCompare(b.title))
+                  .filter((game) => {
+                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+                    const gameTitle = game.title ? game.title.toLowerCase() : '';
+                    const gameRegion = game.region ? game.region.toLowerCase() : '';
+                    const gameTitleId = game["title-id"] ? game["title-id"].toLowerCase() : '';
+                    const matchesSearch = 
+                      gameTitle.includes(lowerCaseSearchTerm) ||
+                      gameRegion.includes(lowerCaseSearchTerm) ||
+                      gameTitleId.includes(lowerCaseSearchTerm);
+                    const matchesStatus =
+                      statusFilter === "all" ||
+                      game.status.toLowerCase() === statusFilter.toLowerCase();
+                    return matchesSearch && matchesStatus;
+                  });
+                const totalPages = Math.ceil(filteredGames.length / gamesPerPage);
+                const indexOfLastGame = currentPage * gamesPerPage;
+                const indexOfFirstGame = indexOfLastGame - gamesPerPage;
+                const currentGames = filteredGames.slice(indexOfFirstGame, indexOfLastGame);
+                if (currentPage > totalPages && totalPages > 0) {
+                  setCurrentPage(1);
+                }
+                return (
+                  <>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      {currentGames.length === 0 ? (
+                        <div className="col-span-2 text-center py-12">
+                          <div className="text-xl text-gray-400">
+                            No games found on this page
+                          </div>
+                        </div>
+                      ) : (
+                        currentGames.map((game, index) => (
+                          <div key={index} className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full">
+                            <div className="flex justify-between items-start gap-4">
+                              <div className="flex-1">
+                                <h2 className="text-2xl text-white font-bold mb-3">
+                                  {game.title}
+                                </h2>
+                                <p className="text-gray-400 text-base mb-2">
+                                  Region: {game.region}
+                                  <img
+                                    src={getFlagIcon(game.region)}
+                                    alt={`${game.region} flag`}
+                                    className="w-5 h-5 rounded-full shadow-md"
+                                  />
+                                </p>
+                                <p className="text-gray-400 text-base mb-2">
+                                  Title ID: {game["title-id"]}
+                                </p>
+                                <p className="text-gray-400 text-base">{game.notes}</p>
+                              </div>
+                              <div>
+                                <span
+                                  className={`${getcorrespondingColor(
+                                    game.status
+                                  )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
+                                >
+                                  {game.status.replace(
+                                    /(^|-)(\w)/g,
+                                    (_, sep, char) => sep + char.toUpperCase()
+                                    )}{" "}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      )}
                     </div>
-                    <div>
-                      <span
-                        className={`${getcorrespondingColor(
-                          game.status
-                        )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
-                      >
-                        {game.status.replace(
-                          /(^|-)(\w)/g,
-                          (_, sep, char) => sep + char.toUpperCase()
-                        )}{" "}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))
+                    {totalPages > 1 && (
+                      <div className="flex justify-center mt-10 col-span-full">
+                        <button
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                          disabled={currentPage === 1}
+                          className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
+                        >
+                          Previous
+                        </button>
+                        {[...Array(totalPages)].map((_, index) => (
+                          <button
+                            key={index}
+                            onClick={() => setCurrentPage(index + 1)}
+                            className={`px-4 py-2 mx-1 rounded-lg transition-colors ${
+                              currentPage === index + 1
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-[#2a2a2f] text-gray-300 hover:bg-[#323237]'
+                            }`}
+                          >
+                            {index + 1}
+                          </button>
+                        ))}
+                        <button
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                          disabled={currentPage === totalPages}
+                          className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
+                        >
+                          Next
+                        </button> 
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
           )}
         </div>
       </div>
