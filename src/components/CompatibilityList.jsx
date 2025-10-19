@@ -11,7 +11,43 @@ const CompatibilityList = ({
   const [error, setError] = useState(null);
   const [statusFilter, setFilterTo] = useState("all");
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-
+  const calculateStats = () => {
+    const allGames = gamesData.games;
+    const totalGames = allGames.length;
+    const initialCounts = {
+      perfect: 0,
+      playable: 0,
+      'in-game': 0,
+      menu: 0,
+      'not-tested': 0,
+    };
+    if (totalGames === 0) {
+      return initialCounts;
+    }
+    const counts = allGames.reduce((acc, game) => {
+      const status = game.status.toLowerCase();
+      if (status === 'perfect') acc.perfect += 1;
+      else if (status === 'playable') acc.playable += 1;
+      else if (status === 'in-game') acc['in-game'] += 1;
+      else if (status === 'menu') acc.menu += 1;
+      else acc['not-tested'] += 1;
+      return acc;
+    }, initialCounts);
+    const formatStat = (count) => {
+      return {
+        count: count,
+        percent: ((count / totalGames) * 100).toFixed(1) + '%'
+      };
+    };
+    return {
+      total: totalGames,
+      perfect: formatStat(counts.perfect),
+      playable: formatStat(counts.playable),
+      ingame: formatStat(counts['in-game']),
+      menu: formatStat(counts.menu),
+      nottested: formatStat(counts['not-tested']),
+    };
+  }
   useEffect(() => {
     const url =
       "https://raw.githubusercontent.com/ARMSX2/ARMSX2-compat/refs/heads/main/compatibility.json";
@@ -36,19 +72,16 @@ const CompatibilityList = ({
         setError(err.message);
       });
   }, []);
-
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isFilterOpen && !event.target.closest(".filter-dropdown"))
         setIsFilterOpen(false);
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen]);
-
   const getcorrespondingColor = (status) => {
     switch (status.toLowerCase()) {
       case "perfect":
@@ -87,7 +120,51 @@ const CompatibilityList = ({
         <h1 className="text-4xl text-center font-bold text-white mt-5 mb-6">
           Compatibility List
         </h1>
-
+        {gamesData.games.length > 0 && (
+          <div className="mb-8 p-4 bg-[#1a1a1f] rounded-lg shadow-xl border border-gray-700">
+            <h3 className="text-xl font-semibold text-white mb-4">
+              Total Games Tested: {calculateStats().total}
+            </h3>
+            <div className="flex flex-wrap gap-4 justify-between">
+              {Object.entries(calculateStats()).map(([key, stat]) => {
+                if (key === 'total') return null;
+                if (stat.count === 0) return null; // Nasconde gli stati con 0 giochi
+                let label = '';
+                let colorClass = '';
+                switch (key) {
+                  case 'perfect':
+                    label = 'Perfect';
+                    colorClass = 'text-green-400 border-green-400';
+                    break;
+                  case 'playable':
+                    label = 'Playable';
+                    colorClass = 'text-yellow-400 border-yellow-400';
+                    break;
+                  case 'ingame':
+                    label = 'In-Game';
+                    colorClass = 'text-orange-400 border-orange-400';
+                    break;
+                  case 'menu':
+                    label = 'Menu';
+                    colorClass = 'text-blue-400 border-blue-400';
+                    break;
+                  case 'nottested':
+                    label = 'Not Tested';
+                    colorClass = 'text-red-400 border-red-400';
+                    break;
+                  default:
+                    return null;
+                }
+                return (
+                  <div key={key} className={`text-center flex-1 min-w-[120px] p-2 rounded-md border-b-4 ${colorClass}`}>
+                    <div className="text-3xl font-extrabold">{stat.percent}</div>
+                    <div className="text-sm text-gray-400">{label} ({stat.count})</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <div className="mb-10 max-w mx-auto">
           <div className="flex gap-4">
             <input
@@ -169,7 +246,6 @@ const CompatibilityList = ({
             </div>
           </div>
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {error ? (
             <div className="col-span-2 text-center py-12">
@@ -191,11 +267,9 @@ const CompatibilityList = ({
                 const matchesSearch = game.title
                   .toLowerCase()
                   .includes(searchTerm.toLowerCase());
-
                 const matchesStatus =
                   statusFilter === "all" ||
                   game.status.toLowerCase() === statusFilter.toLowerCase();
-
                 return matchesSearch && matchesStatus;
               })
               .map((game, index) => (
@@ -226,7 +300,6 @@ const CompatibilityList = ({
                           /(^|-)(\w)/g,
                           (_, sep, char) => sep + char.toUpperCase()
                         )}{" "}
-                        {/* makes uppercase incase som1 forgot */}
                       </span>
                     </div>
                   </div>
