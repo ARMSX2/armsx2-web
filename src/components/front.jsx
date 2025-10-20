@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 
 import images from "../data/images.json";
 import blog from "../data/blog.json";
+import Carousel from "./Carousel";
+import Updates from "./Updates";
 import faq from "../data/faq.json";
 
 import {
@@ -237,7 +239,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
             <p className="mt-4 text-base md:text-lg text-white/80">
               ARMSX2 is a new open source emulator for the PS2, it is based on
               the PCSX2 emulator and aims to be the next step in PS2 emulation
-              on Android, as well as cross platform support for iOS and MacOS.
+              on Android, as well as cross platform support for iOS and other ARM Platforms.
             </p>
             <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3">
               <a
@@ -309,98 +311,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               </button>
             </div>
 
-            <div
-              className={`relative w-full mt-6 md:mt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 md:w-[26rem] z-30 carousel-container ${
-                window.innerWidth < 500
-                  ? "absolute left-0 right-0 w-screen"
-                  : "max-w-full"
-              }`}
-            >
-              <div
-                className={`relative mx-auto overflow-hidden carousel w-full ${
-                  window.innerWidth < 500
-                    ? "h-48 rounded-none"
-                    : "h-80 md:h-80 rounded-2xl"
-                }`}
-                style={{
-                  transformStyle: "preserve-3d",
-                  transformOrigin: "center left",
-                  // honestly height: "16rem", would work too but idk im lowk tweaking
-                }}
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-              >
-                {images.map(({ src, title }, i) => {
-                  const n = images.length;
-                  const pos = (i - currentIndex + n) % n;
-                  let style = "";
-
-                  if (window.innerWidth < 500) {
-                    if (pos === 0)
-                      style = "z-20 scale-100 opacity-100 translate-x-0";
-                    else style = "z-0 scale-100 opacity-0 translate-x-0";
-                  } else {
-                    if (pos === 0)
-                      style = "z-20 scale-100 opacity-100 translate-x-0";
-                    else if (pos === 1)
-                      style = "z-10 scale-90 opacity-85 translate-x-16";
-                    else style = "z-10 scale-90 opacity-85 -translate-x-16";
-                  }
-
-                  return (
-                    <img
-                      key={src}
-                      src={src}
-                      alt={title}
-                      className={`ring-glow transition-all duration-500 ease-out ${
-                        window.innerWidth < 500
-                          ? "absolute inset-0 m-auto h-full w-full object-cover"
-                          : "absolute inset-0 m-auto h-full w-full object-cover"
-                      } ${style}`}
-                    />
-                  );
-                })}
-
-                <button
-                  aria-label="Previous slide"
-                  onClick={prevSlide}
-                  className="absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 hover:bg-black/80 text-white px-2 py-1 text-xs z-30"
-                >
-                  ‹
-                </button>
-                <button
-                  aria-label="Next slide"
-                  onClick={nextSlide}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-black/50 hover:bg-black/80 text-white px-2 py-1 text-xs z-30"
-                >
-                  ›
-                </button>
-
-                <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-2">
-                  {images.map((_, i) => (
-                    <span
-                      key={i}
-                      className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                        i === currentIndex ? "bg-white" : "bg-white/40"
-                      }`}
-                    />
-                  ))}
-                </div>
-              </div>
-              <div className="mt-3 text-center">
-                <p id="descrip" className="text-xs text-white/60">
-                  {images[currentIndex].description}
-                </p>
-                <h3 className="text-sm by font-semibold text-white/90">
-                  {images[currentIndex].title}{" "}
-                  <span className="text-xs text-white/60">
-                    {" "}
-                    — by {images[currentIndex].credits}
-                  </span>
-                </h3>
-              </div>
-            </div>
+            <Carousel />
 
             <div className="mt-10 grid grid-cols-1 md:grid-cols-3 gap-3 opacity-90">
               <div
@@ -480,120 +391,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
         <div className="relative w-full space-y-6">
-          <div className="relative w-full snap-start">
-            <div
-              className="relative mx-auto max-w-7xl px-6 min-h-screen flex flex-col justify-center snap-start py-24 md:py-0"
-              id="updates"
-            >
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
-              <div className="relative w-full space-y-6">
-                <h2 className="text-2xl font-semibold text-white">
-                  Latest Updates
-                </h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  {blog.updates.map((update, index) => (
-                    <div
-                      key={index}
-                      className={`grid-item p-6 rounded-xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10 hover:ring-[#8d76cc]/30 cursor-pointer group min-h-[180px] flex flex-col ${
-                        expandedUpdate === index ? "expanded" : ""
-                      }`}
-                      onClick={() =>
-                        setExpandedUpdate(
-                          expandedUpdate === index ? null : index
-                        )
-                      }
-                    >
-                      <h3 className="text-lg font-semibold text-white group-hover:text-[#8d76cc] transition-colors flex items-center gap-2">
-                        {update.title}
-                        {update.extraicon === "warning" && (
-                          <FaTriangleExclamation className="text-yellow-400 text-sm" />
-                        )}
-                      </h3>
-                      <p className="mt-2 text-white/70">{update.content}</p>
-
-                      <div
-                        className={`expanded-content transition-all duration-300 overflow-hidden ${
-                          expandedUpdate === index
-                            ? "max-h-[500px] opacity-100"
-                            : "max-h-0 opacity-0"
-                        }`}
-                      >
-                        {(update.extended_content ||
-                          update.extended_content_img) && (
-                          <div className="mt-4 border-t border-white/10 pt-4">
-                            {update.extended_content && (
-                              <p className="text-white/70 mb-4 transition-opacity duration-300">
-                                {update.extended_content}
-                              </p>
-                            )}
-                            {update.extended_content_img && (
-                              <div className="mt-2 transition-opacity duration-300 w-full flex flex-col items-center">
-                                <div className="w-full max-w-[600px] min-h-[200px] max-h-[300px] rounded-2xl overflow-hidden shadow-lg bg-white/5">
-                                  <img
-                                    src={update.extended_content_img}
-                                    alt="Update thumbnail"
-                                    className="w-full h-full object-cover"
-                                  />
-                                </div>
-                                <a
-                                  href={update.extended_content_img}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="hidden md:block mt-2 text-sm text-white/60 hover:text-white/90 transition-colors underline underline-offset-2"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                  }}
-                                >
-                                  {(() => {
-                                    try {
-                                      return (
-                                        "Media from " +
-                                        new URL(
-                                          update.extended_content_img
-                                        ).hostname.replace(/^www\./, "")
-                                      );
-                                    } catch {
-                                      return "View source";
-                                    }
-                                  })()}
-                                </a>
-                              </div>
-                            )}
-                          </div>
-                        )}
-                      </div>
-                      <div className="mt-auto flex items-center justify-between">
-                        <div className="flex items-center text-xs text-white/50">
-                          <span>{update.date}</span>
-                          <span className="mx-2">•</span>
-                          <span>by {update.author}</span>
-                        </div>
-                        <div className="text-white/50">
-                          <svg
-                            className={`w-5 h-5 transition-transform duration-500 ${
-                              expandedUpdate === index ? "rotate-180" : ""
-                            }`}
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth="2"
-                              d="M19 9l-7 7-7-7"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          <Updates />
         </div>
 
         <div className="relative w-full snap-start">
@@ -623,7 +421,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                   </p>
                   <p>
                     This is our own attempt at continuing PS2 emulation on
-                    Android, iOS, and MacOS. The emulator currently operates as
+                    Android, iOS, and other ARM Platforms. The emulator currently operates as
                     x86 to arm64, not native arm64, so the performance will not
                     be as good as AetherSX2 currently, however things are
                     subject to change as development goes on.
@@ -675,7 +473,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         rel="noopener noreferrer"
                         className="hover:text-white/90 transition-colors"
                       >
-                        ©2025 ARMSX2 All rights reserved, site by tanos
+                        ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by tanos
                       </a>
                     </div>
                   )}
@@ -713,7 +511,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
             e.target.style.textShadow = "0 0 0px rgba(255, 255, 255, 0)";
           }}
         >
-          ©2025 ARMSX2 All rights reserved, site by tanos
+          ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by tanos
         </a>
       )}
     </>
