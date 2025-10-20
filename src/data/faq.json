@@ -1,7 +1,7 @@
 [
   {
     "question": "What platforms are supported?",
-    "answer": "Android, MacOS, iOS, and other ARM compatible platforms such as linux and windows ARM"
+    "answer": "Android, iOS, and other ARM platforms such as ARM Linux and Windows on ARM"
   },
   {
     "question": "Is this the same as PCSX2?",
@@ -9,7 +9,7 @@
   },
   {
     "question": "What about performance?",
-    "answer": "Performance continues to improve with each and every update, when compared to other ARM64 PSCX2 forks, ours is the best"
+    "answer": "Performance continues to improve with each and every update, when compared to other ARM64 PCSX2 forks, ours is the best"
   },
   {
     "question": "Is this open source?",
