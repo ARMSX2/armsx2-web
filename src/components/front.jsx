@@ -6,6 +6,9 @@ import Carousel from "./Carousel";
 import Updates from "./Updates";
 import faq from "../data/faq.json";
 
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGooglePlay } from "@fortawesome/free-brands-svg-icons";
+
 import {
   FaDownload,
   FaDiscord,
@@ -18,30 +21,64 @@ import {
 
 const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const [downloadURL, setApkUrl] = useState(null);
+  const [playURL, setPlayURL] = useState(null);
   const [version, setVersion] = useState(null) || "0";
 
   useEffect(() => {
+    const EXT = ".apk"; // if we use pcsx2 github as debug use 'appimage' (no caps)
+
+    const PLAY_URL =
+      "https://play.google.com/store/apps/details?id=org.armsx2.armsx2"; // NEEDS TO BE CHANGED just a placeholder for now
+    // playurl will only load if github asset is found, we'll load it statically after release so it doesnt need to wait
+
+    const CACHE_KEY = "releaseData";
+    const CACHE_TIME_KEY = "releaseDataTimestamp";
+    const CACHE_DURATION = 1000 * 60 * 10;
+
     setVersion("0.0.0");
-    fetch("https://api.github.com/repos/ARMSX2/ARMSX2/releases/latest")
-      .then((res) => {
-        if (!res.ok) throw new Error("No information about releases");
-        return res.json();
-      })
-      .then((data) => {
-        setVersion(data.tag_name.replace("v", ""));
+    setApkUrl("LOCK");
 
-        const found = data.assets.find((asset) =>
-          asset.name.toLowerCase().endsWith(".apk")
+    const getCached = () => {
+      const data = localStorage.getItem(CACHE_KEY);
+      const time = localStorage.getItem(CACHE_TIME_KEY);
+      if (!data || !time) return null;
+
+      const expired = Date.now() - parseInt(time) > CACHE_DURATION;
+      return expired ? null : JSON.parse(data);
+    };
+
+    const useData = (data) => {
+      setVersion(data.tag_name?.replace("v", "") || "unreleased");
+      const apk = data.assets?.find((a) => a.name?.toLowerCase().endsWith(EXT));
+      setApkUrl(apk ? apk.browser_download_url : "LOCK");
+      setPlayURL(PLAY_URL);
+    };
+
+    const fetchLatest = async () => {
+      try {
+        const res = await fetch(
+          "https://api.github.com/repos/ARMSX2/ARMSX2/releases/latest"
         );
+        if (!res.ok) throw new Error("fetch failed");
+        const data = await res.json();
 
-        if (found) setApkUrl(found.browser_download_url);
-        else setApkUrl("LOCK");
-      })
-      .catch((err) => {
-        setVersion("unreleased");
-        setApkUrl("LOCK");
-        console.error(err);
-      });
+        localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+        localStorage.setItem(CACHE_TIME_KEY, Date.now().toString());
+
+        useData(data);
+      } catch (err) {
+        console.warn("using fallback cache:", err);
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) useData(JSON.parse(cached));
+        else {
+          setVersion("unreleased");
+          setApkUrl("LOCK");
+        }
+      }
+    };
+
+    const cached = getCached();
+    cached ? (console.log("using cache"), useData(cached)) : fetchLatest();
   }, []);
 
   const [primaryButtonScale, setPrimaryButtonScale] = useState(1);
@@ -243,51 +280,81 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               ARM Platforms.
             </p>
             <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3">
-              <a
-                onMouseMove={(e) =>
-                  handleMouseMove(e, setPrimaryButtonPosition)
-                }
-                onMouseLeave={() => setPrimaryButtonPosition({ x: 0, y: 0 })}
-                onMouseDown={(e) =>
-                  handleButtonMouseDown(e, setPrimaryButtonScale)
-                }
-                onMouseUp={(e) => handleButtonMouseUp(e, setPrimaryButtonScale)}
-                onClick={(e) => {
-                  if (downloadURL === "LOCK") {
-                    e.preventDefault();
-                    e.stopPropagation();
+              <div className="flex flex-row gap-3">
+                <a
+                  onMouseMove={(e) =>
+                    handleMouseMove(e, setPrimaryButtonPosition)
                   }
-                }}
-                className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white transition-colors duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-full md:w-auto text-center ${
-                  downloadURL === "LOCK" ? "disabledAPK" : ""
-                }`}
-                style={{
-                  transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
-                  transition:
-                    "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
-                  animation: "subtleSway 12s ease-in-out infinite",
-                  cursor: downloadURL === "LOCK" ? "not-allowed" : "pointer",
-                }}
-                href={downloadURL === "LOCK" ? "#" : downloadURL}
-                {...(downloadURL !== "LOCK" && { download: true })}
-              >
-                <div className="flex items-center justify-center gap-2">
-                  {downloadURL === "LOCK" ? (
-                    <FaLock
-                      className="text-xs text-[#fff]"
-                      aria-hidden="true"
-                    />
-                  ) : (
-                    <FaDownload
-                      className="text-xs text-[#fff]"
-                      aria-hidden="true"
-                    />
-                  )}
-                  {downloadURL === "LOCK"
-                    ? "Download Unavailable"
-                    : "Download APK"}
-                </div>
-              </a>
+                  onMouseLeave={() => setPrimaryButtonPosition({ x: 0, y: 0 })}
+                  onMouseDown={(e) =>
+                    handleButtonMouseDown(e, setPrimaryButtonScale)
+                  }
+                  onMouseUp={(e) =>
+                    handleButtonMouseUp(e, setPrimaryButtonScale)
+                  }
+                  onClick={(e) => {
+                    if (downloadURL === "LOCK") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
+                  className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white transition-colors duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[80%] md:w-auto text-center ${
+                    downloadURL === "LOCK" ? "disabledAPK" : ""
+                  }`}
+                  style={{
+                    transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
+                    transition:
+                      "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+                    animation: "subtleSway 12s ease-in-out infinite",
+                    cursor: downloadURL === "LOCK" ? "not-allowed" : "pointer",
+                  }}
+                  href={downloadURL === "LOCK" ? "#" : downloadURL}
+                  {...(downloadURL !== "LOCK" && { download: true })}
+                >
+                  <div className="flex items-center justify-center gap-2">
+                    {downloadURL === "LOCK" ? (
+                      <FaLock
+                        className="text-xs text-[#fff]"
+                        aria-hidden="true"
+                      />
+                    ) : (
+                      <FaDownload
+                        className="text-xs text-[#fff]"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {downloadURL === "LOCK"
+                      ? "Download Unavailable"
+                      : "Download APK"}
+                  </div>
+                </a>
+                <a
+                  href={downloadURL === "LOCK" ? "#" : playURL}
+                  onClick={(e) => {
+                    if (downloadURL === "LOCK") {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }
+                  }}
+                  className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${
+                    downloadURL === "LOCK" ? "disabledAPK" : ""
+                  }`}
+                  style={{
+                    transition: "all 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+                    animation: "subtleSway 12s ease-in-out infinite",
+                    cursor: downloadURL === "LOCK" ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faGooglePlay}
+                    style={{
+                      fontSize: "20px",
+                      color: "#f2eaeaff",
+                    }}
+                  />
+                </a>
+              </div>
+              <div className="w-1 h-1 bg-white/20 rounded-full mx-2 hidden md:block" />
               <button
                 onMouseMove={(e) =>
                   handleMouseMove(e, setSecondaryButtonPosition)

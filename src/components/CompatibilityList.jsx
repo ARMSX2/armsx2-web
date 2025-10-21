@@ -90,6 +90,22 @@ const CompatibilityList = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen, selectedSocs]);
+  const getFilterColors = (status, isBackground = false) => {
+    const colors = {
+      perfect: "green",
+      playable: "yellow",
+      "in-game": "orange",
+      menu: "blue",
+      "not-tested": "red",
+      all: null,
+    };
+    const color = colors[status.toLowerCase()];
+    if (!color) return isBackground ? "bg-[#2a2a2f] hover:bg-[#323237]" : "";
+    return isBackground
+      ? `bg-${color}-400/10 hover:bg-${color}-400/15`
+      : `bg-${color}-400/20 text-${color}-400`;
+  };
+
   const getcorrespondingColor = (status) => {
     switch (status.toLowerCase()) {
       case "perfect":
@@ -140,32 +156,39 @@ const CompatibilityList = ({
           transform: window.innerWidth <= 550 ? "scale(0.8)" : "scale(1)",
           filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
         }}
-        className="fixed top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+        className="fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200"
         onClick={() => onNavigate && onNavigate("home")}
       />
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-4xl text-center font-bold text-white mt-5 mb-6">
+        <h1 className="text-4xl max-[470px]:text-2xl text-center font-bold text-white mt-5 mb-6">
           Compatibility List
         </h1>
         <div className="mb-5 max-w mx-auto">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 max-[330px]:gap-0 max-[330px]:relative">
             <input
               type="text"
               placeholder="Search games..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 px-6 py-3 text-lg bg-[#2a2a2f] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg transition-all duration-200 hover:bg-[#323237]"
+              className={`flex-1 min-w-[200px] px-6 max-[330px]:pr-14 py-3 text-lg text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-lg transition-all duration-200 ${getFilterColors(
+                statusFilter,
+                true
+              )}`}
             />
-            <div className="relative filter-dropdown">
+            <div className="relative filter-dropdown max-[330px]:absolute max-[330px]:right-2 max-[330px]:top-1/2 max-[330px]:-translate-y-1/2">
               <button
                 onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className="px-6 py-4 bg-[#2a2a2f] text-white rounded-lg hover:bg-[#323237] transition-all duration-200 shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={`px-4 py-4 max-[330px]:p-2 text-white rounded-lg transition-all duration-200 shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:px-6 ${
+                  window.innerWidth <= 330
+                    ? "bg-transparent shadow-none hover:bg-[#2a2a2f]/50"
+                    : getFilterColors(statusFilter, true)
+                }`}
               >
                 <FaFilter className="text-lg" />
                 <span className="hidden sm:inline">Filter</span>
               </button>
               {isFilterOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-[#2a2a2f] rounded-lg shadow-xl border border-gray-700 z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-[#2a2a2f] rounded-lg shadow-xl border border-gray-700 z-50 max-[330px]:mt-4">
                   <div className="py-3 px-2">
                     <button
                       onClick={() => {
