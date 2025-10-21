@@ -51,13 +51,11 @@ npm run build
 | More content                                       | ✅ **Complete**      | Lowered   |
 | Change line 21                                     | ✅ **Complete**      | Important |
 | Direct Download                                    | ✅ **Complete**      | Important |
-| Change favicon                                     | ✅ **Complete** | Important |
+| Change favicon                                     | ✅ **Complete**      | Important |
 | Fix image scaling in Latest Updates (blog) section | 🔄 **Before Launch** | Important |
-| Better Compatibility page                              | 🔄 **Planned** | Medium    |
+| Better Compatibility page                          | 🔄 **Planned**       | Medium    |
 | Less static page (More interactions)               | 🔄 **Planned**       | Low       |
 | Split front.jsx in to multiple files               | 🔄 **Planned**       | Lowest    |
-
-> also take a look at line 330 // honestly height: "16rem", would work too but idk im lowk tweaking
 
 </div>
 

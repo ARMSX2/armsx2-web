@@ -218,7 +218,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
           <div className="w-full max-w-2xl left-content snap-start">
             <div className="hidden md:flex mt-1 items-center gap-3">
               <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
-                ARMSX2 is currently{" "}
+                ARMSX2 is currently {""}
                 {version === "unreleased" ? "unreleased" : "on v" + version}
               </span>
             </div>
@@ -239,7 +239,8 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
             <p className="mt-4 text-base md:text-lg text-white/80">
               ARMSX2 is a new open source emulator for the PS2, it is based on
               the PCSX2 emulator and aims to be the next step in PS2 emulation
-              on Android, as well as cross platform support for iOS and other ARM Platforms.
+              on Android, as well as cross platform support for iOS and other
+              ARM Platforms.
             </p>
             <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3">
               <a
@@ -417,14 +418,14 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                     gaps and make this into a complete emulator, with the goal
                     to have version parity with PCSX2. This project is not
                     officially associated with PCSX2, and we are not associated
-                    with any other forks made from the original repository.{" "}
+                    with any other forks made from the original repository.
                   </p>
                   <p>
                     This is our own attempt at continuing PS2 emulation on
-                    Android, iOS, and other ARM Platforms. The emulator currently operates as
-                    x86 to arm64, not native arm64, so the performance will not
-                    be as good as AetherSX2 currently, however things are
-                    subject to change as development goes on.
+                    Android, iOS, and other ARM Platforms. The emulator
+                    currently operates as x86 to arm64, not native arm64, so the
+                    performance will not be as good as AetherSX2 currently,
+                    however things are subject to change as development goes on.
                   </p>
                 </div>
               </div>
@@ -473,7 +474,8 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         rel="noopener noreferrer"
                         className="hover:text-white/90 transition-colors"
                       >
-                        ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by tanos
+                        ©{new Date().getFullYear()} ARMSX2 All rights reserved,
+                        site by tanos
                       </a>
                     </div>
                   )}

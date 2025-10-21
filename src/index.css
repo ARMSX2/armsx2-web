@@ -261,3 +261,7 @@ img {
   filter: grayscale(1);
   cursor: not-allowed !important;
 }
+
+.forceSlightRound {
+  border-radius: 5px !important;
+}

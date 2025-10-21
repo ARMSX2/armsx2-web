@@ -41,12 +41,17 @@ const Carousel = () => {
   return (
     <div
       className={`relative w-full mt-6 md:mt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 md:w-[26rem] z-30 carousel-container ${{
-        window: window.innerWidth < 500 ? "absolute left-0 right-0 w-screen" : "max-w-full",
+        window:
+          window.innerWidth < 500
+            ? "absolute left-0 right-0 w-screen"
+            : "max-w-full",
       }}`}
     >
       <div
         className={`relative mx-auto overflow-hidden carousel w-full ${
-          window.innerWidth < 500 ? "h-48 rounded-none" : "h-80 md:h-80 rounded-2xl"
+          window.innerWidth < 500
+            ? "h-48 rounded-none"
+            : "h-80 md:h-80 rounded-2xl"
         }`}
         style={{
           transformStyle: "preserve-3d",
@@ -67,7 +72,8 @@ const Carousel = () => {
             else style = "z-0 scale-100 opacity-0 translate-x-0";
           } else {
             if (pos === 0) style = "z-20 scale-100 opacity-100 translate-x-0";
-            else if (pos === 1) style = "z-10 scale-90 opacity-85 translate-x-16";
+            else if (pos === 1)
+              style = "z-10 scale-90 opacity-85 translate-x-16";
             else style = "z-10 scale-90 opacity-85 -translate-x-16";
           }
 
@@ -116,8 +122,11 @@ const Carousel = () => {
           {images[currentIndex].description}
         </p>
         <h3 className="text-sm by font-semibold text-white/90">
-          {images[currentIndex].title}{" "}
-          <span className="text-xs text-white/60"> — by {images[currentIndex].credits}</span>
+          {images[currentIndex].title}
+          {"  "}
+          <span className="text-xs text-white/60">
+            — by {images[currentIndex].credits}
+          </span>
         </h3>
       </div>
     </div>

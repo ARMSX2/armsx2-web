@@ -1,0 +1,27 @@
+{
+  "games": [
+    {
+      "title": "test: the game",
+      "status": "Playable",
+      "title-id": "SLUS-??",
+      "notes": "we love this game!!!!",
+      "region": "NTSC-U",
+      "tested_socs": ["exynos 990", "SD Gen1"]
+    },
+    {
+      "title": "not: a - game",
+      "status": "nothing",
+      "title-id": "SLUS-00",
+      "notes": "heavy issues we hate this game",
+      "region": "NTSC-U"
+    },
+    {
+      "title": "Okay",
+      "status": "okay",
+      "title-id": "SLUS-1",
+      "notes": "okay game",
+      "region": "NTSC-U",
+      "tested_socs": ["exynos 990"]
+    }
+  ]
+}

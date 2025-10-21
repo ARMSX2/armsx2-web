@@ -6,7 +6,10 @@ const Updates = () => {
   const [expandedUpdate, setExpandedUpdate] = useState(null);
 
   return (
-    <div className="relative mx-auto max-w-7xl px-6 min-h-screen flex flex-col justify-center snap-start py-24 md:py-0" id="updates">
+    <div
+      className="relative mx-auto max-w-7xl px-6 min-h-screen flex flex-col justify-center snap-start py-24 md:py-0"
+      id="updates"
+    >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
       <div className="relative w-full space-y-6">
         <h2 className="text-2xl font-semibold text-white">Latest Updates</h2>
@@ -18,7 +21,9 @@ const Updates = () => {
               className={`grid-item p-6 rounded-xl bg-white/5 backdrop-blur-sm ring-1 ring-white/10 hover:ring-[#8d76cc]/30 cursor-pointer group min-h-[180px] flex flex-col ${
                 expandedUpdate === index ? "expanded" : ""
               }`}
-              onClick={() => setExpandedUpdate(expandedUpdate === index ? null : index)}
+              onClick={() =>
+                setExpandedUpdate(expandedUpdate === index ? null : index)
+              }
             >
               <h3 className="text-lg font-semibold text-white group-hover:text-[#8d76cc] transition-colors flex items-center gap-2">
                 {update.title}
@@ -28,11 +33,19 @@ const Updates = () => {
               </h3>
               <p className="mt-2 text-white/70">{update.content}</p>
 
-              <div className={`expanded-content transition-all duration-300 overflow-hidden ${expandedUpdate === index ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+              <div
+                className={`expanded-content transition-all duration-300 overflow-hidden ${
+                  expandedUpdate === index
+                    ? "max-h-[500px] opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
+              >
                 {(update.extended_content || update.extended_content_img) && (
                   <div className="mt-4 border-t border-white/10 pt-4">
                     {update.extended_content && (
-                      <p className="text-white/70 mb-4 transition-opacity duration-300">{update.extended_content}</p>
+                      <p className="text-white/70 mb-4 transition-opacity duration-300">
+                        {update.extended_content}
+                      </p>
                     )}
                     {update.extended_content_img && (
                       <div className="mt-2 transition-opacity duration-300 w-full flex flex-col items-center">
@@ -55,7 +68,10 @@ const Updates = () => {
                           {(() => {
                             try {
                               return (
-                                "Media from " + new URL(update.extended_content_img).hostname.replace(/^www\./, "")
+                                "Media from " +
+                                new URL(
+                                  update.extended_content_img
+                                ).hostname.replace(/^www\./, "")
                               );
                             } catch {
                               return "View source";
@@ -76,13 +92,20 @@ const Updates = () => {
                 </div>
                 <div className="text-white/50">
                   <svg
-                    className={`w-5 h-5 transition-transform duration-500 ${expandedUpdate === index ? "rotate-180" : ""}`}
+                    className={`w-5 h-5 transition-transform duration-500 ${
+                      expandedUpdate === index ? "rotate-180" : ""
+                    }`}
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M19 9l-7 7-7-7"
+                    />
                   </svg>
                 </div>
               </div>
