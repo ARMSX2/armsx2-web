@@ -92,11 +92,11 @@ const CompatibilityList = ({
   }, [isFilterOpen, selectedSocs]);
   const getFilterColors = (status, isBackground = false) => {
     const colors = {
-      perfect: "green",
+      /*  perfect: "green",
       playable: "yellow",
       "in-game": "orange",
       menu: "blue",
-      "not-tested": "red",
+      "not-tested": "red",*/
       all: null,
     };
     const color = colors[status.toLowerCase()];
