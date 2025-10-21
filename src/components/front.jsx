@@ -28,9 +28,8 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
     const EXT = ".apk"; // if we use pcsx2 github as debug use 'appimage' (no caps)
 
     const PLAY_URL =
-      "https://play.google.com/store/apps/details?id=org.armsx2.armsx2"; // NEEDS TO BE CHANGED just a placeholder for now
-    // playurl will only load if github asset is found, we'll load it statically after release so it doesnt need to wait
-
+      "https://play.google.com/store/apps/details?id=come.nanodata.armsx2";
+    
     const CACHE_KEY = "releaseData";
     const CACHE_TIME_KEY = "releaseDataTimestamp";
     const CACHE_DURATION = 1000 * 60 * 10;
