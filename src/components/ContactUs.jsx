@@ -17,12 +17,19 @@ const ContactUs = forwardRef(({
     onNavigate
 }, ref) => {
     const MAIN_BG = "bg-[#0d0e14]";
-    const CARD_BG = "bg-[#1c1c25]";
     const INPUT_BG = "bg-[#3b414d]";
     const PRIMARY_COLOR = "text-[#8b85fc]";
     const BUTTON_BG = "bg-[#6a5acd]";
     return (
-        <section ref={ref} id="contact" className={`py-20 ${MAIN_BG} transition-colors duration-500 min-h-screen flex items-center`}>
+        <section ref={ref} id="contact" className={`py-20 ${MAIN_BG} transition-colors duration-500 min-h-screen flex items-center relative overflow-hidden`}>
+            <div 
+                className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-2 rounded-full bloom-strong transform -translate-x-1/2 -translate-y-1/2" 
+                style={{ backgroundColor: 'var(--accent-2)', zIndex: 0 }}
+            />
+            <div 
+                className="absolute top-3/4 right-1/4 w-80 h-80 bg-accent rounded-full bloom-strong transform translate-x-1/2 -translate-y-1/2" 
+                style={{ backgroundColor: 'var(--accent)', zIndex: 0 }}
+            />
             <img
               src="/icon.png"
               alt="ARMSX2 Logo"
@@ -34,17 +41,17 @@ const ContactUs = forwardRef(({
               className="fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200"
               onClick={() => onNavigate && onNavigate("home")}
             />
-            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
                 <div className="text-center mb-16">
-                    <h2 className="text-4xl font-extrabold text-white sm:text-5xl">
+                    <h2 className="title text-4xl md:text-5xl font-semibold leading-tight text-white text-glow">
                         Contact Us
                     </h2>
-                    <p className="mt-4 text-xl text-gray-400">
+                    <p className="mt-4 text-xl md:text-lg text-white/80">
                         We Are Here To Help You. Send Us A Message.
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className={`${CARD_BG} p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>
+                    <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500 ring-glow`}>
                         <h3 className="text-2xl font-semibold mb-8 text-white flex items-center">
                             <MessageSquare className={`w-6 h-6 mr-3 ${PRIMARY_COLOR}`} /> Send a Message
                         </h3>
@@ -118,7 +125,7 @@ const ContactUs = forwardRef(({
                         </form>
                     </div>
                     <div className="space-y-8">
-                        <div className={`${CARD_BG} p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>
+                        <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500 ring-glow`}>
                             <h3 className="text-2xl font-semibold mb-6 text-white">
                                 Useful Details
                             </h3>
@@ -130,21 +137,13 @@ const ContactUs = forwardRef(({
                                 </li>
                             </ul>
                         </div>
-                        
-                        {/* Social Media */}
-                        <div className={`${CARD_BG} p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>
+                        <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500 ring-glow`}>
                             <h3 className="text-2xl font-semibold mb-6 text-white">
                                 Follow Us
                             </h3>
                             <div className="flex space-x-6">
-                                <a href="#" aria-label="Instagram" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
-                                    <FaInstagram className="w-8 h-8" />
-                                </a>
                                 <a href="https://github.com/ARMSX2" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
                                     <FaGithub className="w-8 h-8" />
-                                </a>
-                                <a href="#" aria-label="LinkedIn" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
-                                    <FaLinkedin className="w-8 h-8" />
                                 </a>
                                 <a href="#" aria-label="X" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
                                     <FaXTwitter className="w-8 h-8" />
