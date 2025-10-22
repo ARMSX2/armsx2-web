@@ -283,3 +283,10 @@ img {
   -webkit-backdrop-filter: blur(16px) saturate(140%); /* Prefisso per WebKit */
   border: 1px solid rgba(148, 163, 184, 0.15); /* Bordo sottile e leggero */
 }
+
+.glassish-input {
+    background: rgba(30, 40, 60, 0.7); /* Meno trasparente per leggibilità */
+    backdrop-filter: blur(4px); /* Blur minore */
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}

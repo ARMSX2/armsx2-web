@@ -17,7 +17,6 @@ const ContactUs = forwardRef(({
     onNavigate
 }, ref) => {
     const MAIN_BG = "bg-[#0d0e14]";
-    const INPUT_BG = "bg-[#3b414d]";
     const PRIMARY_COLOR = "text-[#8b85fc]";
     const BUTTON_BG = "bg-[#6a5acd]";
     return (
@@ -67,7 +66,7 @@ const ContactUs = forwardRef(({
                                         name="name"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className={`py-3 px-4 block w-full rounded-lg border-transparent ${INPUT_BG} text-white placeholder-gray-400 focus:ring-0 focus:border-transparent transition-colors`}
+                                        className={`py-3 px-4 block w-full rounded-lg border-transparent glassish-input text-white placeholder-gray-400 focus:ring-0 focus:border-transparent transition-colors`}
                                         placeholder="Your Name"
                                         required
                                     />
@@ -84,7 +83,7 @@ const ContactUs = forwardRef(({
                                         name="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
-                                        className={`py-3 px-4 block w-full rounded-lg border-transparent ${INPUT_BG} text-white placeholder-gray-400 focus:ring-0 focus:border-transparent transition-colors`}
+                                        className={`py-3 px-4 block w-full rounded-lg border-transparent glassish-input text-white placeholder-gray-400 focus:ring-0 focus:border-transparent transition-colors`}
                                         placeholder="example@domain.com"
                                         required
                                     />
@@ -101,7 +100,7 @@ const ContactUs = forwardRef(({
                                         rows="4"
                                         value={message}
                                         onChange={(e) => setMessage(e.target.value)}
-                                        className={`py-3 px-4 block w-full rounded-lg border-transparent ${INPUT_BG} text-white placeholder-gray-400 focus:ring-0 focus:border-transparent transition-colors resize-none`}
+                                        className={`py-3 px-4 block w-full rounded-lg border-transparent glassish-input text-white placeholder-gray-400 focus:ring-0 focus:border-transparent transition-colors resize-none`}
                                         placeholder="What we can do for you?"
                                         required
                                     ></textarea>
@@ -115,7 +114,7 @@ const ContactUs = forwardRef(({
                             <div>
                                 <button
                                     type="submit"
-                                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white ${BUTTON_BG} hover:bg-[#7a6ce5] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8b85fc] focus:ring-offset-[#1c1c25] transition-colors duration-300 disabled:opacity-50`}
+                                    className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white ${BUTTON_BG} ring-glow hover:bg-[#7a6ce5] hover:scale-[1.01] hover:ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#8b85fc] focus:ring-offset-[#1c1c25] transition-colors duration-300 disabled:opacity-50`}
                                     disabled={!name || !email || !message || loading}
                                 >
                                     <Send className="w-5 h-5 mr-2" />
