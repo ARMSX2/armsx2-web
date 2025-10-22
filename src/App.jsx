@@ -1,6 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import Front from "./components/front";
 import CompatibilityList from "./components/CompatibilityList.jsx"; // ignore error bruh youll live
+import ContactUs from "./components/ContactUs.jsx";
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -8,6 +9,13 @@ function App() {
 
   // eslint-disable-next-line
   const [nextPage, setNextPage] = useState(null);
+
+  // contactus backend request state
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [status, setStatus] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const navigateToPage = (page) => {
     if (page === currentPage || isTransitioning) return;
@@ -24,6 +32,35 @@ function App() {
     }, 300);
   };
 
+  //Post function for Backend
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setStatus(null);
+    const formData = { name, email, message };
+    try {
+      const response = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      if (response.ok) {
+        setStatus('Richiesta inviata con successo! Ti ricontatteremo presto.');
+        setName('');
+        setEmail('');
+        setMessage('');
+      } else {
+        const errorData = await response.json(); 
+        setStatus(`Errore: ${errorData.message || 'Si è verificato un errore durante l\'invio.'}`);
+      }
+    } catch (error) {
+      console.error('Errore di rete:', error);
+      setStatus('Errore di connessione. Controlla la tua rete.');
+    } finally {
+      setLoading(false);
+    }
+  }, [name, email, message]);
+
   const renderCurrentPage = () => {
     switch (currentPage) {
       case "compatibility":
@@ -31,6 +68,23 @@ function App() {
           <CompatibilityList
             isthetransitioninghappening={isTransitioning}
             isEntering={!isTransitioning && currentPage === "compatibility"}
+            onNavigate={navigateToPage}
+          />
+        );
+      case "contactus":
+        return (
+          <ContactUs
+            name={name}
+            email={email}
+            message={message}
+            status={status}
+            loading={loading}
+            setName={setName}
+            setEmail={setEmail}
+            setMessage={setMessage}
+            handleSubmit={handleSubmit}
+            isthetransitioninghappening={isTransitioning}
+            isEntering={!isTransitioning && currentPage === "contactus"}
             onNavigate={navigateToPage}
           />
         );
