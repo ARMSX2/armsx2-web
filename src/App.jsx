@@ -45,7 +45,7 @@ function App() {
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        setStatus('Richiesta inviata con successo! Ti ricontatteremo presto.');
+        setStatus('Request sent successfully! We will contact you soon.');
         setName('');
         setEmail('');
         setMessage('');
