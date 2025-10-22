@@ -45,17 +45,17 @@ function App() {
         body: JSON.stringify(formData),
       });
       if (response.ok) {
-        setStatus('Richiesta inviata con successo! Ti ricontatteremo presto.');
+        setStatus('Request sent successfully! We will contact you soon.');
         setName('');
         setEmail('');
         setMessage('');
       } else {
         const errorData = await response.json(); 
-        setStatus(`Errore: ${errorData.message || 'Si è verificato un errore durante l\'invio.'}`);
+        setStatus(`Error: ${errorData.message || 'An error occurred while sending.'}`);
       }
     } catch (error) {
-      console.error('Errore di rete:', error);
-      setStatus('Errore di connessione. Controlla la tua rete.');
+      console.error('Network error:', error);
+      setStatus('Connection error. Please check your network.');
     } finally {
       setLoading(false);
     }
