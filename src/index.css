@@ -31,7 +31,7 @@
 :root {
   --bg-start: #000000;
   --bg-end: #000000;
-  --accent: #8d76cc;
+  --accent: #8c75cc;
   --accent-2: #3e4d84;
   --accent-hover: #7c69b7;
   --accent-2-hover: #384476;
@@ -282,6 +282,8 @@ img {
   backdrop-filter: blur(16px) saturate(140%); /* Effetto di sfocatura dello sfondo */
   -webkit-backdrop-filter: blur(16px) saturate(140%); /* Prefisso per WebKit */
   border: 1px solid rgba(148, 163, 184, 0.15); /* Bordo sottile e leggero */
+  box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.15),
+      0 0 24px rgba(141, 118, 204, 0.35), inset 0 0 12px rgba(62, 77, 132, 0.2);
 }
 
 .glassish-input {
@@ -289,4 +291,9 @@ img {
     backdrop-filter: blur(4px); /* Blur minore */
     -webkit-backdrop-filter: blur(4px);
     border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.bloom-strong1 {
+    filter: blur(70px);
+    opacity: 0.3;
 }

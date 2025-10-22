@@ -22,11 +22,11 @@ const ContactUs = forwardRef(({
     return (
         <section ref={ref} id="contact" className={`py-20 ${MAIN_BG} transition-colors duration-500 min-h-screen flex items-center relative overflow-hidden`}>
             <div 
-                className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-2 rounded-full bloom-strong transform -translate-x-1/2 -translate-y-1/2" 
+                className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-2 rounded-full bloom-strong1 transform -translate-x-1/2 -translate-y-1/2" 
                 style={{ backgroundColor: 'var(--accent-2)', zIndex: 0 }}
             />
             <div 
-                className="absolute top-3/4 right-1/4 w-80 h-80 bg-accent rounded-full bloom-strong transform translate-x-1/2 -translate-y-1/2" 
+                className="absolute top-3/4 right-1/4 w-80 h-80 bg-accent rounded-full bloom-strong1 transform translate-x-1/2 -translate-y-1/2" 
                 style={{ backgroundColor: 'var(--accent)', zIndex: 0 }}
             />
             <img
@@ -50,7 +50,7 @@ const ContactUs = forwardRef(({
                     </p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500 ring-glow`}>
+                    <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>
                         <h3 className="text-2xl font-semibold mb-8 text-white flex items-center">
                             <MessageSquare className={`w-6 h-6 mr-3 ${PRIMARY_COLOR}`} /> Send a Message
                         </h3>
@@ -124,7 +124,7 @@ const ContactUs = forwardRef(({
                         </form>
                     </div>
                     <div className="space-y-8">
-                        <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500 ring-glow`}>
+                        <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>
                             <h3 className="text-2xl font-semibold mb-6 text-white">
                                 Useful Details
                             </h3>
@@ -136,7 +136,7 @@ const ContactUs = forwardRef(({
                                 </li>
                             </ul>
                         </div>
-                        <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500 ring-glow`}>
+                        <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>
                             <h3 className="text-2xl font-semibold mb-6 text-white">
                                 Follow Us
                             </h3>
