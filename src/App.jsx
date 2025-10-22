@@ -51,7 +51,7 @@ function App() {
         setMessage('');
       } else {
         const errorData = await response.json(); 
-        setStatus(`Errore: ${errorData.message || 'Si è verificato un errore durante l\'invio.'}`);
+        setStatus(`Error: ${errorData.message || 'An error occurred while sending.'}`);
       }
     } catch (error) {
       console.error('Network error:', error);
