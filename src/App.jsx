@@ -54,8 +54,8 @@ function App() {
         setStatus(`Errore: ${errorData.message || 'Si è verificato un errore durante l\'invio.'}`);
       }
     } catch (error) {
-      console.error('Errore di rete:', error);
-      setStatus('Errore di connessione. Controlla la tua rete.');
+      console.error('Network error:', error);
+      setStatus('Connection error. Please check your network.');
     } finally {
       setLoading(false);
     }
