@@ -1,5 +1,7 @@
 import React, { forwardRef } from 'react';
-import { MessageSquare, User, Mail, MessageCircle, Phone, MapPin, Send, Instagram, Github, Linkedin } from 'lucide-react';
+import { MessageSquare, User, Mail, MessageCircle, Phone, MapPin, Send, Instagram, Github, Linkedin, Twitter } from 'lucide-react';
+import { FaInstagram, FaLinkedin, FaMastodon, FaX, FaXTwitter } from 'react-icons/fa6';
+import { FaGithub } from 'react-icons/fa';
 
 
 const ContactUs = forwardRef(({ 
@@ -150,13 +152,19 @@ const ContactUs = forwardRef(({
                             </h3>
                             <div className="flex space-x-6">
                                 <a href="#" aria-label="Instagram" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
-                                    <Instagram className="w-8 h-8" />
+                                    <FaInstagram className="w-8 h-8" />
                                 </a>
                                 <a href="https://github.com/ARMSX2" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
-                                    <Github className="w-8 h-8" />
+                                    <FaGithub className="w-8 h-8" />
                                 </a>
                                 <a href="#" aria-label="LinkedIn" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
-                                    <Linkedin className="w-8 h-8" />
+                                    <FaLinkedin className="w-8 h-8" />
+                                </a>
+                                <a href="#" aria-label="X" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
+                                    <FaXTwitter className="w-8 h-8" />
+                                </a>
+                                <a href="#" aria-label="X" className={`${PRIMARY_COLOR} hover:text-[#a09afa] transition-colors`}>
+                                    <FaMastodon className="w-8 h-8" />
                                 </a>
                             </div>
                         </div>
