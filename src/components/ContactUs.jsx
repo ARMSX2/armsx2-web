@@ -5,6 +5,7 @@ import { FaGithub } from 'react-icons/fa';
 
 
 const ContactUs = forwardRef(({ 
+    isthetransitioninghappening,
     handleSubmit, 
     name, 
     setName, 
@@ -21,18 +22,8 @@ const ContactUs = forwardRef(({
     const BUTTON_BG = "bg-[#6a5acd]";
     return (
       <>
-        <img
-          src="/icon.png"
-          alt="ARMSX2 Logo"
-          style={{
-            opacity: window.innerWidth <= 550 ? 0.64582 : 0.8,
-            transform: window.innerWidth <= 550 ? "scale(0.8)" : "scale(1)",
-            filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
-          }}
-          className="sticky max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200"
-          onClick={() => onNavigate && onNavigate("home")}
-        />
-        <section ref={ref} id="contact" className={`py-20 ${MAIN_BG} transition-colors duration-500 min-h-screen flex items-center relative overflow-hidden`}>
+        
+        <section ref={ref} id="contact" className={`py-20 ${MAIN_BG} transition-colors duration-500 min-h-screen flex items-center relative overflow-hidden ${isthetransitioninghappening ? "opacity-0 transform translate-x-12" : "opacity-100 transform translate-x-0"}`}>
             <div 
                 className="absolute top-1/4 left-1/4 w-96 h-96 bg-accent-2 rounded-full bloom-strong1 transform -translate-x-1/2 -translate-y-1/2" 
                 style={{ backgroundColor: 'var(--accent-2)', zIndex: 0 }}
@@ -40,6 +31,17 @@ const ContactUs = forwardRef(({
             <div 
                 className="absolute top-3/4 right-1/4 w-80 h-80 bg-accent rounded-full bloom-strong1 transform translate-x-1/2 -translate-y-1/2" 
                 style={{ backgroundColor: 'var(--accent)', zIndex: 0 }}
+            />
+            <img
+              src="/icon.png"
+              alt="ARMSX2 Logo"
+              style={{
+                opacity: window.innerWidth <= 550 ? 0.64582 : 0.8,
+                transform: window.innerWidth <= 550 ? "scale(0.8)" : "scale(1)",
+                filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
+              }}
+              className={`fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200`}
+              onClick={() => onNavigate && onNavigate("home")}
             />
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
                 <div className="text-center mb-16">
