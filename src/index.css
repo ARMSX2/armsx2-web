@@ -31,7 +31,7 @@
 :root {
   --bg-start: #000000;
   --bg-end: #000000;
-  --accent: #8d76cc;
+  --accent: #8c75cc;
   --accent-2: #3e4d84;
   --accent-hover: #7c69b7;
   --accent-2-hover: #384476;
@@ -68,22 +68,33 @@ body {
 }
 
 * {
-  scrollbar-width: thin;
+    scrollbar-width: thin;
+    scrollbar-color: #0a0a0c #070707;
 }
 
-*::-webkit-scrollbar {
-  width: 8px;
-  background: #070707;
+*::-webkit-scrollbar,
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+.main-scroll-container::-webkit-scrollbar {
+    width: 8px !important;
+    background: #070707 !important;
 }
 
-*::-webkit-scrollbar-thumb {
-  background: #0a0a0c;
-  border-radius: 8px;
+*::-webkit-scrollbar-thumb,
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+.main-scroll-container::-webkit-scrollbar-thumb {
+    background: #0a0a0c !important;
+    border-radius: 8px !important;
 }
 
-*::-webkit-scrollbar-track {
-  background: #070707;
+*::-webkit-scrollbar-track,
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+.main-scroll-container::-webkit-scrollbar-track {
+    background: #070707 !important;
 }
+
 
 button {
   font-family: "OverpassBold";
@@ -264,4 +275,25 @@ img {
 
 .forceSlightRound {
   border-radius: 5px !important;
+}
+
+.glassish {
+  background: rgba(15, 23, 42, 0.45); /* Sfondo semi-trasparente */
+  backdrop-filter: blur(16px) saturate(140%); /* Effetto di sfocatura dello sfondo */
+  -webkit-backdrop-filter: blur(16px) saturate(140%); /* Prefisso per WebKit */
+  border: 1px solid rgba(148, 163, 184, 0.15); /* Bordo sottile e leggero */
+  box-shadow: 0 0 0 2px rgba(148, 163, 184, 0.15),
+      0 0 24px rgba(141, 118, 204, 0.35), inset 0 0 12px rgba(62, 77, 132, 0.2);
+}
+
+.glassish-input {
+    background: rgba(30, 40, 60, 0.7); /* Meno trasparente per leggibilità */
+    backdrop-filter: blur(4px); /* Blur minore */
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.bloom-strong1 {
+    filter: blur(70px);
+    opacity: 0.3;
 }

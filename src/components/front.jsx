@@ -232,7 +232,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
       </nav>
 
       <div
-        className={`relative overflow-x-hidden transition-all duration-500 ease-out ${
+        className={`relative overflow-x-hidden transition-all duration-500 ease-out main-scroll-container ${
           isthetransitioninghappening
             ? "opacity-0 transform translate-x-12 scale-95 blur-sm"
             : isEntering
@@ -543,6 +543,13 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         ©{new Date().getFullYear()} ARMSX2 All rights reserved,
                         site by tanos
                       </a>
+                      <button
+                        onClick={() => onNavigate("contactus")}
+                        className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
+                        aria-label="Contact Us"
+                      >
+                        Contact Us
+                      </button>
                     </div>
                   )}
                 </div>
