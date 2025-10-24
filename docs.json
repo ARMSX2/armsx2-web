@@ -1,68 +1,74 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
-  "name": "Mint Starter Kit",
+  "name": "ARMSX2 Docs",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
+    "primary": "#baace0",
+    "light": "#8c75cc",
     "dark": "#15803D"
   },
-  "favicon": "/favicon.svg",
+  "fonts": {
+    "family": "Overpass, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji"
+  },
+  "favicon": "logo/favicon.ico",
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "ARMSX2 Docs",
         "groups": [
           {
-            "group": "Getting started",
+            "group": " ",
             "pages": [
-              "index",
-              "quickstart",
-              "development"
+              "welcome/welcome"
             ]
           },
           {
-            "group": "Customization",
+            "group": "Setup",
             "pages": [
-              "essentials/settings",
-              "essentials/navigation"
+              "setup/systemrequirements",
+              "setup/dumpingbios",
+              "setup/dumpingdiscs",
+              "setup/runningarmsx2"
             ]
           },
           {
-            "group": "Writing content",
+            "group": "Configuration",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/reusable-snippets"
+              "configuration/generalinformation",
+              "configuration/controllers",
+              "configuration/memorycards"
             ]
           },
           {
-            "group": "AI tools",
+            "group": "Troubleshooting",
             "pages": [
-              "ai-tools/cursor",
-              "ai-tools/claude-code",
-              "ai-tools/windsurf"
-            ]
-          }
-        ]
-      },
-      {
-        "tab": "API reference",
-        "groups": [
-          {
-            "group": "API documentation",
-            "pages": [
-              "api-reference/introduction"
+              "troubleshooting/generalissues",
+              "troubleshooting/performanceissues",
+              "troubleshooting/diagnosingereportiong",
+              "troubleshooting/androidissues",
+              "troubleshooting/iosissues",
+              "troubleshooting/linuxissues",
+              "troubleshooting/macissues"
             ]
           },
           {
-            "group": "Endpoint examples",
+            "group": "Advanced",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "advanced/buildingarmsx2",
+              "advanced/debugger",
+              "advanced/backwardcompatibility",
+              "advanced/clioptions",
+              "advanced/gsdumprunner",
+              "advanced/miscellaneous"
+            ]
+          },
+          {
+            "group": "Contributing",
+            "pages": [
+              "contributing/contributingtoarmsx2",
+              "contributing/codeformattingguidelines",
+              "contributing/advancedcodeformattingguidelines",
+              "contributing/usinggit"
             ]
           }
         ]
@@ -71,26 +77,16 @@
     "global": {
       "anchors": [
         {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Community",
-          "href": "https://mintlify.com/community",
-          "icon": "slack"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
+          "anchor": "ARMSX2 Website",
+          "href": "https://armsx2.net/",
+          "icon": "https://github.com/ARMSX2/armsx2-web/blob/main/public/branding/fulllogo.png?raw=true"
         }
       ]
     }
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "https://github.com/ARMSX2/armsx2-web/blob/main/public/branding/fulllogo.png?raw=true",
+    "dark": "https://github.com/ARMSX2/armsx2-web/blob/main/public/branding/fulllogo.png?raw=true"
   },
   "navbar": {
     "links": [
@@ -98,30 +94,24 @@
         "label": "Support",
         "href": "mailto:hi@mintlify.com"
       }
-    ],
-    "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
-    }
+    ]
   },
   "contextual": {
     "options": [
-     "copy",
-     "view",
-     "chatgpt",
-     "claude",
-     "perplexity",
-     "mcp",
-     "cursor",
-     "vscode"
-   ]
+      "copy",
+      "view",
+      "chatgpt",
+      "claude",
+      "perplexity",
+      "mcp",
+      "cursor",
+      "vscode"
+    ]
   },
   "footer": {
     "socials": {
       "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/ARMSX2"
     }
   }
 }
