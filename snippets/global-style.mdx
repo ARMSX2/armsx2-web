@@ -270,6 +270,39 @@ export default function Styles() {
           filter: blur(70px);
           opacity: 0.3;
       }
+      
+      .mintlify-sidebar {
+        display: block !important;
+        background-color: transparent !important;
+      }
+
+      html[data-theme='light'] .mintlify-sidebar a {
+        color: #000000 !important;
+        opacity: 0.9;
+      }
+
+      html[data-theme='light'] .mintlify-sidebar a:hover {
+        color: #8c75cc !important;
+        opacity: 1;
+      }
+
+      html[data-theme='light'] .mintlify-sidebar a.active {
+        color: #baace0 !important;
+        font-weight: 600;
+      }
+
+      html[data-theme='dark'] .mintlify-sidebar a {
+        color: #aaaaaa !important;
+      }
+
+      html[data-theme='dark'] .mintlify-sidebar a:hover {
+        color: #ffffff !important;
+      }
+
+      html[data-theme='dark'] .mintlify-sidebar a.active,
+      html[data-theme='dark'] .mintlify-sidebar a[aria-current='page'] {
+        color: #4da6ff !important;
+      }
     `}</style>
   );
 }

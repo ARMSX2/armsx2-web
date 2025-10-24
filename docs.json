@@ -2,13 +2,23 @@
   "$schema": "https://mintlify.com/docs.json",
   "theme": "mint",
   "name": "ARMSX2 Docs",
+  "background": {
+    "image": "https://github.com/ARMSX2/armsx2-web/blob/main/public/branding/fulllogo.png?raw=true"
+  },
   "colors": {
-    "primary": "#baace0",
-    "light": "#8c75cc",
-    "dark": "#15803D"
+    "primary": "#9067ff",
+    "light": "#9067ff",
+    "dark": "#9067ff"
   },
   "fonts": {
-    "family": "Overpass, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji"
+    "heading": {
+      "family": "Overpass",
+      "weight": 700
+    },
+    "body":{
+      "family": "Overpass",
+      "weight": 400
+    }
   },
   "favicon": "logo/favicon.ico",
   "navigation": {

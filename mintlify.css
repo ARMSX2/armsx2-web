@@ -284,3 +284,11 @@ img {
     filter: blur(70px);
     opacity: 0.3;
 }
+
+#sidebar a{
+  color: #a04dff !important;
+}
+
+#sidebar a:active{
+  color: #7f14fa !important;
+}
