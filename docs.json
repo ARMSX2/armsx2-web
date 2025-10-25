@@ -95,8 +95,8 @@
     }
   },
   "logo": {
-    "light": "logo/armsx2docslogo.svg",
-    "dark": "logo/armsx2docslogo.svg"
+    "light": "https://github.com/medievalshell/armsx2-web/blob/docs/logo/armsx2docslogo.svg?raw=true",
+    "dark": "https://github.com/medievalshell/armsx2-web/blob/docs/logo/armsx2docslogo.svg?raw=true"
   },
   "navbar": {
     "links": [
