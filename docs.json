@@ -95,8 +95,8 @@
     }
   },
   "logo": {
-    "light": "https://github.com/ARMSX2/armsx2-web/blob/main/public/branding/fulllogo.png?raw=true",
-    "dark": "https://github.com/ARMSX2/armsx2-web/blob/main/public/branding/fulllogo.png?raw=true"
+    "light": "logo/armsx2docslogo.svg",
+    "dark": "logo/armsx2docslogo.svg"
   },
   "navbar": {
     "links": [
