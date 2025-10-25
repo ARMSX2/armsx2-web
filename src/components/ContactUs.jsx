@@ -1,4 +1,5 @@
 import React, { forwardRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MessageSquare, User, Mail, MessageCircle, Phone, MapPin, Send, Instagram, Github, Linkedin, Twitter } from 'lucide-react';
 import { FaInstagram, FaLinkedin, FaMastodon, FaX, FaXTwitter } from 'react-icons/fa6';
 import { FaGithub } from 'react-icons/fa';
@@ -14,12 +15,15 @@ const ContactUs = forwardRef(({
     message, 
     setMessage, 
     status,
-    loading,
-    onNavigate
+    loading
 }, ref) => {
+    const navigate = useNavigate();
     const MAIN_BG = "bg-[#0d0e14]";
     const PRIMARY_COLOR = "text-[#8b85fc]";
     const BUTTON_BG = "bg-[#6a5acd]";
+    const handleLogoClick = () => {
+        navigate('/');
+    };
     return (
       <>
         
@@ -41,7 +45,7 @@ const ContactUs = forwardRef(({
                 filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
               }}
               className={`fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200`}
-              onClick={() => onNavigate && onNavigate("home")}
+              onClick={handleLogoClick}
             />
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
                 <div className="text-center mb-16">
