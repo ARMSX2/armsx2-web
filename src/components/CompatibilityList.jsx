@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from 'react-router-dom';
 import { FaFilter } from "react-icons/fa6";
 
 const CompatibilityList = ({
   isthetransitioninghappening,
   isEntering,
-  onNavigate,
 }) => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [gamesData, setGamesData] = useState({ games: [] });
   const [error, setError] = useState(null);
@@ -139,6 +140,9 @@ const CompatibilityList = ({
     }
     return "/flags/glb.svg";
   };
+  const handleLogoClick = () => {
+    navigate('/');
+  };
 
   return (
     <div
@@ -157,7 +161,7 @@ const CompatibilityList = ({
           filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
         }}
         className="fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200"
-        onClick={() => onNavigate && onNavigate("home")}
+        onClick={handleLogoClick}
       />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl max-[470px]:text-2xl text-center font-bold text-white mt-5 mb-6">
