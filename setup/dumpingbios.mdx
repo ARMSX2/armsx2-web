@@ -1,0 +1,68 @@
+---
+title: "Dumping Bios"
+description: "Guide to extracting BIOS files from your PlayStation 2 console."
+icon: "hand-pointer"
+---
+
+## Requirements
+
+The BIOS (Basic Input/Output System) is a proprietary file that is *essential* to running ARMSX2. You must legally own a PS2 console to extract the BIOS.
+
+<Columns cols={2}>
+  <Card title="Hardware Required" icon="plug">
+    - PlayStation 2 console (FAT or Slim) in working order.
+    - USB stick formatted in **FAT32** (maximum 32GB).
+  </Card>
+  <Card title="Software Required" icon="download">
+    - A method for running homebrew (e.g. **Free McBoot**).
+    - The **BIOS Dumping Software** file (search for "**biosdump.elf**" online).
+  </Card>
+</Columns>
+
+<Callout emoji="warning">
+  **Do not download the BIOS from the internet.** It is illegal and the BIOS you have guarantees maximum compatibility with the emulator.
+</Callout>
+
+<hr />
+
+## Extraction Procedure (Dumping)
+
+Follow these steps to safely extract your console's BIOS:
+
+### 1. Preparing the USB Flash Drive
+
+1.  Download the **`biosdump.elf`** software from a reliable source.
+2.  Copy the **`biosdump.elf`** file to the **root directory** of your USB stick.
+3.  Insert the USB stick into the port on the PS2 console.
+
+### 2. Running the Software
+
+1.  Turn on your PS2 console.
+2.  Launch **uLaunchELF** (or wLaunchELF) via your homebrew exploit (e.g. FMCB).
+3.  In the uLaunchELF menu, navigate to **`mass:/`** (which represents your USB stick).
+4.  Select and run the **`biosdump.elf`** file.
+
+### 3. Completion of Dumping
+
+<Callout emoji="gear">
+  **The program is automatic.** Once started, the BIOS reading procedure begins automatically.
+</Callout>
+
+1.  Wait for the software to read and copy the BIOS. This is a quick process.
+2.  When you see the confirmation message, the process is complete. The files have been saved to **`mass:/`** (your USB stick).
+3.  Turn off your PS2 and remove the USB stick.
+
+### 4. Transferring Files to PC
+
+<Callout emoji="memo">
+  **Important:** Copy *all* the generated files, not just the `.bin` file. They are all required for the emulator to function properly.
+</Callout>
+
+* Insert the USB stick into your PC.
+* Copy the following extracted files (or all generated files) to a safe folder on your computer. Examples of files include:
+    * `SCPH-XXXXX.MEC.bin` (The main BIOS)
+    * `.nvm`
+    * `.rom`
+    * `.erom`
+
+Once completed, you can point ARMSX2 to the folder containing these files to complete the initial setup.

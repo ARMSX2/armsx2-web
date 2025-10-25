@@ -1,0 +1,74 @@
+---
+title: "Dumping Discs"
+description: "A guide to setting up and loading PS2 game discs or ISO images in ARMSX2."
+icon: "compact-disc"
+---
+
+## Game Disc & ISO Configuration
+
+ARMSX2 is fully supported on **Android, iOS, WindowsARM, Linux, and macOS**. Using Disc Image Files (ISOs) is the preferred method for performance and stability across all platforms.
+
+<Callout emoji="rocket">
+  **Recommendation:** Always create and use **ISO files** from your original discs. This provides the best performance and avoids wear on physical media.
+</Callout>
+
+---
+
+### 1. ISO Creation and Dumping
+
+The initial step is creating a legal ISO image from your original PS2 game disc. The software used for this process varies by operating system.
+
+<Columns cols={2}>
+| Operating System | Recommended Tool/Method |
+| :--- | :--- |
+| **Windows** | **ImgBurn** or **DumpDisc** (via PS2 homebrew) |
+| **Linux/macOS** | **`dd` command** or **`hdiutil` (Mac)** |
+</Columns>
+
+#### **Linux/macOS: Using the `dd` Command**
+
+This command directly copies the raw data from the optical drive to an ISO file.
+
+1.  Insert the PS2 game disc into your computer's optical drive.
+2.  Open **Terminal**.
+3.  First, **identify the device name** of your drive (e.g., `/dev/cdrom` or `/dev/disk2`). Use the command `diskutil list` (on Mac) or `lsblk` (on Linux).
+4.  Execute the `dd` command, replacing the placeholders with your actual device name and desired save path:
+
+    ```bash
+    dd if=/dev/your-drive-name of=/path/to/save/game.iso
+    ```
+
+<Callout emoji="memo">
+  Ensure all your final ISO files are stored in a **single, dedicated folder** (e.g., `Documents/ARMSX2/isos`).
+</Callout>
+
+---
+
+### 2. Configure the ISO Directory
+
+You must set the folder path for your game files in the emulator settings so ARMSX2 can list them.
+
+1.  Open ARMSX2.
+2.  Navigate to **Settings**, then select **Folders**.
+3.  Click **Add** and locate the folder containing all your ISO files (e.g., `Documents/ARMSX2/isos`).
+4.  Confirm the selection and press **OK**.
+5.  All your games will automatically populate the **Game List** on the main screen.
+
+### 3. Launching a Game
+
+Once configured, launching the game is platform-independent:
+
+1.  **Double-click** the desired game title in the **Game List**.
+2.  ARMSX2 will use the **quick boot feature** to start the game directly, bypassing the PS2 BIOS screen.
+
+### 4. Loading from a Physical Disc (Alternative)
+
+This method is less stable but can be used if your computer has a supported optical drive.
+
+1.  Insert the original PS2 disc into your computer's drive.
+2.  In ARMSX2, go to **Settings**, then **CDVD**, and select **Disk (Physical Drive)**.
+3.  Go to the **System** menu and choose **Boot CDVD (full)**.
+
+<Callout emoji="warning">
+  Physical disc loading is often **slower and less reliable**. If you encounter performance issues, switch back to the **ISO loading method**.
+</Callout>
