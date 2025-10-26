@@ -29,7 +29,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
 
     const PLAY_URL =
       "https://play.google.com/store/apps/details?id=come.nanodata.armsx2";
-    
+
     const CACHE_KEY = "releaseData";
     const CACHE_TIME_KEY = "releaseDataTimestamp";
     const CACHE_DURATION = 1000 * 60 * 10;
@@ -477,7 +477,8 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                     emulator for ARM systems, and so developer MoonPower with
                     the support of jpolo1224 decided to try their hand at
                     porting a new PS2 emulator for Android, forking from the
-                    repository PCSX2_ARM64 by developer Pontos.
+                    repository PCSX2_ARM64 by developer Pontos. fffathur is
+                    responsible for the original logo, all credits to him.
                   </p>
                   <p>
                     Moon has and will continue doing his best to fill in the
@@ -543,6 +544,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         ©{new Date().getFullYear()} ARMSX2 All rights reserved,
                         site by tanos
                       </a>
+                      <span className="mx-2">•</span>
                       <button
                         onClick={() => onNavigate("contactus")}
                         className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
@@ -561,48 +563,50 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
 
       {window.innerWidth >= 767 && (
         <div
-            className="fixed bottom-4 right-4 text-white/70 text-sm cursor-pointer select-none"
-            style={{
-                zIndex: 9999,
-                transition: "text-shadow 0.3s ease",
-                padding: "0.8rem",
-                paddingRight: "2rem",
-                opacity:
-                    activeSection === "updates"
-                        ? 0.2
-                        : activeSection !== "about" && window.innerWidth <= 500
-                            ? 0.4
-                            : 0.7,
-                textShadow: "0 5px 10px rgba(255, 255, 255, 0.39)",
-                animation: "sway 20s ease-in-out infinite",
-            }}
-            onMouseEnter={(e) => {
-                e.currentTarget.style.textShadow = "0 0 10px rgba(255, 255, 255, 0.7)";
-            }}
-            onMouseLeave={(e) => {
-                e.currentTarget.style.textShadow = "0 5px 10px rgba(255, 255, 255, 0.39)";
-            }}
+          className="fixed bottom-4 right-4 text-white/70 text-sm cursor-pointer select-none"
+          style={{
+            zIndex: 9999,
+            transition: "text-shadow 0.3s ease",
+            padding: "0.8rem",
+            paddingRight: "2rem",
+            opacity:
+              activeSection === "updates"
+                ? 0.2
+                : activeSection !== "about" && window.innerWidth <= 500
+                ? 0.4
+                : 0.7,
+            textShadow: "0 5px 10px rgba(255, 255, 255, 0.39)",
+            animation: "sway 20s ease-in-out infinite",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.textShadow =
+              "0 0 10px rgba(255, 255, 255, 0.7)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.textShadow =
+              "0 5px 10px rgba(255, 255, 255, 0.39)";
+          }}
         >
-            <span>
-                ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by 
-            </span>
-            <span> </span>
-            <a
-                href="https://github.com/tanosshi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white/90 transition-colors"
-            >
-                tanos
-            </a>
-            <span className="mx-2">•</span>
-            <button
-                onClick={() => onNavigate("contactus")}
-                className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
-                aria-label="Contact Us"
-            >
-                Contact Us
-            </button>
+          <span>
+            ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by
+          </span>
+          <span> </span>
+          <a
+            href="https://github.com/tanosshi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white/90 transition-colors"
+          >
+            tanos
+          </a>
+          <span className="mx-2">•</span>
+          <button
+            onClick={() => onNavigate("contactus")}
+            className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
+            aria-label="Contact Us"
+          >
+            Contact Us
+          </button>
         </div>
       )}
     </>
