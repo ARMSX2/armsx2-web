@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 
 import images from "../data/images.json";
 import blog from "../data/blog.json";
@@ -20,9 +21,16 @@ import {
 } from "react-icons/fa6";
 
 const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
+  const navigate = useNavigate()
   const [downloadURL, setApkUrl] = useState(null);
   const [playURL, setPlayURL] = useState(null);
   const [version, setVersion] = useState(null) || "0";
+  const handleTransitionAndNavigate = (routePath) => {
+    onNavigate(routePath);
+    setTimeout(() => {
+      navigate(routePath);
+    }, 500);
+  }; 
 
   useEffect(() => {
     const EXT = ".apk"; // if we use pcsx2 github as debug use 'appimage' (no caps)
@@ -408,7 +416,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                 className="glassish h-24 rounded-xl flex items-center justify-between gap-3 px-4 group cursor-pointer transform-gpu transition-all duration-300 ease-out hover:-translate-y-1 hover:scale-[1.02] ring-glow shadow-[0_0_10px_rgba(141,118,204,0.18)] hover:shadow-[0_0_20px_rgba(141,118,204,0.3)] hover:bg-gradient-to-r hover:from-[#8d76cc]/10 hover:to-[#3e4d84]/10"
                 role="button"
                 tabIndex={0}
-                onClick={() => onNavigate("compatibility")}
+                onClick={() => handleTransitionAndNavigate("/compatibility")}
               >
                 <div className="flex items-center gap-3">
                   <FaRocket
@@ -496,7 +504,6 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                   </p>
                 </div>
               </div>
-
               <div
                 className="w-full md:w-1/2 space-y-8 mt-8 md:mt-0"
                 style={{
@@ -532,7 +539,6 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                       </p>
                     </details>
                   ))}
-
                   {window.innerWidth < 767 && (
                     <div className="text-center py-4 text-white/70 text-sm bg-transparent">
                       <a
@@ -542,11 +548,11 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         className="hover:text-white/90 transition-colors"
                       >
                         ©{new Date().getFullYear()} ARMSX2 All rights reserved,
-                        site by tanos
+                        site by tanos ‎
                       </a>
                       <span className="mx-2">•</span>
                       <button
-                        onClick={() => onNavigate("contactus")}
+                        onClick={() => handleTransitionAndNavigate("/contact")}
                         className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
                         aria-label="Contact Us"
                       >
@@ -587,26 +593,26 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               "0 5px 10px rgba(255, 255, 255, 0.39)";
           }}
         >
-          <span>
-            ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by
-          </span>
-          <span> </span>
-          <a
-            href="https://github.com/tanosshi"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-white/90 transition-colors"
-          >
-            tanos
-          </a>
-          <span className="mx-2">•</span>
-          <button
-            onClick={() => onNavigate("contactus")}
-            className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
-            aria-label="Contact Us"
-          >
-            Contact Us
-          </button>
+            <span>
+                ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by 
+            </span>
+            <span> </span>
+            <a
+                href="https://github.com/tanosshi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white/90 transition-colors"
+            >
+                tanos
+            </a>
+            <span className="mx-2">•</span>
+            <button
+                onClick={() => handleTransitionAndNavigate("/contact")}
+                className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
+                aria-label="Contact Us"
+            >
+                Contact Us
+            </button>
         </div>
       )}
     </>

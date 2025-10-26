@@ -1,7 +1,73 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Front from "./components/front";
 import CompatibilityList from "./components/CompatibilityList.jsx"; // ignore error bruh youll live
 import ContactUs from "./components/ContactUs.jsx";
+
+const RouteTransitionWrapper = ({ contactFormProps }) => {
+    const location = useLocation();
+    const [isTransitioning, setIsTransitioning] = useState(false);
+    const [displayLocation, setDisplayLocation] = useState(location);
+    const navigateToPage = (pagePath) => {
+        if (isTransitioning) return;
+        setIsTransitioning(true);
+        setTimeout(() => {
+            setDisplayLocation(location);
+            setTimeout(() => {
+                setIsTransitioning(false);
+            }, 10);
+        }, 100);
+    };
+    useEffect(() => {
+        if (location.pathname !== displayLocation.pathname) {
+            navigateToPage(location.pathname);
+        } else if (isTransitioning) {
+            setIsTransitioning(false);
+        }
+    }, [location, displayLocation.pathname, isTransitioning]);
+    const key = displayLocation.pathname;
+    const isEntering = !isTransitioning;
+    return (
+        <div className="relative overflow-hidden">
+            <Routes location={displayLocation} key={key}>
+                <Route
+                    path="/"
+                    element={
+                        <Front
+                            onNavigate={navigateToPage} // Ora chiama la funzione sopra (con useEffect)
+                            isthetransitioninghappening={isTransitioning}
+                            isEntering={isEntering && displayLocation.pathname === "/"}
+                        />
+                    }
+                />
+                <Route
+                    path="/compatibility"
+                    element={
+                        <CompatibilityList
+                            isthetransitioninghappening={isTransitioning}
+                            isEntering={isEntering && displayLocation.pathname === "/compatibility"}
+                            onNavigate={navigateToPage}
+                        />
+                    }
+                />
+                <Route
+                    path="/contact"
+                    element={
+                        <ContactUs
+                            {...contactFormProps}
+                            isthetransitioninghappening={isTransitioning}
+                            isEntering={isEntering && displayLocation.pathname === "/contactus"}
+                            onNavigate={navigateToPage}
+                        />
+                    }
+                />
+            </Routes>
+            {isTransitioning && (
+                <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 pointer-events-none transition-opacity duration-300" />
+            )}
+        </div>
+    );
+};
 
 function App() {
   const [currentPage, setCurrentPage] = useState("home");
@@ -61,52 +127,23 @@ function App() {
     }
   }, [name, email, message]);
 
-  const renderCurrentPage = () => {
-    switch (currentPage) {
-      case "compatibility":
-        return (
-          <CompatibilityList
-            isthetransitioninghappening={isTransitioning}
-            isEntering={!isTransitioning && currentPage === "compatibility"}
-            onNavigate={navigateToPage}
-          />
-        );
-      case "contactus":
-        return (
-          <ContactUs
-            name={name}
-            email={email}
-            message={message}
-            status={status}
-            loading={loading}
-            setName={setName}
-            setEmail={setEmail}
-            setMessage={setMessage}
-            handleSubmit={handleSubmit}
-            isthetransitioninghappening={isTransitioning}
-            isEntering={!isTransitioning && currentPage === "contactus"}
-            onNavigate={navigateToPage}
-          />
-        );
-      case "home":
-      default:
-        return (
-          <Front
-            onNavigate={navigateToPage}
-            isTransitioning={isTransitioning}
-            isEntering={!isTransitioning && currentPage === "home"}
-          />
-        );
-    }
+  const contactFormProps = {
+    name,
+    email,
+    message,
+    status,
+    loading,
+    setName,
+    setEmail,
+    setMessage,
+    handleSubmit,
   };
 
+
   return (
-    <div className="relative overflow-hidden">
-      {renderCurrentPage()}
-      {isTransitioning && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm z-50 pointer-events-none transition-opacity duration-300" />
-      )}
-    </div>
+    <Router>
+      <RouteTransitionWrapper contactFormProps={contactFormProps} />
+    </Router>
   );
 }
 
