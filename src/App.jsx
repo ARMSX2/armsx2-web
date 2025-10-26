@@ -31,6 +31,7 @@ const RouteTransitionWrapper = ({ contactFormProps }) => {
         <div className="relative overflow-hidden">
             <Routes location={displayLocation} key={key}>
                 <Route
+                    key="/"
                     path="/"
                     element={
                         <Front
@@ -41,6 +42,7 @@ const RouteTransitionWrapper = ({ contactFormProps }) => {
                     }
                 />
                 <Route
+                    key="/compatibility"
                     path="/compatibility"
                     element={
                         <CompatibilityList
@@ -51,12 +53,13 @@ const RouteTransitionWrapper = ({ contactFormProps }) => {
                     }
                 />
                 <Route
+                    key="/contact"
                     path="/contact"
                     element={
                         <ContactUs
                             {...contactFormProps}
                             isthetransitioninghappening={isTransitioning}
-                            isEntering={isEntering && displayLocation.pathname === "/contactus"}
+                            isEntering={isEntering && displayLocation.pathname === "/contact"}
                             onNavigate={navigateToPage}
                         />
                     }
