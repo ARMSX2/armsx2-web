@@ -66,8 +66,6 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
     const compatibilityStatus = game.status || 'Unknown';
     const emulationNotes = game.notes || "No specific emulation notes available for this title.";
     const soCsToDisplay = (tested_socs || []).map(item => {
-    
-    // Controlla se l'elemento è un oggetto (nuovo formato esteso)
     const isNewFormatObject = typeof item === 'object' && item !== null && 'soc_name' in item;
         if (isNewFormatObject) {
             return {
