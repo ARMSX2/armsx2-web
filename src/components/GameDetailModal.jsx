@@ -65,10 +65,27 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
     const gameName = game.title || 'Game Details';
     const compatibilityStatus = game.status || 'Unknown';
     const emulationNotes = game.notes || "No specific emulation notes available for this title.";
-    const soCsToDisplay = (tested_socs || []).map(socName => ({
-        name: socName,
-        result: status, 
-    }));
+    const soCsToDisplay = (tested_socs || []).map(item => {
+    
+    // Controlla se l'elemento è un oggetto (nuovo formato esteso)
+    const isNewFormatObject = typeof item === 'object' && item !== null && 'soc_name' in item;
+        if (isNewFormatObject) {
+            return {
+                name: item.soc_name,
+                result: item.vulkan_status || item.opengl_status || status || 'Unknown',
+                vulkan: item.vulkan_status,
+                opengl: item.opengl_status,
+            };
+        } else {
+            const socName = typeof item === 'string' ? item : 'Unknown SoC';
+            return {
+                name: socName,
+                result: status || 'Unknown', 
+                vulkan: status,
+                opengl: status,
+            };
+        }
+    });
 
     const GLASSISH_BG = 'bg-[#0d0e14]';
     const color = getcorrespondingColor(compatibilityStatus);
@@ -92,7 +109,6 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                     >
                         <FaTimes className="w-6 h-6" />
                     </button>
-
                     <h2 className="text-3xl md:text-4xl font-bold mb-8 text-white text-glow text-center flex items-center justify-center space-x-4">
                         {title || "Game Details"}
                         <span> </span>
@@ -102,7 +118,6 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                             className="w-8 h-8 md:w-10 md:h-10 rounded-sm shadow-md"
                         />
                     </h2>
-
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
                         
                         <div className="space-y-6">
@@ -118,7 +133,6 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                                     </span>
                                 </p>
                             </div>
-
                             <div className="space-y-2 pt-4"> 
                                 <h3 className="text-xl font-semibold text-white flex items-center">
                                     <FaInfoCircle className={`w-5 h-5 mr-3 text-[#8b85fc]`} /> Official Description 
@@ -137,36 +151,49 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                                 </p>
                             </div>
                         </div>
-
                         <div className="space-y-6">
                             <h3 className="text-xl font-semibold text-white flex items-center mb-4">
                                 <FaMicrochip className={`w-5 h-5 mr-3 text-[#8b85fc]`} /> Tested Hardware (SoCs)
                             </h3>
-                            
                             <ul className="space-y-4">
-                                {soCsToDisplay.map((soc, index) => (
-                                    <li key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-gray-700/50 shadow-md">
-                                        <span className="text-white font-medium">
-                                          {soc.name}
-                                        </span>
-                                        <img 
-                                          src="/api-logos/Vulkan.svg" 
-                                          alt="Vulkan API Logo" 
-                                          className="h-4 w-auto"
-                                          title="Vulkan Graphics API"
-                                        />
-                                        <img 
-                                          src="/api-logos/OpenGL.svg" 
-                                          alt="OpenGL API Logo" 
-                                          className="h-4 w-auto"
-                                          title="OpenGL Graphics API"
-                                        />
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold ${getcorrespondingColor(soc.result)}`}>
-                                            {soc.result}
-                                        </span>
-                                    </li>
-                                ))}
-                            </ul>
+                              {soCsToDisplay.map((soc, index) => (
+                                  <li 
+                                      key={index} 
+                                      className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-gray-700/50 shadow-md"
+                                  >
+                                      <div className="flex items-center space-x-4">
+                                          <span className="text-white font-medium">{soc.name}</span>
+                                          {soc.vulkan && (
+                                              <div className="flex items-center space-x-1">
+                                                  <img 
+                                                      src="/api-logos/Vulkan.svg" 
+                                                      alt={`Vulkan Status: ${soc.vulkan}`} 
+                                                      className="h-4 w-auto" 
+                                                      title={`Vulkan: ${soc.vulkan}`}
+                                                  />
+                                                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getcorrespondingColor(soc.vulkan)}`}>
+                                                      {soc.vulkan}
+                                                  </span>
+                                              </div>
+                                          )}
+                                          {soc.opengl && (
+                                              <div className="flex items-center space-x-1">
+                                                  <img 
+                                                      src="/api-logos/OpenGL.svg" 
+                                                      alt={`OpenGL Status: ${soc.opengl}`} 
+                                                      className="h-4 w-auto" 
+                                                      title={`OpenGL: ${soc.opengl}`}
+                                                  />
+                                                  {/* STATO OPENGL con colore */}
+                                                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getcorrespondingColor(soc.opengl)}`}>
+                                                      {soc.opengl}
+                                                  </span>
+                                              </div>
+                                          )}
+                                      </div>
+                                  </li>
+                              ))}
+                          </ul>
                             
                             {soCsToDisplay.length > 0 && (
                                 <p className="text-xs text-white/60 pt-4">
