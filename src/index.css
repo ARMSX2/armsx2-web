@@ -44,6 +44,20 @@ body,
   overflow-x: hidden;
 }
 
+html {
+  background: radial-gradient(
+      1200px 800px at 10% 20%,
+      rgba(141, 118, 204, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      900px 700px at 80% 60%,
+      rgba(62, 77, 132, 0.12),
+      transparent 60%
+    ),
+    linear-gradient(180deg, var(--bg-start), var(--bg-end));
+}
+
 body {
   margin: 0;
   background: radial-gradient(
@@ -60,6 +74,14 @@ body {
   color: white;
   font-family: "Overpass", ui-sans-serif, system-ui, -apple-system, Segoe UI,
     Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+}
+
+#root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 .title {
