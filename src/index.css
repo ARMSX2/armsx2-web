@@ -307,6 +307,14 @@ img {
     0 0 16px rgba(141, 118, 204, 0.2), inset 0 0 8px rgba(62, 77, 132, 0.15);
 }
 
+.glassish-modal {
+  background: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.1), 0 0 35px rgba(141, 118, 204, 0.5), 0 0 15px rgba(62, 77, 132, 0.3);
+}
+
 .glassish-input {
   background: rgba(30, 40, 60, 0.7); /* Meno trasparente per leggibilità */
   backdrop-filter: blur(4px); /* Blur minore */
@@ -317,4 +325,8 @@ img {
 .bloom-strong1 {
   filter: blur(70px);
   opacity: 0.25;
+}
+
+body.modal-open {
+    overflow: hidden !important;
 }

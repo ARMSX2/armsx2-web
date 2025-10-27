@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from "react-icons/fa6";
+import GameDetailModal from '../components/GameDetailModal';
 
 const CompatibilityList = ({
   isthetransitioninghappening,
@@ -14,6 +15,9 @@ const CompatibilityList = ({
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedSocs, setSelectedSocs] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const mainContentRef = useRef(null);
   const gamesPerPage = 10;
   const calculateStats = () => {
     const allGames = gamesData.games;
@@ -144,8 +148,22 @@ const CompatibilityList = ({
     navigate('/');
   };
 
+  const handleGameClick = (gameData) => {
+    setSelectedGame(gameData);
+    const scrollableElement = document.getElementById('root') || document.body;
+    scrollableElement.scrollTo({
+        top: 0,
+        behavior: 'auto'
+    });
+    document.documentElement.scrollTop = 0; 
+    setTimeout(() => {
+        setIsModalOpen(true);
+    }, 50); 
+  };
+
   return (
     <div
+      ref={mainContentRef}
       className={`min-h-screen px-8 py-12 transition-all duration-500 relative ${
         isthetransitioninghappening
           ? "opacity-0 transform translate-x-12"
@@ -376,6 +394,7 @@ const CompatibilityList = ({
                         currentGames.map((game, index) => (
                           <div
                             key={index}
+                            onClick={() => handleGameClick(game)}
                             className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
                           >
                             <div className="flex justify-between items-start gap-4">
@@ -393,12 +412,13 @@ const CompatibilityList = ({
                                 </p>
                                 <p className="text-gray-400 text-base mb-2">
                                   Title ID: {game["title-id"]}
-                                  {game.tested_socs &&
+                                  {/* {game.tested_socs &&
                                     game.tested_socs.length > 0 && (
                                       <>
                                         {" · "}
                                         <span
                                           onClick={() => {
+                                            e.stopPropagation();
                                             if (game.tested_socs.length > 1) {
                                               setSelectedSocs(
                                                 selectedSocs ===
@@ -442,7 +462,7 @@ const CompatibilityList = ({
                                             )}
                                         </span>
                                       </>
-                                    )}
+                                    )} */}
                                 </p>
                                 <p className="text-gray-400 text-base">
                                   {game.notes}
@@ -503,6 +523,11 @@ const CompatibilityList = ({
           )}
         </div>
       </div>
+      <GameDetailModal
+        isOpen={isModalOpen}
+        game={selectedGame}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };
