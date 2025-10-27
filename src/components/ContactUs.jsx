@@ -26,17 +26,6 @@ const ContactUs = forwardRef(({
     
     return (
       <>
-        <img
-          src="/icon.png"
-          alt="ARMSX2 Logo"
-          style={{
-            opacity: window.innerWidth <= 550 ? 0.64582 : 0.8,
-            transform: window.innerWidth <= 550 ? "scale(0.8)" : "scale(1)",
-            filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
-          }}
-          className={`fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200`}
-          onClick={handleLogoClick}
-        />
         <section 
             ref={ref} 
             id="contact" 
@@ -50,7 +39,17 @@ const ContactUs = forwardRef(({
                 className="absolute top-3/4 right-1/4 w-80 h-80 bg-accent rounded-full bloom-strong1 transform translate-x-1/2 -translate-y-1/2" 
                 style={{ backgroundColor: 'var(--accent)', zIndex: 0 }}
             />
-            
+            <img
+              src="/icon.png"
+              alt="ARMSX2 Logo"
+              style={{
+                opacity: window.innerWidth <= 550 ? 0.64582 : 0.8,
+                transform: window.innerWidth <= 550 ? "scale(0.8)" : "scale(1)",
+                filter: "drop-shadow(0 4px 10px rgba(193, 176, 255, 0.4))",
+              }}
+              className={`fixed max-[336px]:top-5 max-[336px]:left-5 top-8 left-8 w-12 h-12 z-50 cursor-pointer hover:opacity-80 transition-opacity duration-200`}
+              onClick={handleLogoClick}
+            />
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 w-full relative z-10">
                 <div className="text-center mb-16">
                     <h2 className="title text-4xl md:text-5xl font-semibold leading-tight text-white text-glow">
