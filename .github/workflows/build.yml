@@ -25,6 +25,16 @@ jobs:
       - name: Build project
         run: bun run build
 
+      - name: Inject AdSense script into built index.html
+        run: |
+          TARGET=dist/index.html
+          if [ -f "$TARGET" ]; then
+            perl -0777 -pe 's|</head>|<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9488650306417329" crossorigin="anonymous"></script>\n</head>|' -i "$TARGET"
+            echo "Injected AdSense script into $TARGET"
+          else
+            echo "$TARGET not found — skipping injection" && exit 1
+          fi
+
       - name: Deploy to server
         uses: appleboy/scp-action@v1.0.0
         with:
