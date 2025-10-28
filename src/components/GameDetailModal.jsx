@@ -38,7 +38,7 @@ const getFlagIcon = (region) => {
 
 const GameDetailModal = ({ isOpen, game, onClose }) => {
     if (!isOpen || !game) return null;
-    const { title, status, notes, tested_socs, region, name } = game;
+    const { title, status, notes, tested_socs, region, name, version } = game;
     // --- LOGIC FOR FETCHING DESCRIPTION OFFICIAL ---
     const [officialDescription, setOfficialDescription] = useState("Loading official game description...");
     useEffect(() => {
@@ -132,12 +132,16 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                                 </p>
                             </div>
                             <div className="space-y-2 pt-4"> 
-                                <h3 className="text-xl font-semibold text-white flex items-center">
+                                {/* <h3 className="text-xl font-semibold text-white flex items-center">
                                     <FaInfoCircle className={`w-5 h-5 mr-3 text-[#8b85fc]`} /> Official Description 
                                 </h3>
                                 <p className="text-white text-sm leading-relaxed">
                                     {officialDescription} 
-                                </p>
+                                </p> */}
+                                <h3 className="text-xl font-semibold text-white flex items-center">
+                                  <FaInfoCircle className={`w-5 h-5 mr-3 text-[#8b85fc]`} />
+                                  Tested Version : <spam className="text-xl font-semibold text-white flex items-center ml-2">{version}</spam>
+                                </h3>
                             </div>
                             
                             <div className="space-y-2 pt-4"> 
@@ -159,35 +163,36 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                                       key={index} 
                                       className="flex items-center justify-between p-3 bg-white/5 rounded-lg border border-gray-700/50 shadow-md"
                                   >
-                                      <div className="flex items-center space-x-4">
-                                          <span className="text-white font-medium">{soc.name}</span>
-                                          {soc.vulkan && (
-                                              <div className="flex items-center space-x-1">
-                                                  <img 
-                                                      src="/api-logos/Vulkan.svg" 
-                                                      alt={`Vulkan Status: ${soc.vulkan}`} 
-                                                      className="h-4 w-auto" 
-                                                      title={`Vulkan: ${soc.vulkan}`}
-                                                  />
-                                                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getcorrespondingColor(soc.vulkan)}`}>
-                                                      {soc.vulkan}
-                                                  </span>
-                                              </div>
-                                          )}
-                                          {soc.opengl && (
-                                              <div className="flex items-center space-x-1">
-                                                  <img 
-                                                      src="/api-logos/OpenGL.svg" 
-                                                      alt={`OpenGL Status: ${soc.opengl}`} 
-                                                      className="h-4 w-auto" 
-                                                      title={`OpenGL: ${soc.opengl}`}
-                                                  />
-                                                  {/* STATO OPENGL con colore */}
-                                                  <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getcorrespondingColor(soc.opengl)}`}>
-                                                      {soc.opengl}
-                                                  </span>
-                                              </div>
-                                          )}
+                                      <div className="flex items-start sm:items-center">
+                                          <span className="text-white font-medium mr-4">{soc.name}</span>
+                                          <div className="flex flex-col space-y-1 sm:flex-row sm:space-x-4 sm:space-y-0">
+                                            {soc.vulkan && (
+                                                <div className="flex items-center space-x-1">
+                                                    <img 
+                                                        src="/api-logos/Vulkan.svg" 
+                                                        alt={`Vulkan Status: ${soc.vulkan}`} 
+                                                        className="h-4 w-auto" 
+                                                        title={`Vulkan: ${soc.vulkan}`}
+                                                    />
+                                                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getcorrespondingColor(soc.vulkan)}`}>
+                                                        {soc.vulkan}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {soc.opengl && (
+                                                <div className="flex items-center space-x-1">
+                                                    <img 
+                                                        src="/api-logos/OpenGL.svg" 
+                                                        alt={`OpenGL Status: ${soc.opengl}`} 
+                                                        className="h-4 w-auto" 
+                                                        title={`OpenGL: ${soc.opengl}`}
+                                                    />
+                                                    <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${getcorrespondingColor(soc.opengl)}`}>
+                                                        {soc.opengl}
+                                                    </span>
+                                                </div>
+                                            )}
+                                          </div>
                                       </div>
                                   </li>
                               ))}
