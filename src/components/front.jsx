@@ -25,6 +25,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const [downloadURL, setApkUrl] = useState(null);
   const [playURL, setPlayURL] = useState(null);
   const [version, setVersion] = useState(null) || "0";
+  const [backAPK, setBackup] = useState(null) || "0";
   const handleTransitionAndNavigate = (routePath) => {
     onNavigate(routePath);
     setTimeout(() => {
@@ -34,13 +35,15 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
 
   useEffect(() => {
     const EXT = ".apk"; // if we use pcsx2 github as debug use 'appimage' (no caps)
-
+    setBackup("ARMSX2_12_202510271921-release.apk"); // /public/
     const PLAY_URL =
       "https://play.google.com/store/apps/details?id=come.nanodata.armsx2";
 
+    setPlayURL(PLAY_URL);
+
     const CACHE_KEY = "releaseData";
     const CACHE_TIME_KEY = "releaseDataTimestamp";
-    const CACHE_DURATION = 1000 * 60 * 10;
+    const CACHE_DURATION = 1000 * 60 * 2;
 
     setVersion("0.0.0");
     setApkUrl("LOCK");
@@ -58,7 +61,6 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
       setVersion(data.tag_name?.replace("v", "") || "unreleased");
       const apk = data.assets?.find((a) => a.name?.toLowerCase().endsWith(EXT));
       setApkUrl(apk ? apk.browser_download_url : "LOCK");
-      setPlayURL(PLAY_URL);
     };
 
     const fetchLatest = async () => {
@@ -66,7 +68,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         const res = await fetch(
           "https://api.github.com/repos/ARMSX2/ARMSX2/releases/latest"
         );
-        if (!res.ok) throw new Error("fetch failed");
+        if (!res.ok || res == undefined) throw new Error("fetch failed");
         const data = await res.json();
 
         localStorage.setItem(CACHE_KEY, JSON.stringify(data));
@@ -286,10 +288,24 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               </span>
             </div>
             <p className="mt-4 text-base md:text-lg text-white/80">
-              ARMSX2 is a new open source emulator for the PS2, it is based on
-              the PCSX2 emulator and aims to be the next step in PS2 emulation
-              on Android, as well as cross platform support for iOS and other
-              ARM Platforms.
+              {version != "unreleased" ? (
+                "ARMSX2 is a new open source emulator for the PS2, it is based on the PCSX2 emulator and aims to be the next step in PS2 emulation on Android, as well as cross platform support for iOS and other ARM Platforms."
+              ) : (
+                <>
+                  ARMSX2 was an open sourced emulator for the PS2, it was based
+                  on the PCSX2 emulator. However, there are no released APK
+                  files to be found; OR you're rate limited by GitHub. Press{" "}
+                  <a
+                    href={backAPK}
+                    className="text-blue-400 underline hover:text-blue-300"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    here
+                  </a>{" "}
+                  to download {backAPK.replace("-release.apk", "")} directly.
+                </>
+              )}
             </p>
             <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3">
               <div className="flex flex-row gap-3">
@@ -341,20 +357,12 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                   </div>
                 </a>
                 <a
-                  href={downloadURL === "LOCK" ? "#" : playURL}
-                  onClick={(e) => {
-                    if (downloadURL === "LOCK") {
-                      e.preventDefault();
-                      e.stopPropagation();
-                    }
-                  }}
-                  className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${
-                    downloadURL === "LOCK" ? "disabledAPK" : ""
-                  }`}
+                  href={playURL}
+                  className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center`}
                   style={{
                     transition: "all 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
                     animation: "subtleSway 12s ease-in-out infinite",
-                    cursor: downloadURL === "LOCK" ? "not-allowed" : "pointer",
+                    cursor: "pointer",
                   }}
                 >
                   <FontAwesomeIcon
