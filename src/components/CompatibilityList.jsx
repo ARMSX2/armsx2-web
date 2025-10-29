@@ -1,26 +1,36 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from "react-icons/fa6";
 import GameDetailModal from '../components/GameDetailModal';
+import { useGameData } from '../hooks/useGameData'; 
+import { useFilteredGames } from '../hooks/useFilteredGames'; 
 
 const CompatibilityList = ({
   isthetransitioninghappening,
   isEntering,
 }) => {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [gamesData, setGamesData] = useState({ games: [] });
-  const [error, setError] = useState(null);
-  const [statusFilter, setFilterTo] = useState("all");
+  const mainContentRef = useRef(null);
+  const { 
+    searchTerm, 
+    setSearchTerm, 
+    statusFilter, 
+    setFilterTo, 
+    filteredGames, 
+    paginatedGames,
+    currentPage, 
+    totalPages, 
+    paginate,
+    nextPage,
+    prevPage,
+  } = useFilteredGames(games);
+
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [selectedSocs, setSelectedSocs] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
-  const mainContentRef = useRef(null);
-  const gamesPerPage = 10;
-  const calculateStats = () => {
-    const allGames = gamesData.games;
+  const stats = useMemo(() => {
+    const allGames = games || []; 
     const totalGames = allGames.length;
     const initialCounts = {
       perfect: 0,
@@ -29,11 +39,13 @@ const CompatibilityList = ({
       menu: 0,
       "not-tested": 0,
     };
+    
     if (totalGames === 0) {
-      return initialCounts;
+      return { total: 0, ...initialCounts };
     }
+    
     const counts = allGames.reduce((acc, game) => {
-      const status = game.status.toLowerCase();
+      const status = game.status ? game.status.toLowerCase() : "not-tested";
       if (status === "perfect") acc.perfect += 1;
       else if (status === "playable") acc.playable += 1;
       else if (status === "in-game") acc["in-game"] += 1;
@@ -56,31 +68,8 @@ const CompatibilityList = ({
       menu: formatStat(counts.menu),
       nottested: formatStat(counts["not-tested"]),
     };
-  };
-  useEffect(() => {
-    const url =
-      "https://raw.githubusercontent.com/ARMSX2/ARMSX2-compat/refs/heads/main/compatibility.json";
-    fetch(url)
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Failed to fetch compatibility list");
-        }
-        return res.text();
-      })
-      .then((text) => {
-        const cleaned = text.replace(/,\s*([}\]])/g, "$1");
-        const parsed = JSON.parse(cleaned);
-        if (!parsed.games || !Array.isArray(parsed.games)) {
-          throw new Error("Invalid compatibility data format");
-        }
-        setGamesData(parsed);
-        setError(null);
-      })
-      .catch((err) => {
-        console.error("Error fetching compatibility list:", err);
-        setError(err.message);
-      });
-  }, []);
+  }, [games]);
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isFilterOpen && !event.target.closest(".filter-dropdown")) {
@@ -95,13 +84,9 @@ const CompatibilityList = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen, selectedSocs]);
+  
   const getFilterColors = (status, isBackground = false) => {
     const colors = {
-      /*  perfect: "green",
-      playable: "yellow",
-      "in-game": "orange",
-      menu: "blue",
-      "not-tested": "red",*/
       all: null,
     };
     const color = colors[status.toLowerCase()];
@@ -160,6 +145,23 @@ const CompatibilityList = ({
         setIsModalOpen(true);
     }, 50); 
   };
+
+  if (isLoading) {
+    return (
+        <div className={`min-h-screen flex items-center justify-center p-8 transition-opacity duration-300 ${isEntering ? 'opacity-100' : 'opacity-0'}`}>
+            <p className="text-white text-xl">Loading compatibility list...</p>
+        </div>
+    );
+  }
+
+  if (error) {
+    return (
+        <div className={`min-h-screen flex flex-col items-center justify-center p-8 transition-opacity duration-300 ${isEntering ? 'opacity-100' : 'opacity-0'}`}>
+            <h2 className="text-red-500 text-2xl mb-4">Data Loading Error</h2>
+            <p className="text-gray-300 text-center">{error}</p>
+        </div>
+    );
+  }
 
   return (
     <div
@@ -273,15 +275,14 @@ const CompatibilityList = ({
             </div>
           </div>
         </div>
-        {gamesData.games.length > 0 && (
+        {stats.total > 0 && ( 
           <div className="mb-8 p-6 bg-[#1a1a1f] rounded-lg shadow-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-3">
-              Total Games Tested: {calculateStats().total}
+              Total Games Tested: {stats.total}
             </h3>
             <div className="flex flex-wrap gap-4 justify-between">
-              {Object.entries(calculateStats()).map(([key, stat]) => {
-                if (key === "total" || stat.count === 0) return null;
-                if (stat.count === 0) return null;
+              {Object.entries(stats).map(([key, stat]) => {
+                if (key === "total" || stat.count === 0) return null; 
                 let label = "";
                 let colorClass = "";
                 switch (key) {
@@ -331,14 +332,7 @@ const CompatibilityList = ({
           </div>
         )}
         <div>
-          {error ? (
-            <div className="col-span-2 text-center py-12">
-              <div className="text-xl text-red-400 mb-4">
-                Failed to load compatibility list
-              </div>
-              <div className="text-gray-400">{error}</div>
-            </div>
-          ) : gamesData.games.length === 0 ? (
+          {games.length === 0 && !isLoading && !error ? (
             <div className="col-span-2 text-center py-12">
               <div className="text-xl text-gray-400">
                 No games found in the compatibility list
@@ -346,179 +340,88 @@ const CompatibilityList = ({
             </div>
           ) : (
             <div>
-              {(() => {
-                const filteredGames = gamesData.games
-                  .sort((a, b) => a.title.localeCompare(b.title))
-                  .filter((game) => {
-                    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-                    const gameTitle = game.title
-                      ? game.title.toLowerCase()
-                      : "";
-                    const gameRegion = game.region
-                      ? game.region.toLowerCase()
-                      : "";
-                    const gameTitleId = game["title-id"]
-                      ? game["title-id"].toLowerCase()
-                      : "";
-                    const matchesSearch =
-                      gameTitle.includes(lowerCaseSearchTerm) ||
-                      gameRegion.includes(lowerCaseSearchTerm) ||
-                      gameTitleId.includes(lowerCaseSearchTerm);
-                    const matchesStatus =
-                      statusFilter === "all" ||
-                      game.status.toLowerCase() === statusFilter.toLowerCase();
-                    return matchesSearch && matchesStatus;
-                  });
-                const totalPages = Math.ceil(
-                  filteredGames.length / gamesPerPage
-                );
-                const indexOfLastGame = currentPage * gamesPerPage;
-                const indexOfFirstGame = indexOfLastGame - gamesPerPage;
-                const currentGames = filteredGames.slice(
-                  indexOfFirstGame,
-                  indexOfLastGame
-                );
-                if (currentPage > totalPages && totalPages > 0) {
-                  setCurrentPage(1);
-                }
-                return (
-                  <>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                      {currentGames.length === 0 ? (
-                        <div className="col-span-2 text-center py-12">
-                          <div className="text-xl text-gray-400">
-                            No games found on this page
-                          </div>
-                        </div>
-                      ) : (
-                        currentGames.map((game, index) => (
-                          <div
-                            key={index}
-                            onClick={() => handleGameClick(game)}
-                            className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
-                          >
-                            <div className="flex justify-between items-start gap-4">
-                              <div className="flex-1">
-                                <h2 className="text-2xl text-white font-bold mb-3">
-                                  {game.title}
-                                </h2>
-                                <p className="text-gray-400 text-base mb-2 flex items-center gap-2">
-                                  <span>Region: {game.region}</span>
-                                  <img
-                                    src={getFlagIcon(game.region)}
-                                    alt={`${game.region} flag`}
-                                    className="w-5 h-5 shadow-md forceSlightRound -mt-0.5"
-                                  />
-                                </p>
-                                <p className="text-gray-400 text-base mb-2">
-                                  Title ID: {game["title-id"]}
-                                  {/* {game.tested_socs &&
-                                    game.tested_socs.length > 0 && (
-                                      <>
-                                        {" · "}
-                                        <span
-                                          onClick={() => {
-                                            e.stopPropagation();
-                                            if (game.tested_socs.length > 1) {
-                                              setSelectedSocs(
-                                                selectedSocs ===
-                                                  game.tested_socs
-                                                  ? null
-                                                  : game.tested_socs
-                                              );
-                                            }
-                                          }}
-                                          className={`${
-                                            game.tested_socs.length > 1
-                                              ? "cursor-pointer underline decoration-dotted relative"
-                                              : ""
-                                          }`}
-                                        >
-                                          {game.tested_socs[0]
-                                            ?.charAt(0)
-                                            .toUpperCase() +
-                                            game.tested_socs[0]?.slice(1)}
-                                          {selectedSocs === game.tested_socs &&
-                                            game.tested_socs.length > 1 && (
-                                              <div className="absolute z-50 left-0 top-full mt-2 p-3 bg-[#2a2a2f] rounded-lg shadow-xl border border-gray-700">
-                                                <div className="text-sm whitespace-nowrap">
-                                                  <strong className="text-gray-300">
-                                                    Tested on:
-                                                  </strong>
-                                                  <br />
-                                                  {game.tested_socs.map(
-                                                    (soc, index) => (
-                                                      <span key={soc}>
-                                                        {soc}
-                                                        {index <
-                                                          game.tested_socs
-                                                            .length -
-                                                            1 && <br />}
-                                                      </span>
-                                                    )
-                                                  )}
-                                                </div>
-                                              </div>
-                                            )}
-                                        </span>
-                                      </>
-                                    )} */}
-                                </p>
-                                <p className="text-gray-400 text-base">
-                                  {game.notes}
-                                </p>
-                              </div>
-                              <div>
-                                <span
-                                  className={`${getcorrespondingColor(
-                                    game.status
-                                  )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
-                                >
-                                  {game.status.replace(
-                                    /(^|-)(\w)/g,
-                                    (_, sep, char) => sep + char.toUpperCase()
-                                  )}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        ))
-                      )}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {paginatedGames.length === 0 ? (
+                  <div className="col-span-2 text-center py-12">
+                    <div className="text-xl text-gray-400">
+                      No games found matching the current filters.
                     </div>
-                    {totalPages > 1 && (
-                      <div className="flex justify-center mt-10 col-span-full">
-                        <button
-                          onClick={() => setCurrentPage(currentPage - 1)}
-                          disabled={currentPage === 1}
-                          className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
-                        >
-                          Previous
-                        </button>
-                        {[...Array(totalPages)].map((_, index) => (
-                          <button
-                            key={index}
-                            onClick={() => setCurrentPage(index + 1)}
-                            className={`px-4 py-2 mx-1 rounded-lg transition-colors ${
-                              currentPage === index + 1
-                                ? "bg-blue-600 text-white"
-                                : "bg-[#2a2a2f] text-gray-300 hover:bg-[#323237]"
-                            }`}
+                  </div>
+                ) : (
+                  paginatedGames.map((game, index) => (
+                    <div
+                      key={index}
+                      onClick={() => handleGameClick(game)}
+                      className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
+                    >
+                      <div className="flex justify-between items-start gap-4">
+                        <div className="flex-1">
+                          <h2 className="text-2xl text-white font-bold mb-3">
+                            {game.title}
+                          </h2>
+                          <p className="text-gray-400 text-base mb-2 flex items-center gap-2">
+                            <span>Region: {game.region}</span>
+                            <img
+                              src={getFlagIcon(game.region)}
+                              alt={`${game.region} flag`}
+                              className="w-5 h-5 shadow-md forceSlightRound -mt-0.5"
+                            />
+                          </p>
+                          <p className="text-gray-400 text-base mb-2">
+                            Title ID: {game["title-id"]}
+                          </p>
+                          <p className="text-gray-400 text-base">
+                            {game.notes}
+                          </p>
+                        </div>
+                        <div>
+                          <span
+                            className={`${getcorrespondingColor(
+                              game.status
+                            )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
                           >
-                            {index + 1}
-                          </button>
-                        ))}
-                        <button
-                          onClick={() => setCurrentPage(currentPage + 1)}
-                          disabled={currentPage === totalPages}
-                          className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
-                        >
-                          Next
-                        </button>
+                            {game.status.replace(
+                              /(^|-)(\w)/g,
+                              (_, sep, char) => sep + char.toUpperCase()
+                            )}
+                          </span>
+                        </div>
                       </div>
-                    )}
-                  </>
-                );
-              })()}
+                    </div>
+                  ))
+                )}
+              </div>
+              {totalPages > 1 && (
+                <div className="flex justify-center mt-10 col-span-full">
+                  <button
+                    onClick={prevPage} 
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
+                  >
+                    Previous
+                  </button>
+                  {[...Array(totalPages)].map((_, index) => (
+                    <button
+                      key={index}
+                      onClick={() => paginate(index + 1)} 
+                      className={`px-4 py-2 mx-1 rounded-lg transition-colors ${
+                        currentPage === index + 1
+                          ? "bg-blue-600 text-white"
+                          : "bg-[#2a2a2f] text-gray-300 hover:bg-[#323237]"
+                      }`}
+                    >
+                      {index + 1}
+                    </button>
+                  ))}
+                  <button
+                    onClick={nextPage} 
+                    disabled={currentPage === totalPages}
+                    className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
             </div>
           )}
         </div>

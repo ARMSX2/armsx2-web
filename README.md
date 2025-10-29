@@ -53,7 +53,7 @@ npm run build
 | Direct Download                                    | ✅ **Complete**    | Important |
 | Change favicon                                     | ✅ **Complete**    | Important |
 | Better Compatibility page                          | ✅ **Complete**    | Medium    |
-| Split front.jsx in to multiple files               | 🔄 **Almost done** | Lowest    |
+| Split front.jsx in to multiple files               | 🔄 **Complete**    | Lowest    |
 | Fix image scaling in Latest Updates (blog) section | 🔄 **Planned**     | Important |
 | Create version swapper when on version pressed     | 🔄 **Planned**     | High      |
 | Less static page (More interactions)               | 🔄 **Planned**     | Low       |
@@ -80,6 +80,13 @@ npm run build
 <img src="https://github.com/tanosshi.png" width="100px" style="border-radius: 50%"><br>
 <strong>tanos</strong><br>
 <sub>🎯 Lead Web Developer</sub><br>
+<em>Frontend & Backend Developer</em>
+</td>
+
+<td align="center" width="200px">
+<img src="https://github.com/medievalshell.png" width="100px" style="border-radius: 50%"><br>
+<strong>tanos</strong><br>
+<sub>🎯 Web Developer</sub><br>
 <em>Frontend & Backend Developer</em>
 </td>
 
