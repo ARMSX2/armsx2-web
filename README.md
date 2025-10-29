@@ -85,7 +85,7 @@ npm run build
 
 <td align="center" width="200px">
 <img src="https://github.com/medievalshell.png" width="100px" style="border-radius: 50%"><br>
-<strong>tanos</strong><br>
+<strong>Medievalshell</strong><br>
 <sub>🎯 Web Developer</sub><br>
 <em>Frontend & Backend Developer</em>
 </td>
