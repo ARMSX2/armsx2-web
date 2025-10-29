@@ -10,6 +10,7 @@ const CompatibilityList = ({
   isEntering,
 }) => {
   const navigate = useNavigate();
+  const { games, isLoading, error } = useGameData();
   const mainContentRef = useRef(null);
   const { 
     searchTerm, 
