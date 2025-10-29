@@ -1,0 +1,52 @@
+{
+  "projectLeads": [
+    {
+      "name": "momo-AUX1 aka MoonPower",
+      "role": "Project Lead",
+      "github": "https://github.com/momo-AUX1",
+      "image": "https://avatars.githubusercontent.com/u/102610940?v=4"
+    },
+    {
+      "name": "jpolo1224",
+      "role": "Project Lead",
+      "github": "https://github.com/jpolo1224",
+      "image": "https://avatars.githubusercontent.com/u/144529148?v=4"
+    }
+  ],
+  "coFounder": [
+    {
+      "name": "SternXD",
+      "role": "Co-Founder",
+      "github": "https://github.com/SternXD",
+      "image": "https://avatars.githubusercontent.com/u/70122891?v=4"
+    }
+  ],
+  "devTeam": [
+    {
+      "name": "tanosshi aka tanos",
+      "role": "WebSite Creator",
+      "github": "https://github.com/tanosshi",
+      "image": "https://avatars.githubusercontent.com/u/68923270?v=4"
+    },
+    {
+      "name": "Medievalshell",
+      "role": "Web Developer",
+      "github": "https://github.com/medievalshell",
+      "image": "https://avatars.githubusercontent.com/u/150498573?v=4"
+    },
+    {
+      "name": "Judd West aka ThisIsSet-L",
+      "role": "Backend Developer",
+      "github": "https://github.com/ThisIsSet-L",
+      "image": "https://avatars.githubusercontent.com/u/31947915?v=4"
+    }
+  ],
+  "graphicDesign": [
+    {
+      "name": "fffathur",
+      "role": "Branding Designer",
+      "github": "https://github.com/fffathur",
+      "image": "https://avatars.githubusercontent.com/u/132241318?v=4"
+    }
+  ]
+}
