@@ -330,3 +330,8 @@ img {
 body.modal-open {
     overflow: hidden !important;
 }
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+  width: 100% !important;
+}

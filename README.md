@@ -53,9 +53,9 @@ npm run build
 | Direct Download                                    | ✅ **Complete**    | Important |
 | Change favicon                                     | ✅ **Complete**    | Important |
 | Better Compatibility page                          | ✅ **Complete**    | Medium    |
-| Split front.jsx in to multiple files               | 🔄 **Complete**    | Lowest    |
+| Split front.jsx in to multiple files               | ✅ **Complete**    | Lowest    |
+| Create version swapper when on version pressed     | ✅ **Complete**    | High      |
 | Fix image scaling in Latest Updates (blog) section | 🔄 **Planned**     | Important |
-| Create version swapper when on version pressed     | 🔄 **Planned**     | High      |
 | Less static page (More interactions)               | 🔄 **Planned**     | Low       |
 | Comment code in English                            | 🔄 **Planned**     | Lowest    |
 
