@@ -19,10 +19,12 @@ import { useDownloadData } from "../hooks/useDownloadData";
 import AboutAndFAQ from "./AboutAndFAQ"
 import DesktopFooter from "./DesktopFooter";
 import MainHeroSection from "./MainHeroSection";
+import VersionSwapperModal from "./VersionSwapperModal";
 
 const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const navigate = useNavigate();
-  const { downloadURL, playURL, version, isLoading } = useDownloadData();
+  const [isVersionSwapperOpen, setIsVersionSwapperOpen] = useState(false);
+  const { downloadURL, playURL, version, isLoading, allReleases } = useDownloadData();
   const isDownloadLocked = downloadURL === null || isLoading;
   const handleTransitionAndNavigate = (routePath) => {
     onNavigate(routePath);
@@ -43,6 +45,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
     x: 0,
     y: 0,
   });
+
 
   useEffect(() => {
     const observerCallback = (entries) => {
@@ -66,7 +69,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
 
   return (
     <>
-      <LogoAndNavigation activeSection={activeSection} innerWidth={window.innerWidth}/>
+      <LogoAndNavigation activeSection={activeSection} innerWidth={window.innerWidth} isModalOpen={isVersionSwapperOpen}/>
       <div
         className={`relative overflow-x-hidden transition-all duration-500 ease-out main-scroll-container ${
           isthetransitioninghappening
@@ -81,6 +84,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         <MainHeroSection 
           handleTransitionAndNavigate={handleTransitionAndNavigate}
           isEntering={isEntering}
+          setIsVersionSwapperOpen={setIsVersionSwapperOpen}
         /> 
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
         <div className="relative w-full space-y-6 snap-start">
@@ -94,6 +98,13 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         </div>
       </div>
       <DesktopFooter/>
+      {isVersionSwapperOpen && allReleases && (
+        <VersionSwapperModal
+          releases={allReleases}
+          isOpen={isVersionSwapperOpen}
+          onClose={() => setIsVersionSwapperOpen(false)}
+        />
+      )}
     </>
   );
 };
