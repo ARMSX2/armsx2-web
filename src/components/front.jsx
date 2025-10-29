@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 import images from "../data/images.json";
 import blog from "../data/blog.json";
@@ -21,7 +21,7 @@ import {
 } from "react-icons/fa6";
 
 const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [downloadURL, setApkUrl] = useState(null);
   const [playURL, setPlayURL] = useState(null);
   const [version, setVersion] = useState(null) || "0";
@@ -30,7 +30,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
     setTimeout(() => {
       navigate(routePath);
     }, 500);
-  }; 
+  };
 
   useEffect(() => {
     const EXT = ".apk"; // if we use pcsx2 github as debug use 'appimage' (no caps)
@@ -214,16 +214,21 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                 ? 0
                 : activeSection === "updates"
                 ? 0.2
+                : activeSection === "about" &&
+                  window.innerWidth > 770 &&
+                  window.innerWidth < 1130
+                ? 0
                 : 1,
+
             transition: "1s cubic-bezier(.17,.67,.86,.43)",
           }}
         />
       </a>
 
-      <nav className="fixed opacity-70 right-8 top-1/2 transform -translate-y-1/2 z-50 hidden md:block">
-        <ul className="space-y-4">
+      <nav className="fixed z-50 hidden md:block top-6 left-0 w-full md:px-4 lg:w-auto lg:right-8 lg:top-1/2 lg:left-auto lg:transform lg:-translate-y-1/2 opacity-70">
+        <ul className="flex justify-center space-x-4 lg:flex-col lg:space-x-0 lg:space-y-4">
           {["main", "updates", "about"].map((section) => (
-            <li key={section}>
+            <li key={section} className="inline-flex">
               <a
                 href={`#${section}`}
                 className={`w-3 h-3 block rounded-full transition-all duration-300 ${
@@ -355,7 +360,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                   <FontAwesomeIcon
                     icon={faGooglePlay}
                     style={{
-                      fontSize: "20px",
+                      fontSize: "17px",
                       color: "#f2eaeaff",
                     }}
                   />
@@ -539,6 +544,15 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                       </p>
                     </details>
                   ))}
+                  <div className="text-center py-1 text-white/70 text-sm bg-transparent">
+                    <button
+                      onClick={() => handleTransitionAndNavigate("/privacy")}
+                      className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
+                      aria-label="Privacy Policy"
+                    >
+                      Press here to view our Privacy Policy
+                    </button>
+                  </div>
                   {window.innerWidth < 767 && (
                     <div className="text-center py-4 text-white/70 text-sm bg-transparent">
                       <a
@@ -548,7 +562,7 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
                         className="hover:text-white/90 transition-colors"
                       >
                         ©{new Date().getFullYear()} ARMSX2 All rights reserved,
-                        site by tanos ‎
+                        site by tanos
                       </a>
                       <span className="mx-2">•</span>
                       <button
@@ -593,26 +607,26 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
               "0 5px 10px rgba(255, 255, 255, 0.39)";
           }}
         >
-            <span>
-                ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by 
-            </span>
-            <span> </span>
-            <a
-                href="https://github.com/tanosshi"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hover:text-white/90 transition-colors"
-            >
-                tanos
-            </a>
-            <span className="mx-2">•</span>
-            <button
-                onClick={() => handleTransitionAndNavigate("/contact")}
-                className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
-                aria-label="Contact Us"
-            >
-                Contact Us
-            </button>
+          <span>
+            ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by
+          </span>
+          <span> </span>
+          <a
+            href="https://github.com/tanosshi"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-white/90 transition-colors"
+          >
+            tanos
+          </a>
+          <span className="mx-2">•</span>
+          <button
+            onClick={() => handleTransitionAndNavigate("/contact")}
+            className="hover:text-white/90 transition-colors cursor-pointer focus:outline-none"
+            aria-label="Contact Us"
+          >
+            Contact Us
+          </button>
         </div>
       )}
     </>
