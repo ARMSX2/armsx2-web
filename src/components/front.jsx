@@ -1,31 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import images from "../data/images.json";
 import CreditsSection from "./Credits";
 import Updates from "./Updates";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGooglePlay } from "@fortawesome/free-brands-svg-icons";
-import {
-  FaDownload,
-  FaDiscord,
-  FaFile,
-  FaRocket,
-  FaChevronRight,
-  FaTriangleExclamation,
-  FaLock,
-} from "react-icons/fa6";
 import LogoAndNavigation from "./LogoAndNavigation";
 import { useDownloadData } from "../hooks/useDownloadData";
 import AboutAndFAQ from "./AboutAndFAQ"
 import DesktopFooter from "./DesktopFooter";
 import MainHeroSection from "./MainHeroSection";
 import VersionSwapperModal from "./VersionSwapperModal";
+import MobileFooter from "./MobileFooter";
 
 const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const navigate = useNavigate();
   const [isVersionSwapperOpen, setIsVersionSwapperOpen] = useState(false);
-  const { downloadURL, playURL, version, isLoading, allReleases } = useDownloadData();
-  const isDownloadLocked = downloadURL === null || isLoading;
+  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases } = useDownloadData();
+  const isDownloadLocked = latestDownloadURL === null || isLoading;
   const handleTransitionAndNavigate = (routePath) => {
     onNavigate(routePath);
     setTimeout(() => {
@@ -34,18 +23,6 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   };
 
   const [activeSection, setActiveSection] = useState("main");
-  const [expandedUpdate, setExpandedUpdate] = useState(null);
-
-
-  const [primaryButtonPosition, setPrimaryButtonPosition] = React.useState({
-    x: 0,
-    y: 0,
-  });
-  const [secondaryButtonPosition, setSecondaryButtonPosition] = React.useState({
-    x: 0,
-    y: 0,
-  });
-
 
   useEffect(() => {
     const observerCallback = (entries) => {
@@ -97,7 +74,8 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
           <CreditsSection handleTransitionAndNavigate={handleTransitionAndNavigate} />
         </div>
       </div>
-      <DesktopFooter/>
+      <DesktopFooter handleTransitionAndNavigate={handleTransitionAndNavigate}/>
+      <MobileFooter handleTransitionAndNavigate={handleTransitionAndNavigate}/>
       {isVersionSwapperOpen && allReleases && (
         <VersionSwapperModal
           releases={allReleases}

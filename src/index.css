@@ -335,3 +335,8 @@ body.modal-open {
   backdrop-filter: blur(4px);
   width: 100% !important;
 }
+
+.margin-main {
+  margin-left: 18rem;
+  margin-right: 7rem;
+}

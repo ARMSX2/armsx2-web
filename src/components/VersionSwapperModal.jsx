@@ -3,7 +3,7 @@ import { FaTimes, FaDownload, FaTags, FaCalendar } from 'react-icons/fa';
 
 const formatDate = (dateString) => {
   if (!dateString) return 'N/A';
-  return new Date(dateString).toLocaleDateString('it-IT', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
