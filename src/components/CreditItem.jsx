@@ -7,7 +7,7 @@ const CreditItem = ({ member }) => {
 
   return (
     <div 
-      className="flex items-center gap-4 p-3 rounded-xl transition-all duration-300 cursor-pointer hover:bg-white/5 hover:scale-[1.02] shadow-sm hover:shadow-lg"
+      className="flex items-center gap-4 p-3 rounded-xl transition-all duration-300 cursor-pointer hover:bg-white/5 hover:scale-[1.02] shadow-sm hover:shadow-lg max-w-sm mx-auto"
       onClick={handleClick}
       role="link"
       tabIndex={0}
@@ -18,7 +18,7 @@ const CreditItem = ({ member }) => {
         alt={`${member.name} avatar`}
         className="w-12 h-12 rounded-full object-cover border-2 border-[#8d76cc]"
       />
-      <div>
+      <div className="text-left">
         <p className="text-base font-medium text-white/95">
           {member.name}
         </p>

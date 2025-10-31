@@ -18,7 +18,7 @@ const CreditsSection = () => {
               <h3 className="text-2xl font-bold text-[#8d76cc] mb-4">
                 👑 Project Leads
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-3 items-center">
                 {projectMembers.projectLeads.map((member) => (
                   <CreditItem key={member.name} member={member} />
                 ))}
@@ -28,7 +28,7 @@ const CreditsSection = () => {
               <h3 className="text-2xl font-bold text-[#8d76cc]/70 mb-4">
                 ✨ Co-Founder
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-3 items-center">
                 {projectMembers.coFounder.map((member) => (
                   <CreditItem key={member.name} member={member} />
                 ))}
@@ -41,7 +41,7 @@ const CreditsSection = () => {
                 <h3 className="text-xl font-semibold text-white/90 mb-4">
                   💻 Development Team
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-3 items-center">
                   {projectMembers.devTeam.map((member) => (
                     <CreditItem key={member.name} member={member} />
                   ))}
@@ -51,7 +51,7 @@ const CreditsSection = () => {
                 <h3 className="text-xl font-semibold text-white/90 mb-4">
                   🎨 Graphic Design
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-3 items-center">
                   {projectMembers.graphicDesign.map((member) => (
                     <CreditItem key={member.name} member={member} />
                   ))}
