@@ -14,11 +14,24 @@ export const useFilteredGames = (games) => {
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredGames = useMemo(() => {
-    const allGames = games || [];
+    const currentGames = games || [];
+
+    const sortedGames = [...currentGames].sort((a, b) => {
+      const titleA = a.title ? a.title.toUpperCase() : '';
+      const titleB = b.title ? b.title.toUpperCase() : '';
+      
+      if (titleA < titleB) {
+        return -1;
+      }
+      if (titleA > titleB) {
+        return 1;
+      }
+      return 0;
+    });
 
     const statusFiltered = statusFilter === "all"
-      ? allGames
-      : allGames.filter(game => game.status.toLowerCase() === statusFilter);
+      ? sortedGames
+      : sortedGames.filter(game => game.status.toLowerCase() === statusFilter);
     if (!searchTerm.trim()) {
       return statusFiltered;
     }

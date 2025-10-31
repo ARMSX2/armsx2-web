@@ -40,7 +40,7 @@ const Carousel = () => {
 
   return (
     <div
-      className={`relative w-full mt-6 md:mt-0 md:absolute md:right-4 md:top-1/2 md:-translate-y-1/2 md:w-[26rem] z-30 carousel-container ${{
+      className={`relative w-full mt-6 md:mt-0 md:absolute md:-right-4 md:top-1/2 md:-translate-y-1/2 md:w-[36rem] z-30 carousel-container ${{
         window:
           window.innerWidth < 500
             ? "absolute left-0 right-0 w-screen"
@@ -51,12 +51,12 @@ const Carousel = () => {
         className={`relative mx-auto overflow-hidden carousel w-full ${
           window.innerWidth < 500
             ? "h-48 rounded-none"
-            : "h-80 md:h-80 rounded-2xl"
+            : "h-[20rem] md:h-[20rem] rounded-2xl"
         }`}
         style={{
           transformStyle: "preserve-3d",
           transformOrigin: "center left",
-          height: window.innerWidth < 500 ? undefined : "20.5rem",
+          height: window.innerWidth < 500 ? undefined : "19rem",
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -84,8 +84,8 @@ const Carousel = () => {
               alt={title}
               className={`ring-glow transition-all duration-500 ease-out ${
                 window.innerWidth < 500
-                  ? "absolute inset-0 m-auto h-full w-full object-cover"
-                  : "absolute inset-0 m-auto h-full w-full object-cover"
+                  ? "absolute inset-0 m-auto h-full w-full object-contain"
+                  : "absolute inset-0 m-auto h-full w-full object-contain"
               } ${style}`}
             />
           );

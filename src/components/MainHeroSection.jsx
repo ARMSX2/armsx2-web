@@ -59,13 +59,13 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
 
   return (
     <div
-      className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center px-6 py-10 md:py-16 w-full mobile-container overflow-x-hidden transition-all duration-700 delay-100 snap-start ${isEntering
+      className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center py-10 md:py-16 w-full mobile-container transition-all duration-700 delay-100 snap-start ${isEntering
           ? "opacity-100 transform translate-y-0"
           : "opacity-0 transform translate-y-4"
         }`}
       id="main"
     >
-      <div className="w-full max-w-2xl left-content snap-start">
+      <div className="w-full max-w-2xl center-content snap-start px-6 md:w-3/5 lg:w-1/2">
         <div className="hidden md:flex mt-1 items-center gap-3">
           <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
             ARMSX2 is currently {""}
@@ -265,7 +265,6 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
           </div>
         </div>
       </div>
-      
     </div>
   );
 };
