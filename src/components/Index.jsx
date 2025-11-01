@@ -4,16 +4,17 @@ import CreditsSection from "./Credits";
 import Updates from "./Updates";
 import LogoAndNavigation from "./LogoAndNavigation";
 import { useDownloadData } from "../hooks/useDownloadData";
-import AboutAndFAQ from "./AboutAndFAQ"
+import AboutAndFAQ from "./AboutAndFAQ";
 import DesktopFooter from "./DesktopFooter";
 import MainHeroSection from "./MainHeroSection";
 import VersionSwapperModal from "./VersionSwapperModal";
 import MobileFooter from "./MobileFooter";
 
-const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
+const Index = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const navigate = useNavigate();
   const [isVersionSwapperOpen, setIsVersionSwapperOpen] = useState(false);
-  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases } = useDownloadData();
+  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases } =
+    useDownloadData();
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const handleTransitionAndNavigate = (routePath) => {
     onNavigate(routePath);
@@ -38,7 +39,9 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
       threshold: 0.5,
     });
 
-    const sections = document.querySelectorAll("#main, #updates, #about, #credits");
+    const sections = document.querySelectorAll(
+      "#main, #updates, #about, #credits"
+    );
     sections.forEach((section) => observer.observe(section));
 
     return () => sections.forEach((section) => observer.unobserve(section));
@@ -46,7 +49,11 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
 
   return (
     <>
-      <LogoAndNavigation activeSection={activeSection} innerWidth={window.innerWidth} isModalOpen={isVersionSwapperOpen}/>
+      <LogoAndNavigation
+        activeSection={activeSection}
+        innerWidth={window.innerWidth}
+        isModalOpen={isVersionSwapperOpen}
+      />
       <div
         className={`relative overflow-x-hidden transition-all duration-500 ease-out main-scroll-container ${
           isthetransitioninghappening
@@ -58,24 +65,30 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
       >
         <div className="pointer-events-none fixed -left-24 -top-24 h-96 w-96 rounded-full bg-gradient-to-br from-[#8d76cc]/40 to-[#3e4d84]/30 bloom" />
         <div className="pointer-events-none fixed left-40 top-64 h-[34rem] w-[34rem] rounded-full bg-gradient-to-tr from-[#3e4d84]/25 to-[#8d76cc]/25 bloom-strong" />
-        <MainHeroSection 
+        <MainHeroSection
           handleTransitionAndNavigate={handleTransitionAndNavigate}
           isEntering={isEntering}
           setIsVersionSwapperOpen={setIsVersionSwapperOpen}
-        /> 
+        />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b" />
         <div className="relative w-full space-y-6 snap-start">
           <Updates />
         </div>
         <div className="relative w-full snap-start">
-          <AboutAndFAQ handleTransitionAndNavigate={handleTransitionAndNavigate} />
+          <AboutAndFAQ
+            handleTransitionAndNavigate={handleTransitionAndNavigate}
+          />
         </div>
         <div className="relative w-full snap-start">
-          <CreditsSection handleTransitionAndNavigate={handleTransitionAndNavigate} />
+          <CreditsSection
+            handleTransitionAndNavigate={handleTransitionAndNavigate}
+          />
         </div>
       </div>
-      <DesktopFooter handleTransitionAndNavigate={handleTransitionAndNavigate}/>
-      <MobileFooter handleTransitionAndNavigate={handleTransitionAndNavigate}/>
+      <DesktopFooter
+        handleTransitionAndNavigate={handleTransitionAndNavigate}
+      />
+      <MobileFooter handleTransitionAndNavigate={handleTransitionAndNavigate} />
       {isVersionSwapperOpen && allReleases && (
         <VersionSwapperModal
           releases={allReleases}
@@ -87,4 +100,4 @@ const Front = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   );
 };
 
-export default Front;
+export default Index;

@@ -48,7 +48,7 @@ const Carousel = () => {
       }}`}
     >
       <div
-        className={`relative mx-auto overflow-hidden carousel w-full ${
+        className={`relative mx-auto overflow-hidden hardcodedForceBlack carousel w-full ${
           window.innerWidth < 500
             ? "h-48 rounded-none"
             : "h-[20rem] md:h-[20rem] rounded-2xl"
@@ -82,7 +82,9 @@ const Carousel = () => {
               key={src}
               src={src}
               alt={title}
-              className={`ring-glow transition-all duration-500 ease-out ${
+              className={`ring-glow${
+                pos !== 0 ? "-priorityLow" : ""
+              } transition-all duration-500 ease-out ${
                 window.innerWidth < 500
                   ? "absolute inset-0 m-auto h-full w-full object-contain"
                   : "absolute inset-0 m-auto h-full w-full object-contain"

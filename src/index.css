@@ -180,7 +180,11 @@ button {
     box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.1),
       0 0 16px rgba(141, 118, 204, 0.2), inset 0 0 8px rgba(62, 77, 132, 0.15);
   }
-
+  .ring-glow-priorityLow {
+    box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.1),
+      inset 0 0 16px rgba(141, 118, 204, 0.2),
+      inset 0 0 8px rgba(62, 77, 132, 0.15) !important;
+  }
   .glint {
     position: relative;
     overflow: hidden;
@@ -312,7 +316,8 @@ img {
   backdrop-filter: blur(16px) saturate(140%);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   border: 1px solid rgba(148, 163, 184, 0.1);
-  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.1), 0 0 35px rgba(141, 118, 204, 0.5), 0 0 15px rgba(62, 77, 132, 0.3);
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.1),
+    0 0 35px rgba(141, 118, 204, 0.5), 0 0 15px rgba(62, 77, 132, 0.3);
 }
 
 .glassish-input {
@@ -328,7 +333,7 @@ img {
 }
 
 body.modal-open {
-    overflow: hidden !important;
+  overflow: hidden !important;
 }
 
 .backdrop-blur-sm {
@@ -339,4 +344,8 @@ body.modal-open {
 .margin-main {
   margin-left: 18rem;
   margin-right: 7rem;
+}
+
+.hardcodedForceBlack {
+  background-color: black !important;
 }

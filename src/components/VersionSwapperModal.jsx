@@ -42,14 +42,14 @@ const VersionSwapperModal = ({ releases, isOpen, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center w-full h-full">
       <div
-        className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-70 backdrop-blur-sm transition-opacity duration-300 w-full h-full"
+        className="fixed inset-0 z-[999] flex items-center justify-center bg-black bg-opacity-60 backdrop-blur-md md:backdrop-blur-none transition-opacity duration-300 w-full h-full"
         onClick={onClose}
       />
       <div
         ref={modalRef}
-        className="relative z-[1000] bg-[#1a1a1f] rounded-xl w-full max-w-lg max-h-[90vh] overflow-y-auto border border-gray-700 transform transition-transform duration-300 scale-100 animate-fadeInUp glassish-modal"
+        className="relative z-[1000] bg-[#1a1a1f] rounded-xl md:rounded-xl w-full md:max-w-lg max-h-[100vh] md:max-h-[90vh] overflow-y-auto border border-purple-500/30 transform transition-transform duration-300 scale-100 animate-fadeInUp shadow-lg shadow-purple-500/10 mx-4 md:mx-0"
       >
-        <div className="p-6 glassish-modal">
+        <div className="p-6">
           <div className="flex justify-between items-center mb-6 border-b border-gray-700/50 pb-4">
             <h2 className="text-2xl font-bold text-white flex items-center gap-3">
               <FaTags className="text-purple-400" />
@@ -73,7 +73,7 @@ const VersionSwapperModal = ({ releases, isOpen, onClose }) => {
                   href={release.url}
                   download
                   onClick={onClose}
-                  className="p-4 bg-[#2a2a2f] rounded-lg hover:bg-[#323237] transition-all duration-200 group flex justify-between items-center glassish-modal"
+                  className="p-4 bg-[#2a2a2f] rounded-lg hover:bg-[#323237] transition-all duration-200 group flex justify-between items-center"
                 >
                   <div>
                     <div className="text-lg font-semibold text-white">

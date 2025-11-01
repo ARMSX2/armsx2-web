@@ -5,10 +5,13 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-import Front from "./components/front";
-import CompatibilityList from "./components/CompatibilityList.jsx"; // ignore error bruh youll live
+
+import Index from "./components/Index";
+
+import CompatibilityList from "./components/CompatibilityList.jsx";
 import ContactUs from "./components/ContactUs.jsx";
 import PrivacyPolicy from "./components/PrivacyPolicy.jsx";
+
 import { useContactForm } from "./hooks/useContactForm";
 
 const RouteTransitionWrapper = ({ contactFormProps }) => {
@@ -44,7 +47,7 @@ const RouteTransitionWrapper = ({ contactFormProps }) => {
           key="/"
           path="/"
           element={
-            <Front
+            <Index
               onNavigate={navigateToPage}
               isthetransitioninghappening={isTransitioning}
               isEntering={isEntering && displayLocation.pathname === "/"}

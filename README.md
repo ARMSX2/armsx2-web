@@ -42,22 +42,22 @@ npm run build
 
 <div align="center">
 
-| Update                                             | Status             | Priority  |
-| -------------------------------------------------- | ------------------ | --------- |
-| Main page demo UI                                  | ✅ **Complete**    | High      |
-| Responsiveness                                     | ✅ **Complete**    | Low       |
-| Finished main page UI                              | ✅ **Complete**    | Low       |
-| Images                                             | ✅ **Complete**    | Low       |
-| More content                                       | ✅ **Complete**    | Lowered   |
-| Change line 21                                     | ✅ **Complete**    | Important |
-| Direct Download                                    | ✅ **Complete**    | Important |
-| Change favicon                                     | ✅ **Complete**    | Important |
-| Better Compatibility page                          | ✅ **Complete**    | Medium    |
-| Split front.jsx in to multiple files               | ✅ **Complete**    | Lowest    |
-| Create version swapper when on version pressed     | ✅ **Complete**    | High      |
-| Fix image scaling in Latest Updates (blog) section | ✅ **Complete**    | Important |
-| Less static page (More interactions)               | 🔄 **Planned**     | Low       |
-| Comment code in English                            | 🔄 **Planned**     | Lowest    |
+| Update                                             | Status          | Priority  |
+| -------------------------------------------------- | --------------- | --------- |
+| Main page demo UI                                  | ✅ **Complete** | High      |
+| Responsiveness                                     | ✅ **Complete** | Low       |
+| Finished main page UI                              | ✅ **Complete** | Low       |
+| Images                                             | ✅ **Complete** | Low       |
+| More content                                       | ✅ **Complete** | Lowered   |
+| Change line 21                                     | ✅ **Complete** | Important |
+| Direct Download                                    | ✅ **Complete** | Important |
+| Change favicon                                     | ✅ **Complete** | Important |
+| Better Compatibility page                          | ✅ **Complete** | Medium    |
+| Split index.jsx in to multiple files               | ✅ **Complete** | Lowest    |
+| Create version swapper when on version pressed     | ✅ **Complete** | High      |
+| Fix image scaling in Latest Updates (blog) section | ✅ **Complete** | Important |
+| Less static page (More interactions)               | 🔄 **Planned**  | Low       |
+| Comment code in English                            | 🔄 **Planned**  | Lowest    |
 
 </div>
 
