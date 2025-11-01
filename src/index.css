@@ -348,4 +348,5 @@ body.modal-open {
 
 .hardcodedForceBlack {
   background-color: black !important;
+  border-radius: 28px !important;
 }

@@ -48,11 +48,10 @@ const Carousel = () => {
       }}`}
     >
       <div
-        className={`relative mx-auto overflow-hidden hardcodedForceBlack carousel w-full ${
-          window.innerWidth < 500
-            ? "h-48 rounded-none"
-            : "h-[20rem] md:h-[20rem] rounded-2xl"
-        }`}
+        className={`relative mx-auto overflow-hidden hardcodedForceBlack carousel w-full ${window.innerWidth < 500
+          ? "h-48 rounded-none"
+          : "h-[20rem] md:h-[20rem] rounded-2xl"
+          }`}
         style={{
           transformStyle: "preserve-3d",
           transformOrigin: "center left",
@@ -71,25 +70,33 @@ const Carousel = () => {
             if (pos === 0) style = "z-20 scale-100 opacity-100 translate-x-0";
             else style = "z-0 scale-100 opacity-0 translate-x-0";
           } else {
-            if (pos === 0) style = "z-20 scale-100 opacity-100 translate-x-0";
-            else if (pos === 1)
+            if (pos === 0) {
+              style = "z-20 scale-100 opacity-100 translate-x-0";
+            } else if (pos === 1) {
               style = "z-10 scale-90 opacity-85 translate-x-16";
-            else style = "z-10 scale-90 opacity-85 -translate-x-16";
+            } else if (pos === n - 1) {
+              style = "z-10 scale-90 opacity-85 -translate-x-16";
+            } else {
+              style = "z-0 scale-90 opacity-0 translate-x-32";
+            }
           }
 
           return (
-            <img
+            <div
               key={src}
-              src={src}
-              alt={title}
-              className={`ring-glow${
-                pos !== 0 ? "-priorityLow" : ""
-              } transition-all duration-500 ease-out ${
-                window.innerWidth < 500
-                  ? "absolute inset-0 m-auto h-full w-full object-contain"
-                  : "absolute inset-0 m-auto h-full w-full object-contain"
-              } ${style}`}
-            />
+              className={`hardcodedForceBlack 
+                ${pos === 0 ? "ring-glow" : ""} 
+                ${pos === 1 || pos === n - 1 ? "ring-glow" : ""} 
+                transition-all duration-500 ease-out absolute inset-0 m-auto h-full w-full 
+                ${style}
+              `}
+            >
+              <img
+                src={src}
+                alt={title}
+                className="h-full w-full object-contain"
+              />
+            </div>
           );
         })}
 
@@ -112,9 +119,8 @@ const Carousel = () => {
           {images.map((_, i) => (
             <span
               key={i}
-              className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                i === currentIndex ? "bg-white" : "bg-white/40"
-              }`}
+              className={`h-1.5 w-1.5 rounded-full transition-colors ${i === currentIndex ? "bg-white" : "bg-white/40"
+                }`}
             />
           ))}
         </div>
