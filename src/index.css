@@ -350,3 +350,11 @@ body.modal-open {
   background-color: black !important;
   border-radius: 28px !important;
 }
+
+.w-mod{
+  width: 50% !important;
+}
+
+.absbg{
+  background-color: #1a1a1f !important;
+}

@@ -21,6 +21,7 @@ export const useDownloadData = () => {
   const [latestVersionData, setLatestVersionData] = useState({ version: "0", isPrerelease: false });
   const [isLoading, setIsLoading] = useState(true);
   const [allReleases, setAllReleases] = useState([]);
+  const [allNightlyReleases, setAllNightlyReleases] = useState([]);
   const playURL = PLAY_URL;
 
   useEffect(() => {
@@ -36,12 +37,12 @@ export const useDownloadData = () => {
           let cleanVersion = "0";
           const match = tagName.match(/(\d+\.\d+\.\d+)/);
           if (match && match[1]) {
-                cleanVersion = match[1];
-            } else if (tagName.startsWith('v')) {
-                cleanVersion = tagName.substring(1);
-            } else {
-                cleanVersion = tagName;
-            }
+            cleanVersion = match[1];
+          } else if (tagName.startsWith('v')) {
+            cleanVersion = tagName.substring(1);
+          } else {
+            cleanVersion = tagName;
+          }
           const asset = release.assets?.find(asset =>
             asset.browser_download_url.toLowerCase().endsWith(EXT)
           );
@@ -54,7 +55,10 @@ export const useDownloadData = () => {
             isPrerelease: release.prerelease,
           };
         }).filter(release => release.url !== null);
-        setAllReleases(releasesWithApk);
+        const stableReleases = releasesWithApk.filter(r => !r.isPrerelease);
+        const nightlyReleases = releasesWithApk.filter(r => r.isPrerelease);
+        setAllReleases(stableReleases);
+        setAllNightlyReleases(nightlyReleases);
         if (releasesWithApk.length > 0) {
           const latest = releasesWithApk[0];
           setLatestApkUrl(latest.url);
@@ -93,6 +97,7 @@ export const useDownloadData = () => {
     latestVersion,
     latestVersionData,
     allReleases,
+    allNightlyReleases,
     isLoading
   };
 };
