@@ -13,7 +13,7 @@ import MobileFooter from "./MobileFooter";
 const Index = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const navigate = useNavigate();
   const [isVersionSwapperOpen, setIsVersionSwapperOpen] = useState(false);
-  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases } =
+  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases, latestVersionData } =
     useDownloadData();
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const handleTransitionAndNavigate = (routePath) => {

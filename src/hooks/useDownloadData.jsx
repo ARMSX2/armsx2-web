@@ -18,6 +18,7 @@ const BACKUP_APK_URL = "/ARMSX2_12_202510271921-release.apk";
 export const useDownloadData = () => {
   const [latestDownloadURL, setLatestApkUrl] = useState(null);
   const [latestVersion, setLatestVersion] = useState("0");
+  const [latestVersionData, setLatestVersionData] = useState({ version: "0", isPrerelease: false });
   const [isLoading, setIsLoading] = useState(true);
   const [allReleases, setAllReleases] = useState([]);
   const playURL = PLAY_URL;
@@ -32,31 +33,53 @@ export const useDownloadData = () => {
         const data = await response.json();
         const releasesWithApk = data.map(release => {
           const tagName = release.tag_name || "0";
-          const version = tagName.startsWith('v') ? tagName.substring(1) : tagName;
+          let cleanVersion = "0";
+          const match = tagName.match(/(\d+\.\d+\.\d+)/);
+          if (match && match[1]) {
+                cleanVersion = match[1];
+            } else if (tagName.startsWith('v')) {
+                cleanVersion = tagName.substring(1);
+            } else {
+                cleanVersion = tagName;
+            }
           const asset = release.assets?.find(asset =>
             asset.browser_download_url.toLowerCase().endsWith(EXT)
           );
           return {
             id: release.id,
-            version: version,
+            version: cleanVersion,
             name: release.name || tagName,
             url: asset ? asset.browser_download_url : null,
             date: release.published_at,
+            isPrerelease: release.prerelease,
           };
         }).filter(release => release.url !== null);
         setAllReleases(releasesWithApk);
         if (releasesWithApk.length > 0) {
-          setLatestApkUrl(releasesWithApk[0].url);
-          setLatestVersion(releasesWithApk[0].version);
+          const latest = releasesWithApk[0];
+          setLatestApkUrl(latest.url);
+          setLatestVersion(latest.version);
+          setLatestVersionData({
+            version: latest.version,
+            isPrerelease: latest.isPrerelease
+          });
         } else {
           console.warn("API returned data, but no valid APK assets found. Using fallback.");
           setLatestApkUrl(BACKUP_APK_URL);
           setLatestVersion("v0");
+          setLatestVersionData({
+            version: "0",
+            isPrerelease: false
+          });
         }
       } catch (error) {
         console.error("Error fetching GitHub releases:", error);
         setLatestApkUrl(BACKUP_APK_URL);
         setLatestVersion("v0 (Fallback)");
+        setLatestVersionData({
+          version: "0 (Fallback)",
+          isPrerelease: false
+        });
       } finally {
         setIsLoading(false);
       }
@@ -68,6 +91,7 @@ export const useDownloadData = () => {
     latestDownloadURL,
     playURL,
     latestVersion,
+    latestVersionData,
     allReleases,
     isLoading
   };

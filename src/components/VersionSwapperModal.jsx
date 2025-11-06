@@ -78,7 +78,12 @@ const VersionSwapperModal = ({ releases, isOpen, onClose }) => {
                   <div>
                     <div className="text-lg font-semibold text-white">
                       {release.version}
-                      {index === 0 && <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-600/20 text-green-400 font-bold">Latest</span>}
+                      {index === 0 && !release.isPrerelease && (
+                        <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-green-600/20 text-green-400 font-bold">Latest</span>
+                      )}
+                      {release.isPrerelease && (
+                        <span className="ml-2 px-2 py-0.5 text-xs rounded-full bg-blue-600/20 text-blue-400 font-bold">Nightly</span>
+                      )}
                     </div>
                     <div className="text-sm text-gray-400 flex items-center gap-2 mt-1">
                       <FaCalendar size={12} className="text-purple-400/80" />

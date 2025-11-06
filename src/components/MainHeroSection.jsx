@@ -24,8 +24,8 @@ const handleSourceClick = () => {
   window.open("https://github.com/ARMSX2", "_blank");
 };
 
-const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwapperOpen, setIsVersionSwapperOpen}) => {
-  const { latestDownloadURL, playURL, latestVersion, allReleases, isLoading } = useDownloadData();
+const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwapperOpen, setIsVersionSwapperOpen }) => {
+  const { latestDownloadURL, playURL, latestVersion, allReleases, isLoading, latestVersionData } = useDownloadData();
   const hasMultipleVersions = allReleases.length > 1;
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const [primaryButtonScale, setPrimaryButtonScale] = useState(1);
@@ -60,8 +60,8 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
   return (
     <div
       className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center py-10 md:py-16 w-full mobile-container transition-all duration-700 delay-100 snap-start ${isEntering
-          ? "opacity-100 transform translate-y-0"
-          : "opacity-0 transform translate-y-4"
+        ? "opacity-100 transform translate-y-0"
+        : "opacity-0 transform translate-y-4"
         }`}
       id="main"
     >
@@ -69,7 +69,12 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
         <div className="hidden md:flex mt-1 items-center gap-3">
           <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
             ARMSX2 is currently {""}
-            {latestVersion === "unreleased" ? "unreleased" : "on v" + latestVersion}
+            {latestVersionData?.version === "0" || latestVersion?.includes("Fallback")
+              ? "unreleased"
+              : (
+                "on v" + latestVersionData.version +
+                (latestVersionData.isPrerelease ? " (Nightly)" : "")
+              )}
           </span>
         </div>
         <div className="flex items-center gap-3 mt-5 md:mt-5">
@@ -77,13 +82,15 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
             ARMSX2
           </h1>
           <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow md:hidden">
-            {window.innerWidth < 380
-              ? latestVersion === "unreleased"
-                ? "unreleased"
-                : "currently on v" + latestVersion
-              : latestVersion === "unreleased"
-                ? "is currently unreleased"
-                : "latest release on v" + latestVersion}
+            {latestVersionData?.version === "0" || latestVersion?.includes("Fallback")
+              ? "unreleased"
+              : (
+                window.innerWidth < 380
+                  ? "currently on v"
+                  : "latest release on v"
+              ) + latestVersionData.version +
+              (latestVersionData.isPrerelease ? " (Nightly)" : "")
+            }
           </span>
         </div>
         <p className="mt-4 text-base md:text-lg text-white/80">
