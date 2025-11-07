@@ -12,7 +12,7 @@ import {
 import { useDownloadData } from "../hooks/useDownloadData";
 import Carousel from "./Carousel";
 import images from "../data/images.json";
-import VersionSwapperModal from './VersionSwapperModal';
+import VersionSwapperModal from "./VersionSwapperModal";
 
 const handleDiscordClick = () => {
   window.open("https://discord.gg/S7VxwfS8w9", "_blank");
@@ -24,14 +24,32 @@ const handleSourceClick = () => {
   window.open("https://github.com/ARMSX2", "_blank");
 };
 
-const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwapperOpen, setIsVersionSwapperOpen }) => {
-  const { latestDownloadURL, playURL, latestVersion, allReleases, isLoading, latestVersionData } = useDownloadData();
+const MainHeroSection = ({
+  handleTransitionAndNavigate,
+  isEntering,
+  isVersionSwapperOpen,
+  setIsVersionSwapperOpen,
+}) => {
+  const {
+    latestDownloadURL,
+    playURL,
+    latestVersion,
+    allReleases,
+    isLoading,
+    latestVersionData,
+  } = useDownloadData();
   const hasMultipleVersions = allReleases.length > 1;
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const [primaryButtonScale, setPrimaryButtonScale] = useState(1);
   const [secondaryButtonScale, setSecondaryButtonScale] = useState(1);
-  const [primaryButtonPosition, setPrimaryButtonPosition] = useState({ x: 0, y: 0 });
-  const [secondaryButtonPosition, setSecondaryButtonPosition] = useState({ x: 0, y: 0 });
+  const [primaryButtonPosition, setPrimaryButtonPosition] = useState({
+    x: 0,
+    y: 0,
+  });
+  const [secondaryButtonPosition, setSecondaryButtonPosition] = useState({
+    x: 0,
+    y: 0,
+  });
 
   const handleButtonMouseDown = (e, setScale) => {
     setScale(0.92);
@@ -59,22 +77,21 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
 
   return (
     <div
-      className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center py-10 md:py-16 w-full mobile-container transition-all duration-700 delay-100 snap-start ${isEntering
-        ? "opacity-100 transform translate-y-0"
-        : "opacity-0 transform translate-y-4"
-        }`}
+      className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center py-10 md:py-16 w-full mobile-container transition-all duration-700 delay-100 snap-start ${
+        isEntering
+          ? "opacity-100 transform translate-y-0"
+          : "opacity-0 transform translate-y-4"
+      }`}
       id="main"
     >
       <div className="w-full max-w-2xl center-content snap-start px-6 md:w-3/5 lg:w-1/2">
         <div className="hidden md:flex mt-1 items-center gap-3">
           <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
             ARMSX2 is currently {""}
-            {latestVersionData?.version === "0" || latestVersion?.includes("Fallback")
+            {latestVersionData?.version === "0" ||
+            latestVersion?.includes("Fallback")
               ? "unreleased"
-              : (
-                "on v" + latestVersionData.version +
-                (latestVersionData.isPrerelease ? " (Nightly)" : "")
-              )}
+              : "on v" + latestVersionData.version}
           </span>
         </div>
         <div className="flex items-center gap-3 mt-5 md:mt-5">
@@ -82,36 +99,29 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
             ARMSX2
           </h1>
           <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow md:hidden">
-            {latestVersionData?.version === "0" || latestVersion?.includes("Fallback")
+            {latestVersionData?.version === "0" ||
+            latestVersion?.includes("Fallback")
               ? "unreleased"
-              : (
-                window.innerWidth < 380
+              : (window.innerWidth < 380
                   ? "currently on v"
-                  : "latest release on v"
-              ) + latestVersionData.version +
-              (latestVersionData.isPrerelease ? " (Nightly)" : "")
-            }
+                  : "latest release on v") + latestVersionData.version}
           </span>
         </div>
         <p className="mt-4 text-base md:text-lg text-white/80">
-          ARMSX2 is a new open source emulator for the PS2, it is based on
-          the PCSX2 emulator and aims to be the next step in PS2 emulation
-          on Android, as well as cross platform support for iOS and other
-          ARM Platforms.
+          ARMSX2 is a new open source emulator for the PS2, it is based on the
+          PCSX2 emulator and aims to be the next step in PS2 emulation on
+          Android, as well as cross platform support for iOS and other ARM
+          Platforms.
         </p>
         <div className="mt-8 flex flex-col md:flex-row items-stretch md:items-center gap-3">
           <div className="flex flex-row gap-3">
             <a
-              onMouseMove={(e) =>
-                handleMouseMove(e, setPrimaryButtonPosition)
-              }
+              onMouseMove={(e) => handleMouseMove(e, setPrimaryButtonPosition)}
               onMouseLeave={() => setPrimaryButtonPosition({ x: 0, y: 0 })}
               onMouseDown={(e) =>
                 handleButtonMouseDown(e, setPrimaryButtonScale)
               }
-              onMouseUp={(e) =>
-                handleButtonMouseUp(e, setPrimaryButtonScale)
-              }
+              onMouseUp={(e) => handleButtonMouseUp(e, setPrimaryButtonScale)}
               onClick={(e) => {
                 if (isDownloadLocked) {
                   e.preventDefault();
@@ -121,33 +131,35 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
                   setIsVersionSwapperOpen(true);
                 }
               }}
-              className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[80%] md:w-auto text-center ${isDownloadLocked ? "disabledAPK" : ""
-                }`}
+              className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[80%] md:w-auto text-center ${
+                isDownloadLocked ? "disabledAPK" : ""
+              }`}
               style={{
                 transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
-                transition:
-                  "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+                transition: "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
                 animation: "subtleSway 12s ease-in-out infinite",
                 cursor: isDownloadLocked ? "not-allowed" : "pointer",
               }}
-              href={isDownloadLocked ? "#" : (hasMultipleVersions ? "#" : latestDownloadURL)}
-              {...(!isDownloadLocked && !hasMultipleVersions && { download: true })}
+              href={
+                isDownloadLocked
+                  ? "#"
+                  : hasMultipleVersions
+                  ? "#"
+                  : latestDownloadURL
+              }
+              {...(!isDownloadLocked &&
+                !hasMultipleVersions && { download: true })}
             >
               <div className="flex items-center justify-center gap-2">
                 {isDownloadLocked ? (
-                  <FaLock
-                    className="text-xs text-[#fff]"
-                    aria-hidden="true"
-                  />
+                  <FaLock className="text-xs text-[#fff]" aria-hidden="true" />
                 ) : (
                   <FaDownload
                     className="text-xs text-[#fff]"
                     aria-hidden="true"
                   />
                 )}
-                {isDownloadLocked
-                  ? "Download Unavailable"
-                  : "Download APK"}
+                {isDownloadLocked ? "Download Unavailable" : "Download APK"}
               </div>
             </a>
             <a
@@ -158,8 +170,9 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
                   e.stopPropagation();
                 }
               }}
-              className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${isDownloadLocked ? "disabledAPK" : ""
-                }`}
+              className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${
+                isDownloadLocked ? "disabledAPK" : ""
+              }`}
               style={{
                 transition: "all 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
                 animation: "subtleSway 12s ease-in-out infinite",
@@ -177,21 +190,16 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
           </div>
           <div className="w-1 h-1 bg-white/20 rounded-full mx-2 hidden md:block" />
           <button
-            onMouseMove={(e) =>
-              handleMouseMove(e, setSecondaryButtonPosition)
-            }
+            onMouseMove={(e) => handleMouseMove(e, setSecondaryButtonPosition)}
             onMouseLeave={() => setSecondaryButtonPosition({ x: 0, y: 0 })}
             onMouseDown={(e) =>
               handleButtonMouseDown(e, setSecondaryButtonScale)
             }
             onClick={handleSourceClick}
-            onMouseUp={(e) =>
-              handleButtonMouseUp(e, setSecondaryButtonScale)
-            }
+            onMouseUp={(e) => handleButtonMouseUp(e, setSecondaryButtonScale)}
             style={{
               transform: `translate(${secondaryButtonPosition.x}px, ${secondaryButtonPosition.y}px) scale(${secondaryButtonScale})`,
-              transition:
-                "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+              transition: "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
               animation: "subtleSway 14s ease-in-out infinite",
             }}
             className="ring-glow glint rounded-xl px-8 py-3 text-sm font-medium text-white bg-[#3e4d84] hover:bg-[#384476] duration-300 ease-out shadow-[0_0_14px_rgba(62,77,132,0.25)] hover:shadow-[0_0_24px_rgba(62,77,132,0.4)] transition-shadow w-full md:w-auto text-center"
@@ -214,9 +222,7 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
               />
               <div>
                 <div className="text-sm font-semibold">Discord</div>
-                <div className="text-xs text-white/70">
-                  Join our community
-                </div>
+                <div className="text-xs text-white/70">Join our community</div>
               </div>
             </div>
             <FaChevronRight
@@ -236,9 +242,7 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
                 aria-hidden="true"
               />
               <div>
-                <div className="text-sm font-semibold">
-                  Compatibility List
-                </div>
+                <div className="text-sm font-semibold">Compatibility List</div>
                 <div className="text-xs text-white/70">Can we run it?</div>
               </div>
             </div>
@@ -254,15 +258,10 @@ const MainHeroSection = ({ handleTransitionAndNavigate, isEntering, isVersionSwa
             tabIndex={0}
           >
             <div className="flex items-center gap-3">
-              <FaFile
-                className="text-2xl text-[#8d76cc]"
-                aria-hidden="true"
-              />
+              <FaFile className="text-2xl text-[#8d76cc]" aria-hidden="true" />
               <div>
                 <div className="text-sm font-semibold">Documentation</div>
-                <div className="text-xs text-white/70">
-                  Get started quickly
-                </div>
+                <div className="text-xs text-white/70">Get started quickly</div>
               </div>
             </div>
             <FaChevronRight
