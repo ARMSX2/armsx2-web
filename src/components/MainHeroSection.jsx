@@ -85,37 +85,42 @@ const MainHeroSection = ({
 
   return (
     <div
-      className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center py-10 md:py-16 w-full mobile-container transition-all duration-700 delay-100 snap-start ${
-        isEntering
-          ? "opacity-100 transform translate-y-0"
-          : "opacity-0 transform translate-y-4"
-      }`}
+      className={`relative mx-auto flex flex-col md:flex-row md:min-h-screen max-w-7xl items-start md:items-center py-10 md:py-16 w-full mobile-container transition-all duration-700 delay-100 snap-start ${isEntering
+        ? "opacity-100 transform translate-y-0"
+        : "opacity-0 transform translate-y-4"
+        }`}
       id="main"
     >
       <div className="w-full max-w-2xl center-content snap-start px-6 md:w-3/5 lg:w-1/2">
-        <div className="hidden md:flex mt-1 items-center gap-3">
-          <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
-            ARMSX2 is currently {""}
-            {latestVersionData?.version === "0" ||
-            latestVersion?.includes("Fallback")
-              ? "unreleased"
-              : "on v" + latestVersionData.version}
-          </span>
-        </div>
         <div className="flex items-center gap-3 mt-5 md:mt-5">
           <h1 className="title text-4xl md:text-5xl font-semibold leading-tight text-white text-glow">
             ARMSX2
           </h1>
-          <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow md:hidden">
-            {latestVersionData?.version === "0" ||
-            latestVersion?.includes("Fallback")
-              ? "unreleased"
-              : (window.innerWidth < 380
-                  ? "currently on v"
-                  : "latest release on v"
-              ) + latestVersionData.version +
-              (latestVersionData.isPrerelease ? " (n)" : "")}
-          </span>
+          {latestVersionData?.version === "0" || latestVersion?.includes("Fallback") ? (
+            <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
+              unreleased
+            </span>
+          ) : (
+            <>
+              {(() => {
+                const versionSuffix = latestVersionData.isPrerelease ? " (n)" : " (s)";
+                const fullVersion = "v" + latestVersionData.version + versionSuffix;
+                return (
+                  <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
+                    <span className="hidden md:inline">
+                      ARMSX2 is currently {fullVersion}
+                    </span>
+                    <span className="md:hidden">
+                      {window.innerWidth < 380
+                        ? "currently on " + fullVersion
+                        : "latest release on " + fullVersion
+                      }
+                    </span>
+                  </span>
+                );
+              })()}
+            </>
+          )}
         </div>
         <p className="mt-4 text-base md:text-lg text-white/80">
           ARMSX2 is a new open source emulator for the PS2, it is based on the
@@ -141,9 +146,8 @@ const MainHeroSection = ({
                   setIsVersionSwapperOpen(true);
                 }
               }}
-              className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[80%] md:w-auto text-center ${
-                isDownloadLocked ? "disabledAPK" : ""
-              }`}
+              className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[80%] md:w-auto text-center ${isDownloadLocked ? "disabledAPK" : ""
+                }`}
               style={{
                 transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
                 transition: "transform 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
@@ -154,8 +158,8 @@ const MainHeroSection = ({
                 isDownloadLocked
                   ? "#"
                   : hasMultipleVersions
-                  ? "#"
-                  : latestDownloadURL
+                    ? "#"
+                    : latestDownloadURL
               }
               {...(!isDownloadLocked &&
                 !hasMultipleVersions && { download: true })}
@@ -180,9 +184,8 @@ const MainHeroSection = ({
                   e.stopPropagation();
                 }
               }}
-              className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${
-                isDownloadLocked ? "disabledAPK" : ""
-              }`}
+              className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${isDownloadLocked ? "disabledAPK" : ""
+                }`}
               style={{
                 transition: "all 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
                 animation: "subtleSway 12s ease-in-out infinite",
