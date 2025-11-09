@@ -1,3 +1,5 @@
+
+
 # ARMSX2
 
 _a special delivery, an armsx2 site made by tanos._
@@ -40,6 +42,8 @@ npm run build
 
 ## 🎯 Roadmap
 
+> !! do not make any massive UI changes, as there is already an mild ui overhaul incoming ~comment made on 9/11/25
+
 <div align="center">
 
 | Update                                             | Status          | Priority  |
@@ -64,7 +68,7 @@ npm run build
 
 ---
 
-## 🤝 Contributors & Credits
+## 🤝 Credits
 
 <div align="center">
 <table>
@@ -100,6 +104,8 @@ npm run build
 </tr>
 </table>
 </div>
+
+> and ofcourse always love to all the contributers <3
 
 <div align="center">
 

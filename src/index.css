@@ -358,3 +358,7 @@ body.modal-open {
 .absbg{
   background-color: #1a1a1f !important;
 }
+
+#ft-reg-bubble {
+  display: none !important;
+}
