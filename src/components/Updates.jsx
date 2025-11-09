@@ -1,3 +1,9 @@
+/** @file Updates.jsx
+ * @description: 2nd page of the site
+
+ * This file contains:
+ * - Everything updates related */
+
 import React, { useState } from "react";
 import blog from "../data/blog.json";
 import { FaTriangleExclamation } from "react-icons/fa6";

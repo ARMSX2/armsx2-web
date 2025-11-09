@@ -1,3 +1,9 @@
+/** @file Credits.jsx
+ * @description: 4th section on the index page
+
+ * This file contains:
+ * - Everything for the credits section, except for credit items */
+
 import React from "react";
 import CreditItem from "./CreditItem";
 import projectMembers from "../data/credits.json";

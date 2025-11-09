@@ -1,3 +1,9 @@
+/** @file DesktopFooter.jsx
+ * @description: Site bottom footer
+
+ * This file contains:
+ * - Footer component for desktop viewports */
+
 import React from 'react';
 
 const DesktopFooter = ({ activeSection, handleTransitionAndNavigate }) => {

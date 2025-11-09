@@ -1,13 +1,12 @@
+/** @file useFilteredGames.jsx
+ * @description: Custom hooks to manage filter, search, and pagination logic for the list of games.
+
+ * @param {Array} games The complete array of unfiltered games.
+ * @returns {Object} Contains the status of the filters, the functions to modify them and the paginated game array for rendering. */
+
 import { useState, useMemo, useEffect } from 'react';
 const GAMES_PER_PAGE = 10;
 
-/**
- * Custom hooks to manage filter, search, and pagination logic
- * for the list of games.
- * * @param {Array} games The complete array of unfiltered games.
- * @returns {Object} Contains the status of the filters, the functions to modify them
- * and the paginated game array for rendering.
- */
 export const useFilteredGames = (games) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setFilterTo] = useState("all");

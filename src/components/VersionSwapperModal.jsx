@@ -1,3 +1,9 @@
+/** @file VersionSwapperModal.jsx
+ * @description: Card for the version swapper
+
+ * This file contains:
+ * - Everything for the version swapper modal */
+
 import React, { useEffect, useRef } from 'react';
 import { FaTimes, FaDownload, FaTags, FaCalendar } from 'react-icons/fa';
 

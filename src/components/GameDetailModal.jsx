@@ -1,3 +1,9 @@
+/** @file GameDetailModal.jsx
+ * @description: Modal for displaying detailed game status information
+
+ * This file contains:
+ * - Everything for the expanded compatibility component */
+
 import React, { useState, useEffect } from 'react';
 import { FaTimes, FaQuestionCircle, FaInfoCircle, FaMicrochip, FaDatabase, FaClipboard } from 'react-icons/fa';
 

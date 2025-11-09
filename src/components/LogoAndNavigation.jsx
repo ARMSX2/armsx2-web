@@ -1,11 +1,15 @@
-import React from 'react';
+/** @file LogoAndNavigation.jsx
+ * @description: Renders the fixed logo link and the side/top navigation dots.
 
-/**
- * Renders the fixed logo link and the side/top navigation dots.
+ * This file contains:
+ * - The logo and adaptiveness-aware navigation component
+
  * @param {object} props
  * @param {string} props.activeSection - The currently visible section ('main', 'updates', 'about').
- * @param {number} props.innerWidth - The current window width, used for responsive styling.
- */
+ * @param {number} props.innerWidth - The current window width, used for responsive styling. */
+
+import React from 'react';
+
 const LogoAndNavigation = ({ activeSection, innerWidth, isModalOpen }) => {
   const isMobile = innerWidth <= 770;
   const isTablet = innerWidth > 770 && innerWidth < 1130;

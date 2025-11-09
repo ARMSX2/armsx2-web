@@ -1,3 +1,9 @@
+/** @file MobileFooter.jsx
+ * @description: Footer component for mobile devices.
+
+ * This file contains:
+ * - The footer for mobile */
+
 import React from 'react';
 
 const MobileFooter = ({ handleTransitionAndNavigate }) => {

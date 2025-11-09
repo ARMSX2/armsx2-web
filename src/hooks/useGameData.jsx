@@ -1,10 +1,9 @@
-import { useState, useEffect } from 'react';
+/** @file useGameData.jsx
+ * @description: Custom hook to load game data from a remote JSON file. Manages loading status and errors.
 
-/**
- * Custom hook to load compatibility list from remote JSON.
- * Manages loading status and errors.
- * * @returns {{games: Array, isLoading: boolean, error: string | null}}
- */
+ * @returns {{games: Array, isLoading: boolean, error: string | null}}*/
+
+import { useState, useEffect } from 'react';
 export const useGameData = () => {
   const [games, setGames] = useState([]);
   const [isLoading, setIsLoading] = useState(true);

@@ -1,3 +1,9 @@
+/** @file Index.jsx
+ * @description: Entry point component
+
+ * This file contains:
+ * - Pointers to all main sections/components of the index page */
+
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CreditsSection from "./Credits";

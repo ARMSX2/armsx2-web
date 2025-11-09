@@ -1,3 +1,6 @@
+/** @file useContactForm.jsx
+ * @description: Hook for handling contact form submissions */
+
 import { useState, useCallback } from "react";
 
 export const useContactForm = () => {

@@ -1,3 +1,14 @@
+/** @file useDownloadData.jsx
+ * @description: Custom hook to retrieve versions and download URLs from GitHub
+
+ * @returns {{
+ * latestVersion: string,
+ * latestDownloadURL: string | null,
+ * allReleases: Array<object>,
+ * playURL: string,
+ * isLoading: boolean
+ * }} */
+
 import { useState, useEffect } from "react";
 
 const EXT = ".apk";
@@ -6,16 +17,6 @@ const PLAY_URL =
 const GITHUB_API_URL = "https://api.github.com/repos/ARMSX2/ARMSX2/releases";
 const BACKUP_APK_URL = "/ARMSX2_12_202510271921-release.apk";
 
-/**
- * Custom hook to retrieve versions and download URLs from GitHub.
- * @returns {{
- * latestVersion: string,
- * latestDownloadURL: string | null,
- * allReleases: Array<object>,
- * playURL: string,
- * isLoading: boolean
- * }}
- */
 export const useDownloadData = () => {
   const [latestDownloadURL, setLatestApkUrl] = useState(null);
   const [latestVersion, setLatestVersion] = useState("0");

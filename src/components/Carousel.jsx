@@ -1,3 +1,12 @@
+/** @file Carousel.jsx
+ * @description: Card for the version swapper
+
+ * This file contains:
+ * - Everything for the carousel component used in the main hero section
+
+
+  */
+
 import React, { useEffect, useRef, useState } from "react";
 import images from "../data/images.json";
 

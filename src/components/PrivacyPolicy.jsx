@@ -1,3 +1,9 @@
+/** @file PrivacyPolicy.jsx
+ * @description: Privacy Policy page
+
+ * This file contains:
+ * - Everything for the Privacy Policy page component */
+
 import React, { forwardRef } from "react";
 import { useNavigate } from "react-router-dom";
 

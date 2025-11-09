@@ -1,3 +1,6 @@
+/** @file usePageTransition.jsx
+ * @description: Custom hook to manage page transition states for route changes.*/
+
 import { useState, useEffect, useCallback } from 'react';
 
 const TRANSITION_DELAY_MS = 100;

@@ -1,3 +1,9 @@
+/** @file CompatibilityList.jsx
+ * @description: The entire page for the compatibility list
+
+ * This file contains:
+ * - Everything for the compatibility list page */
+
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from "react-icons/fa6";

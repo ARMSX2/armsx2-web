@@ -1,3 +1,11 @@
+/** @file MainHeroSection.jsx
+ * @description: Main hero / landing section for the ARMSX2 website.
+
+ * This file contains:
+ * - Title and description
+ * - Download buttons
+ * - Links to Discord, Documentation, and Source Code */
+
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faGooglePlay } from "@fortawesome/free-brands-svg-icons";
@@ -104,7 +112,9 @@ const MainHeroSection = ({
               ? "unreleased"
               : (window.innerWidth < 380
                   ? "currently on v"
-                  : "latest release on v") + latestVersionData.version}
+                  : "latest release on v"
+              ) + latestVersionData.version +
+              (latestVersionData.isPrerelease ? " (n)" : "")}
           </span>
         </div>
         <p className="mt-4 text-base md:text-lg text-white/80">

@@ -1,3 +1,9 @@
+/** @file AboutAndFAQ.jsx
+ * @description: 3rd section on the index page
+
+ * This file contains:
+ * - Everything for the About and FAQ section */
+
 import React from 'react';
 import faq from "../data/faq.json";
 

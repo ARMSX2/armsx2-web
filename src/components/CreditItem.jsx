@@ -1,3 +1,9 @@
+/** @file CreditItem.jsx
+ * @description: Pop-up card for credits section
+
+ * This file contains:
+ * - A card for the credits section displaying team member info */
+
 import React from 'react';
 
 const CreditItem = ({ member }) => {

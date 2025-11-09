@@ -1,3 +1,9 @@
+/** @file ContactUs.jsx
+ * @description: Contact page
+
+ * This file contains:
+ * - The contact page */
+
 import React, { forwardRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaSquareEnvelope, FaPaperPlane, FaMessage, FaMastodon, FaXTwitter } from 'react-icons/fa6';

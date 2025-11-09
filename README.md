@@ -56,8 +56,9 @@ npm run build
 | Split index.jsx in to multiple files               | ✅ **Complete** | Lowest    |
 | Create version swapper when on version pressed     | ✅ **Complete** | High      |
 | Fix image scaling in Latest Updates (blog) section | ✅ **Complete** | Important |
+| Comment code in English                            | ✅ **Complete**  | Lowest    |
 | Less static page (More interactions)               | 🔄 **Planned**  | Low       |
-| Comment code in English                            | 🔄 **Planned**  | Lowest    |
+> Roadmap will be reset sooner or later to add more plans, and to keep it clean
 
 </div>
 
