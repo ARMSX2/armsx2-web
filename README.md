@@ -42,8 +42,6 @@ npm run build
 
 ## 🎯 Roadmap
 
-> !! do not make any massive UI changes, as there is already an mild ui overhaul incoming ~comment made on 9/11/25
-
 <div align="center">
 
 | Update                                             | Status          | Priority  |
