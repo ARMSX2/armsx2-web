@@ -45,6 +45,9 @@ const allowedOrigins = [
   "http://127.0.0.1:4173"
 ];
 
+const sessions = new Map();
+const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
+
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -130,6 +133,9 @@ const normalizeSubmission = (payload, defaults = {}) => {
   const submittedBy = payload.githubUser || payload.submittedBy || defaults.submittedBy || "anonymous";
   const status = payload.status || payload.compatibility || "Unknown";
   const titleId = payload["title-id"] || payload.titleId || "UNKNOWN";
+  const submissionId =
+    payload.id ||
+    `sub_${(titleId || "UNKNOWN").replace(/\s+/g, "_")}_${(submittedBy || "user").replace(/\W+/g, "_")}_${Date.now()}`;
 
   const testedSocs = Array.isArray(payload.tested_socs)
     ? payload.tested_socs.map((soc) => normalizeSoc(soc, status))
@@ -143,6 +149,7 @@ const normalizeSubmission = (payload, defaults = {}) => {
     notes: (payload.notes || "").trim(),
     tested_socs: testedSocs,
     version: (payload.version || "Unknown").trim(),
+    id: submissionId,
     submittedBy,
     createdAt: payload.createdAt || new Date().toISOString()
   };
@@ -174,6 +181,35 @@ const buildStatusBreakdown = (submissions) => {
     },
     {}
   );
+};
+
+const parseCookies = (cookieHeader = "") => {
+  return cookieHeader.split(";").reduce((acc, part) => {
+    const [key, ...rest] = part.trim().split("=");
+    if (!key) return acc;
+    acc[key] = decodeURIComponent(rest.join("="));
+    return acc;
+  }, {});
+};
+
+const getSessionUser = (req) => {
+  const cookies = parseCookies(req.headers.cookie || "");
+  const token = cookies["armsx2_session"] || req.headers["x-session-token"];
+  if (!token) return null;
+  const data = sessions.get(token);
+  if (!data) return null;
+  const isExpired = Date.now() - data.createdAt > SESSION_TTL_MS;
+  if (isExpired) {
+    sessions.delete(token);
+    return null;
+  }
+  return data.username;
+};
+
+const createSession = (username) => {
+  const token = randomBytes(24).toString("hex");
+  sessions.set(token, { username, createdAt: Date.now() });
+  return token;
 };
 
 // --- GitHub OAuth helpers ---
@@ -278,7 +314,15 @@ app.get("/auth/github/callback", async (req, res) => {
     }
 
     const user = await userResponse.json();
-    const payload = { username: user.login, avatar: user.avatar_url };
+    const sessionToken = createSession(user.login);
+    res.cookie("armsx2_session", sessionToken, {
+      httpOnly: true,
+      sameSite: "lax",
+      secure: BACKEND_ORIGIN.startsWith("https"),
+      maxAge: SESSION_TTL_MS
+    });
+
+    const payload = { username: user.login, avatar: user.avatar_url, sessionToken };
     return res.send(renderAuthResultPage("armsx2/github-auth", payload));
   } catch (error) {
     console.error("GitHub OAuth failed:", error);
@@ -356,9 +400,10 @@ const loadData = () => {
   const baseAsSubmissions = (basePayload.games || []).map((game) =>
     normalizeSubmission(game, { submittedBy: "official-seed" })
   );
-  const userSubmissions = (submissionPayload.submissions || []).map((sub) =>
-    normalizeSubmission(sub, { submittedBy: sub.githubUser || "community" })
-  );
+  const userSubmissions = (submissionPayload.submissions || []).map((sub) => {
+    const normalized = normalizeSubmission(sub, { submittedBy: sub.githubUser || "community" });
+    return normalized;
+  });
 
   return groupGamesWithAverages(baseAsSubmissions, userSubmissions);
 };
@@ -378,12 +423,14 @@ app.post("/api/compatibility", (req, res) => {
   const payload = req.body || {};
   const requiredFields = ["title", "status", "notes", "region", "version"];
   const titleId = payload["title-id"] || payload.titleId;
+  const sessionUser = getSessionUser(req);
+  const activeUser = sessionUser || payload.githubUser;
 
   const missing = requiredFields.filter((field) => !payload[field]);
   if (!titleId) {
     missing.push("title-id");
   }
-  if (!payload.githubUser) {
+  if (!activeUser) {
     missing.push("githubUser");
   }
   const testedSocs = payload.tested_socs;
@@ -407,7 +454,7 @@ app.post("/api/compatibility", (req, res) => {
   }
 
   const normalizedSubmission = normalizeSubmission(payload, {
-    submittedBy: payload.githubUser
+    submittedBy: activeUser
   });
   const existing = readJson(SUBMISSIONS_PATH, { submissions: [] });
   existing.submissions = existing.submissions || [];
@@ -422,6 +469,81 @@ app.post("/api/compatibility", (req, res) => {
   const games = loadData();
   return res.status(201).json({
     message: "Submission stored successfully.",
+    games
+  });
+});
+
+app.put("/api/compatibility/:id", (req, res) => {
+  const { id } = req.params;
+  const payload = req.body || {};
+  const sessionUser = getSessionUser(req);
+  const activeUser = sessionUser || payload.githubUser;
+
+  if (!activeUser) {
+    return res.status(401).json({ error: "Authentication required to edit submissions." });
+  }
+
+  const requiredFields = ["title", "status", "notes", "region", "version"];
+  const titleId = payload["title-id"] || payload.titleId;
+  const missing = requiredFields.filter((field) => !payload[field]);
+  if (!titleId) {
+    missing.push("title-id");
+  }
+  const testedSocs = payload.tested_socs;
+  if (!Array.isArray(testedSocs) || testedSocs.length === 0) {
+    missing.push("tested_socs");
+  }
+  if (missing.length > 0) {
+    return res.status(400).json({
+      error: "Validation failed",
+      missing
+    });
+  }
+
+  const invalidSoc = testedSocs.find(
+    (soc) => !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
+  );
+  if (invalidSoc) {
+    return res.status(400).json({
+      error: "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
+    });
+  }
+
+  const existing = readJson(SUBMISSIONS_PATH, { submissions: [] });
+  existing.submissions = existing.submissions || [];
+  const targetIndex = existing.submissions.findIndex((sub) => sub.id === id);
+  if (targetIndex === -1) {
+    return res.status(404).json({ error: "Submission not found." });
+  }
+
+  const existingSub = normalizeSubmission(existing.submissions[targetIndex], {});
+  if ((existingSub.submittedBy || existingSub.githubUser) !== activeUser) {
+    return res.status(403).json({ error: "You can only edit your own submissions." });
+  }
+
+  const updated = normalizeSubmission(
+    {
+      ...existing.submissions[targetIndex],
+      ...payload,
+      id,
+      submittedBy: activeUser,
+      githubUser: activeUser,
+      updatedAt: new Date().toISOString()
+    },
+    { submittedBy: activeUser }
+  );
+
+  existing.submissions[targetIndex] = updated;
+
+  try {
+    writeJson(SUBMISSIONS_PATH, existing);
+  } catch (error) {
+    return res.status(500).json({ error: "Could not save edited submission." });
+  }
+
+  const games = loadData();
+  return res.status(200).json({
+    message: "Submission updated successfully.",
     games
   });
 });
