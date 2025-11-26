@@ -6,17 +6,18 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
-import { FaFilter } from "react-icons/fa6";
+import { FaFilter, FaPlus } from "react-icons/fa6";
 import GameDetailModal from '../components/GameDetailModal';
 import { useGameData } from '../hooks/useGameData'; 
 import { useFilteredGames } from '../hooks/useFilteredGames'; 
+import CompatibilitySubmitModal from "./CompatibilitySubmitModal";
 
 const CompatibilityList = ({
   isthetransitioninghappening,
   isEntering,
 }) => {
   const navigate = useNavigate();
-  const { games, isLoading, error } = useGameData();
+  const { games, isLoading, error, reload } = useGameData();
   const mainContentRef = useRef(null);
   const { 
     searchTerm, 
@@ -36,6 +37,25 @@ const CompatibilityList = ({
   const [selectedSocs, setSelectedSocs] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedGame, setSelectedGame] = useState(null);
+  const [isSubmitOpen, setIsSubmitOpen] = useState(false);
+  const availableSocs = useMemo(() => {
+    const socNames = new Set();
+    (games || []).forEach((game) => {
+      (game.tested_socs || []).forEach((soc) => {
+        if (typeof soc === "string") {
+          socNames.add(soc);
+        } else if (soc && soc.soc_name) {
+          socNames.add(soc.soc_name);
+        }
+      });
+      (game.submissions || []).forEach((sub) => {
+        (sub.tested_socs || []).forEach((soc) => {
+          if (soc?.soc_name) socNames.add(soc.soc_name);
+        });
+      });
+    });
+    return Array.from(socNames).filter(Boolean).sort();
+  }, [games]);
   const stats = useMemo(() => {
     const allGames = games || []; 
     const totalGames = allGames.length;
@@ -44,6 +64,7 @@ const CompatibilityList = ({
       playable: 0,
       "in-game": 0,
       menu: 0,
+      crash: 0,
       "not-tested": 0,
     };
     
@@ -57,6 +78,7 @@ const CompatibilityList = ({
       else if (status === "playable") acc.playable += 1;
       else if (status === "in-game") acc["in-game"] += 1;
       else if (status === "menu") acc.menu += 1;
+      else if (status === "crash") acc.crash += 1;
       else acc["not-tested"] += 1;
       return acc;
     }, initialCounts);
@@ -73,6 +95,7 @@ const CompatibilityList = ({
       playable: formatStat(counts.playable),
       ingame: formatStat(counts["in-game"]),
       menu: formatStat(counts.menu),
+      crash: formatStat(counts.crash),
       nottested: formatStat(counts["not-tested"]),
     };
   }, [games]);
@@ -95,6 +118,11 @@ const CompatibilityList = ({
   const getFilterColors = (status, isBackground = false) => {
     const colors = {
       all: null,
+      perfect: "green",
+      playable: "yellow",
+      "in-game": "orange",
+      menu: "blue",
+      crash: "red"
     };
     const color = colors[status.toLowerCase()];
     if (!color) return isBackground ? "bg-[#2a2a2f] hover:bg-[#323237]" : "";
@@ -113,6 +141,8 @@ const CompatibilityList = ({
         return "bg-orange-400/20 text-orange-400";
       case "menu":
         return "bg-blue-400/20 text-blue-400";
+      case "crash":
+        return "bg-red-500/25 text-red-400";
       default:
         return "bg-red-400/20 text-red-400";
     }
@@ -195,7 +225,7 @@ const CompatibilityList = ({
           Compatibility List
         </h1>
         <div className="mb-5 max-w mx-auto">
-          <div className="flex flex-wrap gap-4 max-[330px]:gap-0 max-[330px]:relative">
+          <div className="flex flex-wrap gap-4 max-[330px]:gap-0 max-[330px]:relative items-center">
             <input
               type="text"
               placeholder="Search games..."
@@ -276,10 +306,32 @@ const CompatibilityList = ({
                     >
                       Menu
                     </button>
+                    <button
+                      onClick={() => {
+                        setFilterTo("crash");
+                        setIsFilterOpen(false);
+                      }}
+                      className={`w-full text-left rounded-lg px-4 py-2 text-red-400 hover:bg-[#323237] transition-colors duration-200 ${
+                        statusFilter === "crash" ? "bg-red-600/20" : ""
+                      }`}
+                    >
+                      Crash
+                    </button>
                   </div>
                 </div>
               )}
             </div>
+            <button
+              onClick={() => setIsSubmitOpen(true)}
+              className={`px-4 py-4 max-[330px]:p-2 text-white rounded-lg transition-all duration-200 shadow-lg flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-blue-500 sm:px-6 ${
+                window.innerWidth <= 330
+                  ? "bg-transparent shadow-none hover:bg-[#2a2a2f]/50"
+                  : getFilterColors(statusFilter, true)
+              }`}
+            >
+              <FaPlus className="text-lg" />
+              <span className="hidden sm:inline">Submit</span>
+            </button>
           </div>
         </div>
         {stats.total > 0 && ( 
@@ -309,9 +361,13 @@ const CompatibilityList = ({
                     label = "Menu";
                     colorClass = "text-blue-400 bg-blue-400";
                     break;
+                  case "crash":
+                    label = "Crash";
+                    colorClass = "text-red-400 bg-red-400";
+                    break;
                   case "nottested":
                     label = "Not Tested";
-                    colorClass = "text-red-400 bg-red-400";
+                    colorClass = "text-gray-400 bg-gray-400";
                     break;
                   default:
                     return null;
@@ -355,47 +411,62 @@ const CompatibilityList = ({
                     </div>
                   </div>
                 ) : (
-                  paginatedGames.map((game, index) => (
-                    <div
-                      key={index}
-                      onClick={() => handleGameClick(game)}
-                      className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
-                    >
-                      <div className="flex justify-between items-start gap-4">
-                        <div className="flex-1">
-                          <h2 className="text-2xl text-white font-bold mb-3">
-                            {game.title}
-                          </h2>
-                          <p className="text-gray-400 text-base mb-2 flex items-center gap-2">
-                            <span>Region: {game.region}</span>
-                            <img
-                              src={getFlagIcon(game.region)}
-                              alt={`${game.region} flag`}
-                              className="w-5 h-5 shadow-md forceSlightRound -mt-0.5"
-                            />
-                          </p>
-                          <p className="text-gray-400 text-base mb-2">
-                            Title ID: {game["title-id"]}
-                          </p>
-                          <p className="text-gray-400 text-base">
-                            {game.notes}
-                          </p>
-                        </div>
-                        <div>
-                          <span
-                            className={`${getcorrespondingColor(
-                              game.status
-                            )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
-                          >
-                            {game.status.replace(
-                              /(^|-)(\w)/g,
-                              (_, sep, char) => sep + char.toUpperCase()
-                            )}
-                          </span>
+                  paginatedGames.map((game, index) => {
+                    const submissions = game.submissions || [];
+                    const latestSubmission = submissions[submissions.length - 1];
+                    const reporter = latestSubmission?.submittedBy || "community";
+                    const submissionCount = game.submissionCount || submissions.length || 1;
+                    const globalScore =
+                      typeof game.globalScore === "number" ? game.globalScore.toFixed(2) : "—";
+
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => handleGameClick(game)}
+                        className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
+                      >
+                        <div className="flex justify-between items-start gap-4">
+                          <div className="flex-1">
+                            <h2 className="text-2xl text-white font-bold mb-3">
+                              {game.title}
+                            </h2>
+                            <p className="text-gray-400 text-base mb-2 flex items-center gap-2">
+                              <span>Region: {game.region}</span>
+                              <img
+                                src={getFlagIcon(game.region)}
+                                alt={`${game.region} flag`}
+                                className="w-5 h-5 shadow-md forceSlightRound -mt-0.5"
+                              />
+                            </p>
+                            <p className="text-gray-400 text-base mb-2">
+                              Title ID: {game["title-id"]}
+                            </p>
+                            <p className="text-gray-400 text-base">
+                              Latest note by @{reporter}: {game.notes || "No notes yet."}
+                            </p>
+                          </div>
+                          <div className="text-right">
+                            <span
+                              className={`${getcorrespondingColor(
+                                game.status
+                              )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
+                            >
+                              {game.status.replace(
+                                /(^|-)(\w)/g,
+                                (_, sep, char) => sep + char.toUpperCase()
+                              )}
+                            </span>
+                            <div className="text-sm text-blue-300 mt-2">
+                              Global score: {globalScore} / 5
+                            </div>
+                            <div className="text-xs text-gray-500">
+                              {submissionCount} report{submissionCount !== 1 ? "s" : ""}
+                            </div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
               {totalPages > 1 && (
@@ -437,6 +508,12 @@ const CompatibilityList = ({
         isOpen={isModalOpen}
         game={selectedGame}
         onClose={() => setIsModalOpen(false)}
+      />
+      <CompatibilitySubmitModal
+        isOpen={isSubmitOpen}
+        onClose={() => setIsSubmitOpen(false)}
+        onSubmitted={reload}
+        socOptions={availableSocs}
       />
     </div>
   );

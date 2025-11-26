@@ -17,6 +17,8 @@ const getcorrespondingColor = (status) => {
       return "bg-orange-400/20 text-orange-400";
     case "menu":
       return "bg-blue-400/20 text-blue-400";
+    case "crash":
+      return "bg-red-500/25 text-red-400";
     default:
       return "bg-red-400/20 text-red-400";
   }
@@ -42,9 +44,32 @@ const getFlagIcon = (region) => {
   return "/flags/glb.svg";
 };
 
+const formatDate = (value) => {
+  if (!value) return "Unknown date";
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "Unknown date";
+  return parsed.toLocaleDateString(undefined, {
+    year: "numeric",
+    month: "short",
+    day: "numeric"
+  });
+};
+
 const GameDetailModal = ({ isOpen, game, onClose }) => {
   if (!isOpen || !game) return null;
-  const { title, status, notes, tested_socs, region, name, version } = game;
+  const {
+    title,
+    status,
+    notes,
+    tested_socs,
+    region,
+    name,
+    version,
+    globalScore,
+    submissions = [],
+    notesList = [],
+    submissionCount
+  } = game;
   // --- LOGIC FOR FETCHING DESCRIPTION OFFICIAL ---
   const [officialDescription, setOfficialDescription] = useState("Loading official game description...");
   useEffect(() => {
@@ -70,7 +95,26 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
   const serial = game["title-id"] || 'missing_serial';
   const gameName = game.title || 'Game Details';
   const compatibilityStatus = game.status || 'Unknown';
-  const emulationNotes = game.notes || "No specific emulation notes available for this title.";
+  const totalReports = submissionCount || submissions.length || 1;
+  const scoreLabel = typeof globalScore === 'number' ? globalScore.toFixed(2) : '—';
+  const reports = submissions.length
+    ? submissions
+    : notesList.length
+      ? notesList.map((entry) => ({
+        ...entry,
+        notes: entry.note,
+        tested_socs: tested_socs || []
+      }))
+      : [
+        {
+          submittedBy: "community",
+          status: compatibilityStatus,
+          notes,
+          tested_socs: tested_socs || [],
+          version,
+          createdAt: game.createdAt
+        }
+      ];
   const soCsToDisplay = (tested_socs || []).map(item => {
     const isNewFormatObject = typeof item === 'object' && item !== null && 'soc_name' in item;
     if (isNewFormatObject) {
@@ -132,31 +176,61 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                 </h3>
                 <p className="flex items-center">
                   <strong className="text-white/90">Current Status:</strong>
-                  <span className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${getcorrespondingColor(status)}`}>
-                    {status}
+                  <span className={`ml-2 px-3 py-1 rounded-full text-sm font-bold ${getcorrespondingColor(compatibilityStatus)}`}>
+                    {compatibilityStatus}
                   </span>
+                </p>
+                <p className="text-sm text-blue-300">
+                  Global score: {scoreLabel} / 5 ({totalReports} report{totalReports !== 1 ? "s" : ""})
                 </p>
               </div>
               <div className="space-y-2 pt-4">
-                {/* <h3 className="text-xl font-semibold text-white flex items-center">
-                                    <FaInfoCircle className={`w-5 h-5 mr-3 text-[#8b85fc]`} /> Official Description 
-                                </h3>
-                                <p className="text-white text-sm leading-relaxed">
-                                    {officialDescription} 
-                                </p> */}
                 <h3 className="text-xl font-semibold text-white flex items-center">
                   <FaInfoCircle className={`w-5 h-5 mr-3 text-[#8b85fc]`} />
-                  Tested Version : <spam className="text-xl font-semibold text-white flex items-center ml-2">{version}</spam>
+                  Tested Version : <span className="text-xl font-semibold text-white flex items-center ml-2">{version}</span>
                 </h3>
               </div>
 
-              <div className="space-y-2 pt-4">
+              <div className="space-y-3 pt-4">
                 <h3 className="text-xl font-semibold text-white flex items-center">
                   <FaClipboard className={`w-5 h-5 mr-3 text-[#8b85fc]`} /> Emulation Notes
                 </h3>
-                <p className="text-white text-sm leading-relaxed">
-                  {notes}
-                </p>
+                <div className="space-y-3">
+                  {reports.map((entry, idx) => (
+                    <div
+                      key={`${entry.submittedBy || "community"}-${idx}`}
+                      className="bg-white/5 border border-gray-700/60 rounded-lg p-3"
+                    >
+                      <div className="flex items-center justify-between text-sm">
+                        <div className="text-white font-semibold">@{entry.submittedBy || "community"}</div>
+                        <span
+                          className={`px-2 py-1 rounded-full text-xs font-bold ${getcorrespondingColor(entry.status || compatibilityStatus)}`}
+                        >
+                          {entry.status || compatibilityStatus}
+                        </span>
+                      </div>
+                      <p className="text-white text-sm leading-relaxed mt-2">
+                        {entry.notes || "No notes provided."}
+                      </p>
+                      {(entry.tested_socs || []).length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                          {(entry.tested_socs || []).map((soc, socIdx) => (
+                            <span
+                              key={`${soc.soc_name || socIdx}-${socIdx}`}
+                              className="text-xs text-gray-200 bg-gray-800/80 border border-gray-700 rounded-full px-2 py-1"
+                            >
+                              {soc.soc_name}: Vulkan {soc.vulkan_status} / OpenGL {soc.opengl_status}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      <div className="flex flex-wrap gap-3 text-xs text-gray-400 mt-2">
+                        <span>Version: {entry.version || version}</span>
+                        <span>Submitted: {formatDate(entry.createdAt)}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="space-y-6">

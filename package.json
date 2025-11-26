@@ -6,6 +6,9 @@
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^7.1.0",
     "@fortawesome/react-fontawesome": "^3.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "lucide-react": "^0.546.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
@@ -15,6 +18,7 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
+    "server": "node server/index.js",
     "build": "vite build",
     "preview": "vite preview",
     "test": "vitest"
