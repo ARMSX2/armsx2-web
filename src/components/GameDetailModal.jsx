@@ -212,7 +212,7 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                       <p className="text-white text-sm leading-relaxed mt-2">
                         {entry.notes || "No notes provided."}
                       </p>
-                      {(entry.tested_socs || []).length > 0 && (
+                      {/* {(entry.tested_socs || []).length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-2">
                           {(entry.tested_socs || []).map((soc, socIdx) => (
                             <span
@@ -223,7 +223,7 @@ const GameDetailModal = ({ isOpen, game, onClose }) => {
                             </span>
                           ))}
                         </div>
-                      )}
+                      )} */}
                       <div className="flex flex-wrap gap-3 text-xs text-gray-400 mt-2">
                         <span>Version: {entry.version || version}</span>
                         <span>Submitted: {formatDate(entry.createdAt)}</span>
