@@ -115,37 +115,44 @@ const CompatibilityList = ({
     };
   }, [isFilterOpen, selectedSocs]);
   
-  const getFilterColors = (status, isBackground = false) => {
+  const getFilterClasses = (status, type) => {
+    const statusLower = status.toLowerCase();
+    
     const colors = {
-      all: null,
-      perfect: "green",
-      playable: "yellow",
-      "in-game": "orange",
-      menu: "blue",
-      crash: "red"
+      background: {
+        "all": "bg-[#2a2a2f] hover:bg-[#323237]",
+        "perfect": "bg-green-400/10 hover:bg-green-400/15",
+        "playable": "bg-yellow-400/10 hover:bg-yellow-400/15",
+        "in-game": "bg-orange-400/10 hover:bg-orange-400/15",
+        "menu": "bg-blue-400/10 hover:bg-blue-400/15",
+        "crash": "bg-red-400/10 hover:bg-red-400/15",
+      },
+
+      tag: {
+        "perfect": "bg-green-400/20 text-green-400",
+        "playable": "bg-yellow-400/20 text-yellow-400",
+        "in-game": "bg-orange-400/20 text-orange-400",
+        "menu": "bg-blue-400/20 text-blue-400",
+        "crash": "bg-red-500/25 text-red-400", // Notare: bg-red-500/25
+        "default": "bg-red-400/20 text-red-400",
+      }
     };
-    const color = colors[status.toLowerCase()];
-    if (!color) return isBackground ? "bg-[#2a2a2f] hover:bg-[#323237]" : "";
-    return isBackground
-      ? `bg-${color}-400/10 hover:bg-${color}-400/15`
-      : `bg-${color}-400/20 text-${color}-400`;
+
+    if (type === 'background') {
+      return colors.background[statusLower] || colors.background["all"];
+    }
+    if (type === 'tag') {
+      return colors.tag[statusLower] || colors.tag["default"];
+    }
+    return "";
+  };
+
+  const getFilterColors = (status, isBackground = false) => {
+      return isBackground ? getFilterClasses(status, 'background') : getFilterClasses(status, 'tag');
   };
 
   const getcorrespondingColor = (status) => {
-    switch (status.toLowerCase()) {
-      case "perfect":
-        return "bg-green-400/20 text-green-400";
-      case "playable":
-        return "bg-yellow-400/20 text-yellow-400";
-      case "in-game":
-        return "bg-orange-400/20 text-orange-400";
-      case "menu":
-        return "bg-blue-400/20 text-blue-400";
-      case "crash":
-        return "bg-red-500/25 text-red-400";
-      default:
-        return "bg-red-400/20 text-red-400";
-    }
+      return getFilterClasses(status, 'tag');
   };
 
   const getFlagIcon = (region) => {
