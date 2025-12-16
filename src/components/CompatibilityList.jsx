@@ -133,7 +133,7 @@ const CompatibilityList = ({
         "playable": "bg-yellow-400/20 text-yellow-400",
         "in-game": "bg-orange-400/20 text-orange-400",
         "menu": "bg-blue-400/20 text-blue-400",
-        "crash": "bg-red-500/25 text-red-400", // Notare: bg-red-500/25
+        "crash": "bg-red-500/25 text-red-400",
         "default": "bg-red-400/20 text-red-400",
       }
     };
