@@ -16,23 +16,13 @@ const CreditsSection = () => {
           Credits
         </h2>
         <div className="w-full max-w-3xl mx-auto">
-          <div className="pl-0 pb-6 flex flex-col md:flex-row gap-8 md:gap-12">
+          <div className="pl-0 pb-6 flex flex-col md:flex-row gap-8 md:gap-12 justify-center">
             <div className="w-full md:w-1/2 text-center">
               <h3 className="text-2xl font-bold text-[#8d76cc] mb-4">
                 Project Leads
               </h3>
               <div className="space-y-3 items-center">
                 {projectMembers.projectLeads.map((member) => (
-                  <CreditItem key={member.name} member={member} />
-                ))}
-              </div>
-            </div>
-            <div className="w-full md:w-1/2 text-center">
-              <h3 className="text-2xl font-bold text-[#8d76cc]/70 mb-4">
-                Co-Founder
-              </h3>
-              <div className="space-y-3 items-center">
-                {projectMembers.coFounder.map((member) => (
                   <CreditItem key={member.name} member={member} />
                 ))}
               </div>
