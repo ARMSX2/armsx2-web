@@ -43,10 +43,11 @@ const MainHeroSection = ({
     playURL,
     latestVersion,
     allReleases,
+    allNightlyReleases,
     isLoading,
     latestVersionData,
   } = useDownloadData();
-  const hasMultipleVersions = allReleases.length > 1;
+  const hasMultipleVersions = (allReleases.length + allNightlyReleases.length) > 1;
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const [primaryButtonScale, setPrimaryButtonScale] = useState(1);
   const [secondaryButtonScale, setSecondaryButtonScale] = useState(1);
@@ -155,14 +156,11 @@ const MainHeroSection = ({
                 cursor: isDownloadLocked ? "not-allowed" : "pointer",
               }}
               href={
-                isDownloadLocked
-                  ? "#"
-                  : hasMultipleVersions
-                    ? "#"
-                    : latestDownloadURL
+                isDownloadLocked || hasMultipleVersions
+                  ? "#" 
+                  : latestDownloadURL
               }
-              {...(!isDownloadLocked &&
-                !hasMultipleVersions && { download: true })}
+              {...(!isDownloadLocked && !hasMultipleVersions ? { download: true } : {})}
             >
               <div className="flex items-center justify-center gap-2">
                 {isDownloadLocked ? (
@@ -182,6 +180,10 @@ const MainHeroSection = ({
                 if (isDownloadLocked) {
                   e.preventDefault();
                   e.stopPropagation();
+                } else if (hasMultipleVersions) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsVersionSwapperOpen(true);
                 }
               }}
               className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${isDownloadLocked ? "disabledAPK" : ""
