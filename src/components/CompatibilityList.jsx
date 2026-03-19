@@ -410,9 +410,9 @@ const CompatibilityList = ({
             </div>
           ) : (
             <div>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 items-start">
                 {paginatedGames.length === 0 ? (
-                  <div className="col-span-2 text-center py-12">
+                  <div className="col-span-full text-center py-12">
                     <div className="text-xl text-gray-400">
                       No games found matching the current filters.
                     </div>
@@ -423,51 +423,53 @@ const CompatibilityList = ({
                     const latestSubmission = submissions[submissions.length - 1];
                     const reporter = latestSubmission?.submittedBy || "community";
                     const submissionCount = game.submissionCount || submissions.length || 1;
-                    const globalScore =
-                      typeof game.globalScore === "number" ? game.globalScore.toFixed(2) : "—";
+                    const globalScore = typeof game.globalScore === "number" ? game.globalScore.toFixed(2) : "—";
 
                     return (
                       <div
                         key={index}
                         onClick={() => handleGameClick(game)}
-                        className="bg-[#1a1a1f] rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-full"
+                        className="bg-[#1a1a1f] rounded-lg p-4 md:p-6 shadow-lg hover:shadow-xl transition-all duration-200 hover:bg-[#1f1f24] flex flex-col h-auto min-h-0 cursor-pointer border border-white/5"
                       >
-                        <div className="flex justify-between items-start gap-4">
-                          <div className="flex-1">
-                            <h2 className="text-2xl text-white font-bold mb-3">
-                              {game.title}
-                            </h2>
-                            <p className="text-gray-400 text-base mb-2 flex items-center gap-2">
-                              <span>Region: {game.region}</span>
-                              <img
-                                src={getFlagIcon(game.region)}
-                                alt={`${game.region} flag`}
-                                className="w-5 h-5 shadow-md forceSlightRound -mt-0.5"
-                              />
-                            </p>
-                            <p className="text-gray-400 text-base mb-2">
-                              Title ID: {game["title-id"]}
-                            </p>
-                            <p className="text-gray-400 text-base">
-                              Latest note by @{reporter}: {game.notes || "No notes yet."}
-                            </p>
-                          </div>
-                          <div className="text-right">
-                            <span
-                              className={`${getcorrespondingColor(
-                                game.status
-                              )} font-bold text-lg inline-block px-5 py-2 rounded-md`}
-                            >
-                              {game.status.replace(
-                                /(^|-)(\w)/g,
-                                (_, sep, char) => sep + char.toUpperCase()
-                              )}
-                            </span>
-                            <div className="text-sm text-blue-300 mt-2">
-                              Global score: {globalScore} / 5
+                        <div className="flex flex-col sm:flex-row justify-between items-start gap-3 sm:gap-4">
+                          <div className="flex-1 w-full">
+                            <div className="flex items-start justify-between sm:justify-start sm:gap-3 mb-2">
+                              <h2 className="text-xl md:text-2xl text-white font-bold leading-tight line-clamp-2">
+                                {game.title}
+                              </h2>
                             </div>
-                            <div className="text-xs text-gray-500">
-                              {submissionCount} report{submissionCount !== 1 ? "s" : ""}
+                            
+                            <div className="space-y-1 mb-3">
+                              <p className="text-gray-400 text-sm md:text-base flex items-center gap-2">
+                                <span>Region: {game.region}</span>
+                                <img
+                                  src={getFlagIcon(game.region)}
+                                  alt=""
+                                  className="w-4 h-4 shadow-sm rounded-sm"
+                                />
+                              </p>
+                              <p className="text-gray-400 text-sm md:text-base">
+                                Title ID: <span className="font-mono text-xs opacity-80">{game["title-id"]}</span>
+                              </p>
+                              <p className="text-gray-400 text-xs md:text-sm italic line-clamp-2">
+                                Latest note by @{reporter}: {game.notes || "No notes yet."}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-3 sm:pt-0 border-t border-white/5 sm:border-none">
+                            <span
+                              className={`${getcorrespondingColor(game.status)} font-bold text-sm md:text-lg inline-block tracking-wide px-5 py-2 rounded-md`}
+                            >
+                              {game.status}
+                            </span>
+                            <div className="text-right">
+                              <div className="text-[10px] md:text-sm text-blue-300 font-medium sm:mt-2">
+                                Score: {globalScore} / 5
+                              </div>
+                              <div className="text-[9px] md:text-xs text-gray-500">
+                                {submissionCount} report{submissionCount !== 1 ? "s" : ""}
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -477,11 +479,11 @@ const CompatibilityList = ({
                 )}
               </div>
               {totalPages > 1 && (
-                <div className="flex flex-wrap justify-center items-center mt-10 gap-1 md:gap-2">
+                <div className="flex flex-wrap justify-center items-center mt-6 md:mt-10 mb-8 gap-1.5">
                   <button
                     onClick={prevPage} 
                     disabled={currentPage === 1}
-                    className="px-4 py-2 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors text-sm"
+                    className="px-3 py-2 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-30 text-xs font-semibold hover:bg-[#323237] transition-colors"
                   >
                     Previous
                   </button>
@@ -529,7 +531,7 @@ const CompatibilityList = ({
                   <button
                     onClick={nextPage} 
                     disabled={currentPage === totalPages}
-                    className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
+                    className="px-3 py-2 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-30 text-xs font-semibold hover:bg-[#323237] transition-colors"
                   >
                     Next
                   </button>

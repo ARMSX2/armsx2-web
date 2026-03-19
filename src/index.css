@@ -232,6 +232,9 @@ button {
   .carousel {
     transform: perspective(1000px) rotateY(-6deg);
   }
+  .main-scroll-container {
+    scroll-snap-type: y proximity !important;
+  }
 }
 
 @media (max-width: 1211px) {
@@ -361,4 +364,10 @@ body.modal-open {
 
 #ft-reg-bubble {
   display: none !important;
+}
+
+.main-scroll-container {
+  -webkit-overflow-scrolling: touch;
+  scroll-padding-bottom: 5rem; 
+  height: 100dvh; 
 }
