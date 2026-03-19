@@ -93,10 +93,10 @@ const Index = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         handleTransitionAndNavigate={handleTransitionAndNavigate}
       />
       <MobileFooter handleTransitionAndNavigate={handleTransitionAndNavigate} />
-      {isVersionSwapperOpen && allReleases && (
+      {isVersionSwapperOpen && (
         <VersionSwapperModal
-          allStableReleases={allReleases}
-          allNightlyReleases={allNightlyReleases}
+          allStableReleases={allReleases || []}
+          allNightlyReleases={allNightlyReleases || []}
           isOpen={isVersionSwapperOpen}
           onClose={() => setIsVersionSwapperOpen(false)}
         />

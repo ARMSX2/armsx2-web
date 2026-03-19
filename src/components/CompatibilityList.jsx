@@ -477,27 +477,55 @@ const CompatibilityList = ({
                 )}
               </div>
               {totalPages > 1 && (
-                <div className="flex justify-center mt-10 col-span-full">
+                <div className="flex flex-wrap justify-center items-center mt-10 gap-1 md:gap-2">
                   <button
                     onClick={prevPage} 
                     disabled={currentPage === 1}
-                    className="px-4 py-2 mx-1 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors"
+                    className="px-4 py-2 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-30 disabled:cursor-not-allowed hover:bg-[#323237] transition-colors text-sm"
                   >
                     Previous
                   </button>
-                  {[...Array(totalPages)].map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => paginate(index + 1)} 
-                      className={`px-4 py-2 mx-1 rounded-lg transition-colors ${
-                        currentPage === index + 1
-                          ? "bg-blue-600 text-white"
-                          : "bg-[#2a2a2f] text-gray-300 hover:bg-[#323237]"
-                      }`}
-                    >
-                      {index + 1}
-                    </button>
-                  ))}
+                  {(() => {
+                    const pages = [];
+                    const showMax = 5;
+
+                    if (totalPages <= showMax) {
+                      for (let i = 1; i <= totalPages; i++) pages.push(i);
+                    } else {
+                      pages.push(1);
+
+                      if (currentPage > 3) pages.push("...");
+
+                      const start = Math.max(2, currentPage - 1);
+                      const end = Math.min(totalPages - 1, currentPage + 1);
+
+                      for (let i = start; i <= end; i++) {
+                        if (!pages.includes(i)) pages.push(i);
+                      }
+
+                      if (currentPage < totalPages - 2) pages.push("...");
+
+                      if (!pages.includes(totalPages)) pages.push(totalPages);
+                    }
+                    return pages.map((page, index) => (
+                      <React.Fragment key={index}>
+                        {page === "..." ? (
+                          <span className="px-2 text-gray-500 font-bold">...</span>
+                        ) : (
+                          <button
+                            onClick={() => paginate(page)}
+                            className={`min-w-[40px] h-[40px] flex items-center justify-center rounded-lg transition-all duration-200 font-medium ${
+                              currentPage === page
+                                ? "bg-blue-600 text-white shadow-lg shadow-blue-600/20"
+                                : "bg-[#2a2a2f] text-gray-300 hover:bg-[#323237]"
+                            }`}
+                          >
+                            {page}
+                          </button>
+                        )}
+                      </React.Fragment>
+                    ));
+                  })()}
                   <button
                     onClick={nextPage} 
                     disabled={currentPage === totalPages}

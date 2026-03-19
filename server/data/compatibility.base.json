@@ -16,6 +16,380 @@
       "version": "1.0.0 Debug"
     },
     {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },{
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Playable",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Playable",
+          "opengl_status": "Playable"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
+      "title": "Castlevania: Curse of Darkness",
+      "status": "Crush",
+      "title-id": "SLUS-21168",
+      "notes": "Runs at full speed with minor dips in performance and minor graphical issues",
+      "region": "NTSC-U",
+      "tested_socs": [
+        {
+          "soc_name": "SD 888",
+          "vulkan_status": "Crush",
+          "opengl_status": "Crush"
+        }
+      ],
+      "version": "1.0.0 Debug"
+    },
+    {
       "title": "Castlevania: Lament of Innocence",
       "status": "In-Game",
       "title-id": "SLUS-20733",
