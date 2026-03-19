@@ -12,14 +12,14 @@ const MobileFooter = ({ handleTransitionAndNavigate }) => {
   }
 
   return (
-    <div className="text-center py-4 text-white/70 text-sm bg-transparent">
+    <div className="fixed bottom-0 left-0 w-full z-[100] text-center py-4 text-white/70 text-sm bg-black/40 backdrop-blur-md border-t border-white/5 safe-area-bottom">
       <a
         href="https://github.com/tanosshi"
         target="_blank"
         rel="noopener noreferrer"
         className="hover:text-white/90 transition-colors"
       >
-        ©{new Date().getFullYear()} ARMSX2 All rights reserved, site by tanos
+        ©{new Date().getFullYear()} ARMSX2, site by tanos
       </a>
       <span className="mx-2">•</span>
       <button
