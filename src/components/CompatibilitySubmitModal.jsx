@@ -24,6 +24,22 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
       return window.location.origin;
     }
   }, [apiBase]);
+  const isTrustedAuthOrigin = useMemo(() => {
+    return (origin) => {
+      if (origin === apiOrigin) return true;
+      if (!import.meta.env.DEV) return false;
+
+      try {
+        const { hostname, protocol } = new URL(origin);
+        return (
+          (hostname === "localhost" || hostname === "127.0.0.1") &&
+          (protocol === "http:" || protocol === "https:")
+        );
+      } catch (error) {
+        return false;
+      }
+    };
+  }, [apiOrigin]);
 
   const [formData, setFormData] = useState({
     title: "",
@@ -59,7 +75,7 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
 
   useEffect(() => {
     const receiveAuth = (event) => {
-      if (event.origin !== apiOrigin && !event.origin.includes("localhost")) return;
+      if (!isTrustedAuthOrigin(event.origin)) return;
       const data = event.data || {};
       if (data.type === "armsx2/github-auth") {
         const username = data.payload?.username || "";
@@ -76,7 +92,7 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
     };
     window.addEventListener("message", receiveAuth);
     return () => window.removeEventListener("message", receiveAuth);
-  }, [apiOrigin]);
+  }, [isTrustedAuthOrigin]);
 
   if (!isOpen) return null;
 

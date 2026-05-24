@@ -36,6 +36,18 @@ const STATUS_SCORES = {
   unknown: 1
 };
 
+const ALLOWED_COMPATIBILITY_STATUSES = new Set([
+  "Perfect",
+  "Playable",
+  "In-Game",
+  "Menu",
+  "Not Tested",
+  "Crash"
+]);
+const ALLOWED_REGIONS = new Set(["NTSC-U", "NTSC-J", "PAL-E", "PAL-A", "Other"]);
+const DANGEROUS_TEXT_PATTERN =
+  /[<>]|&(?:lt|gt|#0*60|#x0*3c|#0*62|#x0*3e);|javascript:|srcdoc\s*=|on[a-z]+\s*=/i;
+
 const app = express();
 const allowedOrigins = [
   FRONTEND_ORIGIN,
@@ -48,6 +60,13 @@ const allowedOrigins = [
 const sessions = new Map();
 const SESSION_TTL_MS = 24 * 60 * 60 * 1000;
 
+app.disable("x-powered-by");
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "strict-origin-when-cross-origin");
+  res.setHeader("X-Frame-Options", "DENY");
+  next();
+});
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -88,6 +107,91 @@ const writeJson = (filePath, data) => {
     console.error(`Failed to write ${filePath}:`, error);
     throw error;
   }
+};
+
+const validatePlainText = (errors, field, value, { maxLength, allowNewlines = false } = {}) => {
+  if (typeof value !== "string") {
+    errors.push(`${field} must be text.`);
+    return;
+  }
+
+  const trimmed = value.trim();
+  if (!trimmed) {
+    errors.push(`${field} is required.`);
+    return;
+  }
+
+  if (maxLength && trimmed.length > maxLength) {
+    errors.push(`${field} must be ${maxLength} characters or fewer.`);
+  }
+
+  const controlPattern = allowNewlines
+    ? /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/
+    : /[\u0000-\u001f\u007f]/;
+  if (controlPattern.test(trimmed)) {
+    errors.push(`${field} contains unsupported control characters.`);
+  }
+
+  if (DANGEROUS_TEXT_PATTERN.test(trimmed)) {
+    errors.push(`${field} must be plain text and cannot contain HTML, scripts, or event handlers.`);
+  }
+};
+
+const validateSubmissionPayload = (payload, activeUser) => {
+  const errors = [];
+  const titleId = payload["title-id"] || payload.titleId;
+  const testedSocs = payload.tested_socs;
+
+  validatePlainText(errors, "title", payload.title, { maxLength: 140 });
+  validatePlainText(errors, "title-id", titleId, { maxLength: 80 });
+  validatePlainText(errors, "region", payload.region, { maxLength: 20 });
+  validatePlainText(errors, "status", payload.status, { maxLength: 20 });
+  validatePlainText(errors, "version", payload.version, { maxLength: 80 });
+  validatePlainText(errors, "notes", payload.notes, { maxLength: 1500, allowNewlines: true });
+  validatePlainText(errors, "githubUser", activeUser, { maxLength: 39 });
+
+  if (typeof activeUser === "string" && !/^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$/.test(activeUser)) {
+    errors.push("githubUser must be a valid GitHub username.");
+  }
+
+  if (typeof payload.region === "string" && !ALLOWED_REGIONS.has(payload.region.trim())) {
+    errors.push(`region must be one of: ${Array.from(ALLOWED_REGIONS).join(", ")}.`);
+  }
+
+  if (typeof payload.status === "string" && !ALLOWED_COMPATIBILITY_STATUSES.has(payload.status.trim())) {
+    errors.push(`status must be one of: ${Array.from(ALLOWED_COMPATIBILITY_STATUSES).join(", ")}.`);
+  }
+
+  if (!Array.isArray(testedSocs) || testedSocs.length === 0) {
+    errors.push("tested_socs must include at least one device.");
+  } else if (testedSocs.length > 8) {
+    errors.push("tested_socs cannot include more than 8 devices.");
+  } else {
+    testedSocs.forEach((soc, index) => {
+      validatePlainText(errors, `tested_socs[${index}].soc_name`, soc?.soc_name, { maxLength: 80 });
+      validatePlainText(errors, `tested_socs[${index}].vulkan_status`, soc?.vulkan_status, {
+        maxLength: 20
+      });
+      validatePlainText(errors, `tested_socs[${index}].opengl_status`, soc?.opengl_status, {
+        maxLength: 20
+      });
+
+      if (
+        typeof soc?.vulkan_status === "string" &&
+        !ALLOWED_COMPATIBILITY_STATUSES.has(soc.vulkan_status.trim())
+      ) {
+        errors.push(`tested_socs[${index}].vulkan_status must be a valid compatibility status.`);
+      }
+      if (
+        typeof soc?.opengl_status === "string" &&
+        !ALLOWED_COMPATIBILITY_STATUSES.has(soc.opengl_status.trim())
+      ) {
+        errors.push(`tested_socs[${index}].opengl_status must be a valid compatibility status.`);
+      }
+    });
+  }
+
+  return errors;
 };
 
 const getScoreForStatus = (status) => {
@@ -230,8 +334,30 @@ const validateOAuthState = (state) => {
   return !isExpired;
 };
 
-const renderAuthResultPage = (type, payload) => {
-  const safePayload = JSON.stringify(payload || {});
+const toScriptJson = (payload) =>
+  JSON.stringify(payload || {}).replace(/[<>&\u2028\u2029]/g, (char) => {
+    const replacements = {
+      "<": "\\u003C",
+      ">": "\\u003E",
+      "&": "\\u0026",
+      "\u2028": "\\u2028",
+      "\u2029": "\\u2029"
+    };
+    return replacements[char];
+  });
+
+const authPageCsp = (nonce) =>
+  [
+    "default-src 'none'",
+    `script-src 'nonce-${nonce}'`,
+    "style-src 'unsafe-inline'",
+    "base-uri 'none'",
+    "form-action 'none'",
+    "frame-ancestors 'none'"
+  ].join("; ");
+
+const renderAuthResultPage = (type, payload, nonce) => {
+  const safePayload = toScriptJson(payload);
   const targetOrigin = FRONTEND_ORIGIN || "*";
   return `<!DOCTYPE html>
   <html>
@@ -240,7 +366,7 @@ const renderAuthResultPage = (type, payload) => {
         <h3>GitHub authentication complete.</h3>
         <p>You can close this window.</p>
       </div>
-      <script>
+      <script nonce="${nonce}">
         (function() {
           const data = { type: "${type}", payload: ${safePayload} };
           if (window.opener) {
@@ -323,15 +449,19 @@ app.get("/auth/github/callback", async (req, res) => {
     });
 
     const payload = { username: user.login, avatar: user.avatar_url, sessionToken };
-    return res.send(renderAuthResultPage("armsx2/github-auth", payload));
+    const nonce = randomBytes(16).toString("base64url");
+    res.setHeader("Content-Security-Policy", authPageCsp(nonce));
+    return res.send(renderAuthResultPage("armsx2/github-auth", payload, nonce));
   } catch (error) {
     console.error("GitHub OAuth failed:", error);
+    const nonce = randomBytes(16).toString("base64url");
+    res.setHeader("Content-Security-Policy", authPageCsp(nonce));
     return res
       .status(500)
       .send(
         renderAuthResultPage("armsx2/github-auth-error", {
           message: error.message || "GitHub authentication failed."
-        })
+        }, nonce)
       );
   }
 });
@@ -445,11 +575,19 @@ app.post("/api/compatibility", (req, res) => {
   }
 
   const invalidSoc = testedSocs.find(
-    (soc) => !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
+    (soc) => !soc || !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
   );
   if (invalidSoc) {
     return res.status(400).json({
       error: "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
+    });
+  }
+
+  const validationErrors = validateSubmissionPayload(payload, activeUser);
+  if (validationErrors.length > 0) {
+    return res.status(400).json({
+      error: "Validation failed",
+      details: validationErrors
     });
   }
 
@@ -501,11 +639,19 @@ app.put("/api/compatibility/:id", (req, res) => {
   }
 
   const invalidSoc = testedSocs.find(
-    (soc) => !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
+    (soc) => !soc || !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
   );
   if (invalidSoc) {
     return res.status(400).json({
       error: "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
+    });
+  }
+
+  const validationErrors = validateSubmissionPayload(payload, activeUser);
+  if (validationErrors.length > 0) {
+    return res.status(400).json({
+      error: "Validation failed",
+      details: validationErrors
     });
   }
 
