@@ -3,14 +3,14 @@ import react from "@vitejs/plugin-react";
 
 const csp = [
   "default-src 'self'",
-  "script-src 'self' 'sha256-Z2/iFzh9VMlVkEOar1f/oSHWwQk3ve1qk/C2WdsC4Xk=' https://pagead2.googlesyndication.com",
+  "script-src 'self' 'sha256-Z2/iFzh9VMlVkEOar1f/oSHWwQk3ve1qk/C2WdsC4Xk=' https://pagead2.googlesyndication.com https://fundingchoicesmessages.google.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob: https://armsx2.net https://github.com https://avatars.githubusercontent.com https://*.githubusercontent.com https://*.googlesyndication.com https://*.doubleclick.net https://*.google.com",
   "font-src 'self' data:",
-  "connect-src 'self' https://api.armsx2.net https://armsx2.net https://api.github.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*",
+  "connect-src 'self' https://api.armsx2.net https://armsx2.net https://api.github.com https://pagead2.googlesyndication.com https://googleads.g.doubleclick.net https://fundingchoicesmessages.google.com http://localhost:* http://127.0.0.1:* ws://localhost:* ws://127.0.0.1:*",
   "object-src 'none'",
   "base-uri 'self'",
-  "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com",
+  "frame-src https://googleads.g.doubleclick.net https://tpc.googlesyndication.com https://www.google.com https://fundingchoicesmessages.google.com",
   "frame-ancestors 'none'",
   "form-action 'self'",
   "manifest-src 'self'"
