@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { randomBytes } from "crypto";
+import nodemailer from "nodemailer";
 
 dotenv.config();
 
@@ -20,6 +21,31 @@ const GITHUB_CALLBACK_URL = process.env.GITHUB_CALLBACK_URL || `${BACKEND_ORIGIN
 const DATA_DIR = path.join(__dirname, "data");
 const BASE_PATH = path.join(DATA_DIR, "compatibility.base.json");
 const SUBMISSIONS_PATH = path.join(DATA_DIR, "compatibility-submissions.json");
+
+const SMTP_HOST = process.env.SMTP_HOST || "mail.nanodata.cloud";
+const SMTP_PORT = Number(process.env.SMTP_PORT || 587);
+const SMTP_SECURE = String(process.env.SMTP_SECURE || "false").toLowerCase() === "true";
+const SMTP_USER = process.env.SMTP_USER || "";
+const SMTP_PASS = process.env.SMTP_PASS || "";
+const SMTP_FROM = process.env.SMTP_FROM || "ARMSX2 Contact <noreply@armsx2.net>";
+
+const CONTACT_RECIPIENTS = {
+  communication: "communication@armsx2.net",
+  medievalshell: "medievalshell@armsx2.net",
+  design: "design@armsx2.net",
+  general: "armsx2mail@gmail.com",
+};
+
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const mailTransporter = SMTP_USER && SMTP_PASS
+  ? nodemailer.createTransport({
+      host: SMTP_HOST,
+      port: SMTP_PORT,
+      secure: SMTP_SECURE,
+      auth: { user: SMTP_USER, pass: SMTP_PASS },
+    })
+  : null;
 
 const STATUS_SCORES = {
   perfect: 5,
@@ -554,14 +580,14 @@ app.post("/api/compatibility", (req, res) => {
   const requiredFields = ["title", "status", "notes", "region", "version"];
   const titleId = payload["title-id"] || payload.titleId;
   const sessionUser = getSessionUser(req);
-  const activeUser = sessionUser || payload.githubUser;
+  if (!sessionUser) {
+    return res.status(401).json({ error: "Sign in with GitHub to submit." });
+  }
+  const activeUser = sessionUser;
 
   const missing = requiredFields.filter((field) => !payload[field]);
   if (!titleId) {
     missing.push("title-id");
-  }
-  if (!activeUser) {
-    missing.push("githubUser");
   }
   const testedSocs = payload.tested_socs;
   if (!Array.isArray(testedSocs) || testedSocs.length === 0) {
@@ -591,9 +617,11 @@ app.post("/api/compatibility", (req, res) => {
     });
   }
 
-  const normalizedSubmission = normalizeSubmission(payload, {
-    submittedBy: activeUser
-  });
+  const { githubUser: _ignoredGithubUser, submittedBy: _ignoredSubmittedBy, ...safePayload } = payload;
+  const normalizedSubmission = normalizeSubmission(
+    { ...safePayload, githubUser: activeUser },
+    { submittedBy: activeUser }
+  );
   const existing = readJson(SUBMISSIONS_PATH, { submissions: [] });
   existing.submissions = existing.submissions || [];
   existing.submissions.push(normalizedSubmission);
@@ -615,11 +643,10 @@ app.put("/api/compatibility/:id", (req, res) => {
   const { id } = req.params;
   const payload = req.body || {};
   const sessionUser = getSessionUser(req);
-  const activeUser = sessionUser || payload.githubUser;
-
-  if (!activeUser) {
+  if (!sessionUser) {
     return res.status(401).json({ error: "Authentication required to edit submissions." });
   }
+  const activeUser = sessionUser;
 
   const requiredFields = ["title", "status", "notes", "region", "version"];
   const titleId = payload["title-id"] || payload.titleId;
@@ -692,6 +719,53 @@ app.put("/api/compatibility/:id", (req, res) => {
     message: "Submission updated successfully.",
     games
   });
+});
+
+app.post("/api/send-email", async (req, res) => {
+  const payload = req.body || {};
+  const errors = [];
+  validatePlainText(errors, "name", payload.name, { maxLength: 100 });
+  validatePlainText(errors, "email", payload.email, { maxLength: 200 });
+  validatePlainText(errors, "message", payload.message, {
+    maxLength: 5000,
+    allowNewlines: true,
+  });
+
+  if (typeof payload.email === "string" && !EMAIL_PATTERN.test(payload.email.trim())) {
+    errors.push("email must be a valid email address.");
+  }
+
+  const recipientId = String(payload.recipient || "").trim();
+  if (!Object.prototype.hasOwnProperty.call(CONTACT_RECIPIENTS, recipientId)) {
+    errors.push("recipient must be a valid contact target.");
+  }
+
+  if (errors.length > 0) {
+    return res.status(400).json({ error: "Validation failed", details: errors });
+  }
+
+  if (!mailTransporter) {
+    return res.status(503).json({ error: "Email service is not configured." });
+  }
+
+  const to = CONTACT_RECIPIENTS[recipientId];
+  const visitorName = payload.name.trim();
+  const visitorEmail = payload.email.trim();
+  const messageBody = payload.message.trim();
+
+  try {
+    await mailTransporter.sendMail({
+      from: SMTP_FROM,
+      to,
+      replyTo: `${visitorName} <${visitorEmail}>`,
+      subject: `ARMSX2 contact form: ${visitorName}`,
+      text: `From: ${visitorName} <${visitorEmail}>\n\n${messageBody}`,
+    });
+    return res.status(200).json({ message: "Email sent successfully." });
+  } catch (error) {
+    console.error("Failed to send contact email:", error);
+    return res.status(500).json({ error: "Could not send the email." });
+  }
 });
 
 app.listen(PORT, () => {
