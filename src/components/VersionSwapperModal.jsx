@@ -5,7 +5,7 @@
  * - Everything for the version swapper modal */
 
 import React, { useEffect, useRef, useState, useMemo } from 'react';
-import { FaTimes, FaDownload, FaTags, FaCalendar } from 'react-icons/fa';
+import { FaTimes, FaDownload, FaTags, FaCalendar, FaAndroid, FaApple } from 'react-icons/fa';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   if (totalPages <= 1) return null;
@@ -126,23 +126,40 @@ const ReleaseCard = ({ release, onClose, isLatest, isNightly }) => {
   );
 };
 
-const VersionSwapperModal = ({ allStableReleases, allNightlyReleases, isOpen, onClose }) => {
+const VersionSwapperModal = ({
+  allStableReleases,
+  allNightlyReleases,
+  allIosStableReleases = [],
+  allIosNightlyReleases = [],
+  isOpen,
+  onClose,
+}) => {
   const ITEMS_PER_PAGE = 4;
-  const [activeView, setActiveView] = useState('stable'); 
+  const [activePlatform, setActivePlatform] = useState('android');
+  const [activeView, setActiveView] = useState('stable');
   const [stablePage, setStablePage] = useState(1);
   const [nightlyPage, setNightlyPage] = useState(1);
   const modalRef = useRef(null);
-  const totalStablePages = Math.ceil(allStableReleases.length / ITEMS_PER_PAGE);
+
+  const activeStableSource = activePlatform === 'ios' ? allIosStableReleases : allStableReleases;
+  const activeNightlySource = activePlatform === 'ios' ? allIosNightlyReleases : allNightlyReleases;
+
+  const totalStablePages = Math.ceil(activeStableSource.length / ITEMS_PER_PAGE);
   const stableReleases = useMemo(() => {
     const startIndex = (stablePage - 1) * ITEMS_PER_PAGE;
-    return allStableReleases.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [allStableReleases, stablePage, ITEMS_PER_PAGE]);
-  
-  const totalNightlyPages = Math.ceil(allNightlyReleases.length / ITEMS_PER_PAGE);
+    return activeStableSource.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [activeStableSource, stablePage, ITEMS_PER_PAGE]);
+
+  const totalNightlyPages = Math.ceil(activeNightlySource.length / ITEMS_PER_PAGE);
   const nightlyReleases = useMemo(() => {
     const startIndex = (nightlyPage - 1) * ITEMS_PER_PAGE;
-    return allNightlyReleases.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  }, [allNightlyReleases, nightlyPage, ITEMS_PER_PAGE]);
+    return activeNightlySource.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  }, [activeNightlySource, nightlyPage, ITEMS_PER_PAGE]);
+
+  useEffect(() => {
+    setStablePage(1);
+    setNightlyPage(1);
+  }, [activePlatform]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -200,7 +217,7 @@ const VersionSwapperModal = ({ allStableReleases, allNightlyReleases, isOpen, on
           <div className="flex justify-between items-center mb-6 border-b border-gray-700/50 pb-4">
             <h2 className="text-2xl font-bold text-white flex items-center gap-3">
               <FaTags className="text-purple-400" />
-              Select APK Version
+              {activePlatform === 'ios' ? 'Select IPA Version' : 'Select APK Version'}
             </h2>
             <button
               onClick={onClose}
@@ -208,6 +225,24 @@ const VersionSwapperModal = ({ allStableReleases, allNightlyReleases, isOpen, on
               aria-label="Close Modal"
             >
               <FaTimes size={20} />
+            </button>
+          </div>
+          <div className="flex mb-6 p-1 bg-gray-800 rounded-lg">
+            <button
+              onClick={() => setActivePlatform('android')}
+              className={`flex-1 py-2 text-sm font-semibold rounded-md transition-colors flex items-center justify-center gap-2 ${activePlatform === 'android' ? 'bg-purple-600/20 text-purple-300' : 'text-gray-400 hover:text-white'
+                }`}
+            >
+              <FaAndroid />
+              Android
+            </button>
+            <button
+              onClick={() => setActivePlatform('ios')}
+              className={`flex-1 py-2 text-sm font-semibold rounded-md transition-colors flex items-center justify-center gap-2 ${activePlatform === 'ios' ? 'bg-purple-600/20 text-purple-300' : 'text-gray-400 hover:text-white'
+                }`}
+            >
+              <FaApple />
+              iOS
             </button>
           </div>
           <div className="md:hidden flex mb-6 p-1 bg-gray-800 rounded-lg">
@@ -231,14 +266,18 @@ const VersionSwapperModal = ({ allStableReleases, allNightlyReleases, isOpen, on
               <h3 className="text-xl font-bold text-green-400 mb-4">Stable Releases</h3>
               <div className="space-y-3">
                 {stableReleases.length === 0 ? (
-                  <p className="text-gray-400">No stable versions available.</p>
+                  <p className="text-gray-400">
+                    {activePlatform === 'ios'
+                      ? 'No iOS versions available.'
+                      : 'No stable versions available.'}
+                  </p>
                 ) : (
                   stableReleases.map((release) => (
                     <ReleaseCard
                       key={release.id}
                       release={release}
                       onClose={onClose}
-                      isLatest={allStableReleases.indexOf(release) === 0 && stablePage === 1}
+                      isLatest={activeStableSource.indexOf(release) === 0 && stablePage === 1}
                     />
                   ))
                 )}
@@ -253,14 +292,18 @@ const VersionSwapperModal = ({ allStableReleases, allNightlyReleases, isOpen, on
               <h3 className="text-xl font-bold text-blue-400 mb-4">Nightly Builds</h3>
               <div className="space-y-3">
                 {nightlyReleases.length === 0 ? (
-                  <p className="text-gray-400">No nightly builds available.</p>
+                  <p className="text-gray-400">
+                    {activePlatform === 'ios'
+                      ? 'No iOS nightlies available.'
+                      : 'No nightly builds available.'}
+                  </p>
                 ) : (
                   nightlyReleases.map((release) => (
                     <ReleaseCard
                       key={release.id}
                       release={release}
                       onClose={onClose}
-                      isLatest={allNightlyReleases.indexOf(release) === 0 && nightlyPage === 1}
+                      isLatest={activeNightlySource.indexOf(release) === 0 && nightlyPage === 1}
                       isNightly={true}
                     />
                   ))

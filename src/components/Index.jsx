@@ -19,7 +19,7 @@ import MobileFooter from "./MobileFooter";
 const Index = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
   const navigate = useNavigate();
   const [isVersionSwapperOpen, setIsVersionSwapperOpen] = useState(false);
-  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases, allNightlyReleases, latestVersionData } = useDownloadData();
+  const { latestDownloadURL, playURL, latestVersion, isLoading, allReleases, allNightlyReleases, allIosReleases, allIosNightlyReleases, latestVersionData } = useDownloadData();
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const handleTransitionAndNavigate = (routePath) => {
     onNavigate(routePath);
@@ -101,6 +101,8 @@ const Index = ({ onNavigate, isthetransitioninghappening, isEntering }) => {
         <VersionSwapperModal
           allStableReleases={allReleases || []}
           allNightlyReleases={allNightlyReleases || []}
+          allIosStableReleases={allIosReleases || []}
+          allIosNightlyReleases={allIosNightlyReleases || []}
           isOpen={isVersionSwapperOpen}
           onClose={() => setIsVersionSwapperOpen(false)}
         />

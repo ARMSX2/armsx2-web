@@ -3,53 +3,51 @@
 
 import { useState, useCallback } from "react";
 
+const RECIPIENTS = [
+    { id: "communication", label: "Communication", email: "communication@armsx2.net" },
+    { id: "medievalshell", label: "Medievalshell", email: "medievalshell@armsx2.net" },
+    { id: "design", label: "Design", email: "design@armsx2.net" },
+    { id: "general", label: "General", email: "armsx2mail@gmail.com" },
+];
+
 export const useContactForm = () => {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [message, setMessage] = useState("");
+    const [recipient, setRecipient] = useState(RECIPIENTS[0].id);
     const [status, setStatus] = useState(null);
     const [loading, setLoading] = useState(false);
+
     const handleSubmit = useCallback(
-        async (e) => {
+        (e) => {
             e.preventDefault();
             setLoading(true);
             setStatus(null);
-            const formData = { name, email, message };
-            try {
-                const response = await fetch("/api/send-email", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(formData),
-                });
-                if (response.ok) {
-                    setStatus("Request sent successfully! We will contact you soon.");
-                    setName("");
-                    setEmail("");
-                    setMessage("");
-                } else {
-                    const errorData = await response.json();
-                    setStatus(
-                        `Error: ${errorData.message || "An error occurred while sending."}`
-                    );
-                }
-            } catch (error) {
-                console.error("Network error:", error);
-                setStatus("Connection error. Please check your network.");
-            } finally {
+            const target = RECIPIENTS.find((r) => r.id === recipient) || RECIPIENTS[0];
+            const subject = `ARMSX2 contact from ${name || "visitor"}`;
+            const body = `From: ${name} <${email}>\n\n${message}`;
+            const mailtoUrl = `mailto:${target.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+            window.location.href = mailtoUrl;
+            setTimeout(() => {
+                setStatus(`Opened your email client for ${target.email}. If nothing happened, send your message directly there.`);
                 setLoading(false);
-            }
+            }, 200);
         },
-        [name, email, message]
+        [name, email, message, recipient]
     );
+
     return {
         name,
         email,
         message,
+        recipient,
+        recipients: RECIPIENTS,
         status,
         loading,
         setName,
         setEmail,
         setMessage,
+        setRecipient,
         handleSubmit,
     };
 };

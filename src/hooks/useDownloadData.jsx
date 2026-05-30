@@ -11,11 +11,34 @@
 
 import { useState, useEffect } from "react";
 
-const EXT = ".apk";
+const ANDROID_EXT = ".apk";
+const IOS_EXT = ".ipa";
 const PLAY_URL =
   "https://play.google.com/store/apps/details?id=come.nanodata.armsx2";
 const GITHUB_API_URL = "https://api.github.com/repos/ARMSX2/ARMSX2/releases";
 const BACKUP_APK_URL = "/ARMSX2_12_202510271921-release.apk";
+
+const cleanVersionTag = (tagName) => {
+  const stripped = (tagName || "0").replace(/^ios\s*v?/i, "");
+  const match = stripped.match(/(\d+\.\d+\.\d+)/);
+  if (match && match[1]) return match[1];
+  if (stripped.startsWith("v")) return stripped.substring(1);
+  return stripped;
+};
+
+const findAsset = (release, ext) =>
+  release.assets?.find((asset) =>
+    asset.browser_download_url.toLowerCase().endsWith(ext)
+  );
+
+const buildEntry = (release, asset, platform) => ({
+  id: `${release.id}_${platform}`,
+  version: cleanVersionTag(release.tag_name || "0"),
+  name: release.name || release.tag_name,
+  url: asset.browser_download_url,
+  date: release.published_at,
+  isPrerelease: release.prerelease,
+});
 
 export const useDownloadData = () => {
   const [latestDownloadURL, setLatestApkUrl] = useState(null);
@@ -27,6 +50,8 @@ export const useDownloadData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allReleases, setAllReleases] = useState([]);
   const [allNightlyReleases, setAllNightlyReleases] = useState([]);
+  const [allIosReleases, setAllIosReleases] = useState([]);
+  const [allIosNightlyReleases, setAllIosNightlyReleases] = useState([]);
   const playURL = PLAY_URL;
 
   useEffect(() => {
@@ -37,37 +62,24 @@ export const useDownloadData = () => {
           throw new Error(`GitHub API returned status: ${response.status}`);
         }
         const data = await response.json();
-        const releasesWithApk = data
-          .map((release) => {
-            const tagName = release.tag_name || "0";
-            let cleanVersion = "0";
-            const match = tagName.match(/(\d+\.\d+\.\d+)/);
-            if (match && match[1]) {
-              cleanVersion = match[1];
-            } else if (tagName.startsWith("v")) {
-              cleanVersion = tagName.substring(1);
-            } else {
-              cleanVersion = tagName;
-            }
-            const asset = release.assets?.find((asset) =>
-              asset.browser_download_url.toLowerCase().endsWith(EXT)
-            );
-            return {
-              id: release.id,
-              version: cleanVersion,
-              name: release.name || tagName,
-              url: asset ? asset.browser_download_url : null,
-              date: release.published_at,
-              isPrerelease: release.prerelease,
-            };
-          })
-          .filter((release) => release.url !== null);
-        const stableReleases = releasesWithApk.filter((r) => !r.isPrerelease);
-        const nightlyReleases = releasesWithApk.filter((r) => r.isPrerelease);
-        setAllReleases(stableReleases);
-        setAllNightlyReleases(nightlyReleases);
-        if (releasesWithApk.length > 0) {
-          const latest = releasesWithApk[0];
+        const androidEntries = [];
+        const iosEntries = [];
+        data.forEach((release) => {
+          const apk = findAsset(release, ANDROID_EXT);
+          const ipa = findAsset(release, IOS_EXT);
+          if (apk) androidEntries.push(buildEntry(release, apk, "android"));
+          if (ipa) iosEntries.push(buildEntry(release, ipa, "ios"));
+        });
+        const androidStable = androidEntries.filter((r) => !r.isPrerelease);
+        const androidNightly = androidEntries.filter((r) => r.isPrerelease);
+        const iosStable = iosEntries.filter((r) => !r.isPrerelease);
+        const iosNightly = iosEntries.filter((r) => r.isPrerelease);
+        setAllReleases(androidStable);
+        setAllNightlyReleases(androidNightly);
+        setAllIosReleases(iosStable);
+        setAllIosNightlyReleases(iosNightly);
+        if (androidEntries.length > 0) {
+          const latest = androidEntries[0];
           setLatestApkUrl(latest.url);
           setLatestVersion(latest.version);
           setLatestVersionData({
@@ -107,6 +119,8 @@ export const useDownloadData = () => {
     latestVersionData,
     allReleases,
     allNightlyReleases,
+    allIosReleases,
+    allIosNightlyReleases,
     isLoading,
   };
 };

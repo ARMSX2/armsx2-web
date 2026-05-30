@@ -19,6 +19,9 @@ const ContactUs = forwardRef(({
   setEmail,
   message,
   setMessage,
+  recipient,
+  setRecipient,
+  recipients = [],
   status,
   loading,
 }, ref) => {
@@ -72,6 +75,25 @@ const ContactUs = forwardRef(({
               </h3>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
+                  <label htmlFor="recipient" className="block text-sm font-medium text-gray-300 mb-2">Send to</label>
+                  <div className="mt-1 relative rounded-md shadow-sm">
+                    <select
+                      id="recipient"
+                      name="recipient"
+                      value={recipient}
+                      onChange={(e) => setRecipient(e.target.value)}
+                      className={`py-3 px-4 block w-full rounded-lg border-transparent glassish-input text-white focus:ring-0 focus:border-transparent transition-colors appearance-none`}
+                      required
+                    >
+                      {recipients.map((r) => (
+                        <option key={r.id} value={r.id} className="bg-[#1c1c25] text-white">
+                          {r.label} — {r.email}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+                <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">Name</label>
                   <div className="mt-1 relative rounded-md shadow-sm">
                     <input
@@ -117,7 +139,7 @@ const ContactUs = forwardRef(({
                   </div>
                 </div>
                 {status && (
-                  <p className={`text-sm font-medium ${status.includes('successo') ? 'text-green-400' : 'text-red-400'}`}>
+                  <p className={`text-sm font-medium ${status.startsWith('Error') ? 'text-red-400' : 'text-green-400'}`}>
                     {status}
                   </p>
                 )}
@@ -139,11 +161,18 @@ const ContactUs = forwardRef(({
                   Useful Details
                 </h3>
                 <ul className="space-y-4 text-gray-400">
-                  <li className="flex items-center">
-                    <FaSquareEnvelope className={`w-5 h-5 mr-4 ${PRIMARY_COLOR} flex-shrink-0`} />
-                    <span className="font-medium text-white mr-2">Email:</span>
-                    armsx2mail@gmail.com
-                  </li>
+                  {recipients.map((r) => (
+                    <li key={r.id} className="flex items-center">
+                      <FaSquareEnvelope className={`w-5 h-5 mr-4 ${PRIMARY_COLOR} flex-shrink-0`} />
+                      <span className="font-medium text-white mr-2">{r.label}:</span>
+                      <a
+                        href={`mailto:${r.email}`}
+                        className="hover:text-white transition-colors break-all"
+                      >
+                        {r.email}
+                      </a>
+                    </li>
+                  ))}
                 </ul>
               </div>
               <div className={`glassish p-8 rounded-xl shadow-2xl transition-shadow duration-500`}>

@@ -171,7 +171,7 @@ const MainHeroSection = ({
                     aria-hidden="true"
                   />
                 )}
-                {isDownloadLocked ? "Download Unavailable" : "Download APK"}
+                {isDownloadLocked ? "Download Unavailable" : "Download Emu"}
               </div>
             </a>
             <a
