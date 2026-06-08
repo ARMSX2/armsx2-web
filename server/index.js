@@ -71,6 +71,15 @@ const ALLOWED_COMPATIBILITY_STATUSES = new Set([
   "Crash"
 ]);
 const ALLOWED_REGIONS = new Set(["NTSC-U", "NTSC-J", "PAL-E", "PAL-A", "Other"]);
+const ALLOWED_PLATFORMS = new Set(["android", "ios", "macos"]);
+const PLATFORM_KEYS = ["android", "ios", "macos"];
+const normalizePlatform = (value) => {
+  const v = String(value || "").toLowerCase();
+  if (v.includes("ios") || v.includes("iphone") || v.includes("ipad")) return "ios";
+  if (v.includes("mac") || v.includes("osx")) return "macos";
+  return "android";
+};
+const isApplePlatform = (platform) => platform === "ios" || platform === "macos";
 const DANGEROUS_TEXT_PATTERN =
   /[<>]|&(?:lt|gt|#0*60|#x0*3c|#0*62|#x0*3e);|javascript:|srcdoc\s*=|on[a-z]+\s*=/i;
 
@@ -188,6 +197,15 @@ const validateSubmissionPayload = (payload, activeUser) => {
     errors.push(`status must be one of: ${Array.from(ALLOWED_COMPATIBILITY_STATUSES).join(", ")}.`);
   }
 
+  const platform = normalizePlatform(payload.platform);
+  if (
+    typeof payload.platform === "string" &&
+    payload.platform.trim() &&
+    !ALLOWED_PLATFORMS.has(payload.platform.trim().toLowerCase())
+  ) {
+    errors.push(`platform must be one of: ${Array.from(ALLOWED_PLATFORMS).join(", ")}.`);
+  }
+
   if (!Array.isArray(testedSocs) || testedSocs.length === 0) {
     errors.push("tested_socs must include at least one device.");
   } else if (testedSocs.length > 8) {
@@ -195,24 +213,37 @@ const validateSubmissionPayload = (payload, activeUser) => {
   } else {
     testedSocs.forEach((soc, index) => {
       validatePlainText(errors, `tested_socs[${index}].soc_name`, soc?.soc_name, { maxLength: 80 });
-      validatePlainText(errors, `tested_socs[${index}].vulkan_status`, soc?.vulkan_status, {
-        maxLength: 20
-      });
-      validatePlainText(errors, `tested_socs[${index}].opengl_status`, soc?.opengl_status, {
-        maxLength: 20
-      });
 
-      if (
-        typeof soc?.vulkan_status === "string" &&
-        !ALLOWED_COMPATIBILITY_STATUSES.has(soc.vulkan_status.trim())
-      ) {
-        errors.push(`tested_socs[${index}].vulkan_status must be a valid compatibility status.`);
-      }
-      if (
-        typeof soc?.opengl_status === "string" &&
-        !ALLOWED_COMPATIBILITY_STATUSES.has(soc.opengl_status.trim())
-      ) {
-        errors.push(`tested_socs[${index}].opengl_status must be a valid compatibility status.`);
+      if (isApplePlatform(platform)) {
+        validatePlainText(errors, `tested_socs[${index}].metal_status`, soc?.metal_status, {
+          maxLength: 20
+        });
+        if (
+          typeof soc?.metal_status === "string" &&
+          !ALLOWED_COMPATIBILITY_STATUSES.has(soc.metal_status.trim())
+        ) {
+          errors.push(`tested_socs[${index}].metal_status must be a valid compatibility status.`);
+        }
+      } else {
+        validatePlainText(errors, `tested_socs[${index}].vulkan_status`, soc?.vulkan_status, {
+          maxLength: 20
+        });
+        validatePlainText(errors, `tested_socs[${index}].opengl_status`, soc?.opengl_status, {
+          maxLength: 20
+        });
+
+        if (
+          typeof soc?.vulkan_status === "string" &&
+          !ALLOWED_COMPATIBILITY_STATUSES.has(soc.vulkan_status.trim())
+        ) {
+          errors.push(`tested_socs[${index}].vulkan_status must be a valid compatibility status.`);
+        }
+        if (
+          typeof soc?.opengl_status === "string" &&
+          !ALLOWED_COMPATIBILITY_STATUSES.has(soc.opengl_status.trim())
+        ) {
+          errors.push(`tested_socs[${index}].opengl_status must be a valid compatibility status.`);
+        }
       }
     });
   }
@@ -235,27 +266,33 @@ const statusFromAverage = (average) => {
   return "Crash";
 };
 
-const normalizeSoc = (soc, fallbackStatus) => {
+const normalizeSoc = (soc, fallbackStatus, platform) => {
+  const apple = isApplePlatform(platform);
+  const fallback = fallbackStatus || "Unknown";
+
   if (!soc) {
-    return {
-      soc_name: "Unknown SoC",
-      vulkan_status: fallbackStatus || "Unknown",
-      opengl_status: fallbackStatus || "Unknown"
-    };
+    return apple
+      ? { soc_name: "Unknown Device", metal_status: fallback }
+      : { soc_name: "Unknown SoC", vulkan_status: fallback, opengl_status: fallback };
   }
 
   if (typeof soc === "string") {
+    return apple
+      ? { soc_name: soc, metal_status: fallback }
+      : { soc_name: soc, vulkan_status: fallback, opengl_status: fallback };
+  }
+
+  if (apple) {
     return {
-      soc_name: soc,
-      vulkan_status: fallbackStatus || "Unknown",
-      opengl_status: fallbackStatus || "Unknown"
+      soc_name: soc.soc_name || soc.name || "Unknown Device",
+      metal_status: soc.metal_status || soc.metal || fallback
     };
   }
 
   return {
     soc_name: soc.soc_name || soc.name || "Unknown SoC",
-    vulkan_status: soc.vulkan_status || soc.vulkan || fallbackStatus || "Unknown",
-    opengl_status: soc.opengl_status || soc.opengl || fallbackStatus || "Unknown"
+    vulkan_status: soc.vulkan_status || soc.vulkan || fallback,
+    opengl_status: soc.opengl_status || soc.opengl || fallback
   };
 };
 
@@ -263,18 +300,20 @@ const normalizeSubmission = (payload, defaults = {}) => {
   const submittedBy = payload.githubUser || payload.submittedBy || defaults.submittedBy || "anonymous";
   const status = payload.status || payload.compatibility || "Unknown";
   const titleId = payload["title-id"] || payload.titleId || "UNKNOWN";
+  const platform = normalizePlatform(payload.platform);
   const submissionId =
     payload.id ||
     `sub_${(titleId || "UNKNOWN").replace(/\s+/g, "_")}_${(submittedBy || "user").replace(/\W+/g, "_")}_${Date.now()}`;
 
   const testedSocs = Array.isArray(payload.tested_socs)
-    ? payload.tested_socs.map((soc) => normalizeSoc(soc, status))
+    ? payload.tested_socs.map((soc) => normalizeSoc(soc, status, platform))
     : [];
 
   return {
     title: (payload.title || "Unknown Title").trim(),
     "title-id": titleId.trim(),
     region: (payload.region || "NTSC-U").trim(),
+    platform,
     status: status.trim(),
     notes: (payload.notes || "").trim(),
     tested_socs: testedSocs,
@@ -515,6 +554,24 @@ const groupGamesWithAverages = (baseGames, userSubmissions) => {
   baseGames.forEach(append);
   userSubmissions.forEach(append);
 
+  const buildPlatformAggregate = (subs) => {
+    const ordered = [...subs].sort(
+      (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+    const total = ordered.reduce((sum, sub) => sum + getScoreForStatus(sub.status), 0);
+    const average = ordered.length ? total / ordered.length : 0;
+    const last = ordered[ordered.length - 1] || {};
+    return {
+      status: statusFromAverage(average),
+      globalScore: Number(average.toFixed(2)),
+      version: last.version || "Unknown",
+      notes: last.notes || "",
+      tested_socs: aggregateTestedSocs(ordered),
+      submissions: ordered,
+      submissionCount: ordered.length
+    };
+  };
+
   const aggregatedGames = Array.from(groups.values()).map((group) => {
     const submissions = group.submissions.sort(
       (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
@@ -530,6 +587,12 @@ const groupGamesWithAverages = (baseGames, userSubmissions) => {
       version: sub.version
     }));
 
+    const platforms = {};
+    PLATFORM_KEYS.forEach((key) => {
+      const platformSubs = submissions.filter((sub) => normalizePlatform(sub.platform) === key);
+      platforms[key] = platformSubs.length ? buildPlatformAggregate(platformSubs) : null;
+    });
+
     return {
       title: group.title,
       "title-id": group["title-id"],
@@ -542,7 +605,8 @@ const groupGamesWithAverages = (baseGames, userSubmissions) => {
       tested_socs: aggregateTestedSocs(submissions),
       submissions,
       submissionCount: submissions.length,
-      statusBreakdown: buildStatusBreakdown(submissions)
+      statusBreakdown: buildStatusBreakdown(submissions),
+      platforms
     };
   });
 
@@ -600,12 +664,18 @@ app.post("/api/compatibility", (req, res) => {
     });
   }
 
-  const invalidSoc = testedSocs.find(
-    (soc) => !soc || !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
-  );
+  const submissionPlatform = normalizePlatform(payload.platform);
+  const invalidSoc = testedSocs.find((soc) => {
+    if (!soc || !soc.soc_name) return true;
+    return isApplePlatform(submissionPlatform)
+      ? !soc.metal_status
+      : (!soc.vulkan_status || !soc.opengl_status);
+  });
   if (invalidSoc) {
     return res.status(400).json({
-      error: "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
+      error: isApplePlatform(submissionPlatform)
+        ? "Each tested device entry must include soc_name and metal_status."
+        : "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
     });
   }
 
@@ -665,12 +735,18 @@ app.put("/api/compatibility/:id", (req, res) => {
     });
   }
 
-  const invalidSoc = testedSocs.find(
-    (soc) => !soc || !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
-  );
+  const submissionPlatform = normalizePlatform(payload.platform);
+  const invalidSoc = testedSocs.find((soc) => {
+    if (!soc || !soc.soc_name) return true;
+    return isApplePlatform(submissionPlatform)
+      ? !soc.metal_status
+      : (!soc.vulkan_status || !soc.opengl_status);
+  });
   if (invalidSoc) {
     return res.status(400).json({
-      error: "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
+      error: isApplePlatform(submissionPlatform)
+        ? "Each tested device entry must include soc_name and metal_status."
+        : "Each tested SoC entry must include soc_name, vulkan_status, and opengl_status."
     });
   }
 

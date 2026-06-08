@@ -1,9 +1,28 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { FaTimes, FaPlus, FaGithub, FaMicrochip, FaInfoCircle } from "react-icons/fa";
+import { FaTimes, FaPlus, FaGithub, FaMicrochip, FaInfoCircle, FaAndroid, FaApple, FaLaptop } from "react-icons/fa";
 
 const STATUS_OPTIONS = ["Perfect", "Playable", "In-Game", "Menu", "Not Tested", "Crash"];
 const REGION_OPTIONS = ["NTSC-U", "NTSC-J", "PAL-E", "PAL-A", "Other"];
 const SOC_DATALIST_ID = "compat-soc-options";
+
+const PLATFORM_OPTIONS = [
+  { key: "android", label: "Android", Icon: FaAndroid },
+  { key: "ios", label: "iOS", Icon: FaApple },
+  { key: "macos", label: "Mac OS", Icon: FaLaptop },
+];
+
+const isApplePlatform = (platform) => platform === "ios" || platform === "macos";
+
+const defaultHardwareRow = (platform) =>
+  isApplePlatform(platform)
+    ? { soc_name: "", metal_status: "Playable" }
+    : { soc_name: "", vulkan_status: "Playable", opengl_status: "Playable" };
+
+const hardwarePlaceholder = (platform) => {
+  if (platform === "ios") return "e.g. iPhone 15 Pro (A17)";
+  if (platform === "macos") return "e.g. MacBook Air M2";
+  return "e.g. Snapdragon 8 Gen 2";
+};
 
 const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [] }) => {
   const [githubUser, setGithubUser] = useState("");
@@ -45,21 +64,20 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
     title: "",
     titleId: "",
     region: "NTSC-U",
+    platform: "android",
     status: "Playable",
     version: "",
     notes: "",
-    testedSocs: [
-      {
-        soc_name: "",
-        vulkan_status: "Playable",
-        opengl_status: "Playable"
-      }
-    ]
+    testedSocs: [defaultHardwareRow("android")]
   });
 
   const [submissionError, setSubmissionError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const apple = isApplePlatform(formData.platform);
+  const hardwareHeading = apple ? "Tested Devices" : "Tested SoCs";
+  const hardwareNameLabel = apple ? "Device / Chip" : "SoC Name";
 
   const mergedSocOptions = useMemo(() => {
     const unique = Array.from(
@@ -119,6 +137,14 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
     setFormData((prev) => ({ ...prev, [key]: value }));
   };
 
+  const updatePlatform = (platform) => {
+    setFormData((prev) => ({
+      ...prev,
+      platform,
+      testedSocs: [defaultHardwareRow(platform)]
+    }));
+  };
+
   const updateSoc = (index, key, value) => {
     setFormData((prev) => {
       const next = [...prev.testedSocs];
@@ -130,14 +156,7 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
   const addSocRow = () => {
     setFormData((prev) => ({
       ...prev,
-      testedSocs: [
-        ...prev.testedSocs,
-        {
-          soc_name: "",
-          vulkan_status: "Playable",
-          opengl_status: "Playable"
-        }
-      ]
+      testedSocs: [...prev.testedSocs, defaultHardwareRow(prev.platform)]
     }));
   };
 
@@ -153,16 +172,11 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
       title: "",
       titleId: "",
       region: "NTSC-U",
+      platform: "android",
       status: "Playable",
       version: "",
       notes: "",
-      testedSocs: [
-        {
-          soc_name: "",
-          vulkan_status: "Playable",
-          opengl_status: "Playable"
-        }
-      ]
+      testedSocs: [defaultHardwareRow("android")]
     });
     setGithubUser("");
     setIsVerified(false);
@@ -186,17 +200,24 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
       return;
     }
 
-    const cleanedSocs = formData.testedSocs.map((soc) => ({
-      soc_name: soc.soc_name.trim(),
-      vulkan_status: soc.vulkan_status,
-      opengl_status: soc.opengl_status
-    }));
+    const cleanedSocs = formData.testedSocs.map((soc) => {
+      const base = { soc_name: soc.soc_name.trim() };
+      if (apple) {
+        return { ...base, metal_status: soc.metal_status };
+      }
+      return { ...base, vulkan_status: soc.vulkan_status, opengl_status: soc.opengl_status };
+    });
 
-    const missingSoc = cleanedSocs.find(
-      (soc) => !soc.soc_name || !soc.vulkan_status || !soc.opengl_status
+    const missingSoc = cleanedSocs.find((soc) =>
+      !soc.soc_name ||
+      (apple ? !soc.metal_status : (!soc.vulkan_status || !soc.opengl_status))
     );
     if (missingSoc) {
-      setSubmissionError("Every tested SoC entry must be fully filled out.");
+      setSubmissionError(
+        apple
+          ? "Every tested device entry must include a name and Metal status."
+          : "Every tested SoC entry must be fully filled out."
+      );
       return;
     }
 
@@ -204,6 +225,7 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
       title: formData.title.trim(),
       "title-id": formData.titleId.trim(),
       region: formData.region.trim(),
+      platform: formData.platform,
       status: formData.status.trim(),
       version: formData.version.trim(),
       notes: formData.notes.trim(),
@@ -328,6 +350,27 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
             </div>
           </div>
 
+          <div>
+            <label className="block text-sm text-gray-400 mb-1">Platform</label>
+            <div className="grid grid-cols-3 gap-2">
+              {PLATFORM_OPTIONS.map(({ key, label, Icon }) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => updatePlatform(key)}
+                  className={`flex items-center justify-center gap-2 py-3 rounded-lg text-sm font-semibold transition-colors border ${
+                    formData.platform === key
+                      ? "bg-purple-600/20 text-purple-200 border-purple-500/50"
+                      : "bg-[#1b1c24] text-gray-300 border-gray-700 hover:bg-[#23242e]"
+                  }`}
+                >
+                  <Icon />
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid md:grid-cols-2 gap-4">
             <div>
               <label className="block text-sm text-gray-400 mb-1">Title</label>
@@ -414,9 +457,11 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
                 <FaMicrochip />
               </div>
               <div>
-                <h3 className="text-white font-semibold">Tested SoCs</h3>
+                <h3 className="text-white font-semibold">{hardwareHeading}</h3>
                 <p className="text-sm text-gray-400">
-                  Use the dropdown to pick a SoC or type your own. Add multiple rows for different devices.
+                  {apple
+                    ? "Add the Apple device or chip you tested on and its Metal result. Add multiple rows for different devices."
+                    : "Use the dropdown to pick a SoC or type your own. Add multiple rows for different devices."}
                 </p>
               </div>
             </div>
@@ -424,49 +469,71 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
             {formData.testedSocs.map((soc, index) => (
               <div
                 key={index}
-                className="grid md:grid-cols-3 gap-3 bg-[#13141c] border border-gray-800 rounded-lg p-3"
+                className={`grid gap-3 bg-[#13141c] border border-gray-800 rounded-lg p-3 ${
+                  apple ? "md:grid-cols-2" : "md:grid-cols-3"
+                }`}
               >
                 <div>
-                  <label className="block text-sm text-gray-400 mb-1">SoC Name</label>
+                  <label className="block text-sm text-gray-400 mb-1">{hardwareNameLabel}</label>
                   <input
                     required
-                    list={SOC_DATALIST_ID}
+                    list={apple ? undefined : SOC_DATALIST_ID}
                     value={soc.soc_name}
                     onChange={(e) => updateSoc(index, "soc_name", e.target.value)}
                     className="w-full bg-[#1b1c24] border border-gray-700 rounded-lg text-white py-3 px-4 focus:outline-none focus:border-indigo-500"
-                    placeholder="e.g. Snapdragon 8 Gen 2"
+                    placeholder={hardwarePlaceholder(formData.platform)}
                   />
                 </div>
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">Vulkan Status</label>
-                  <select
-                    required
-                    value={soc.vulkan_status}
-                    onChange={(e) => updateSoc(index, "vulkan_status", e.target.value)}
-                    className="w-full bg-[#1b1c24] border border-gray-700 rounded-lg text-white py-3 px-4 focus:outline-none focus:border-indigo-500"
-                  >
-                    {STATUS_OPTIONS.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-sm text-gray-400 mb-1">OpenGL Status</label>
-                  <select
-                    required
-                    value={soc.opengl_status}
-                    onChange={(e) => updateSoc(index, "opengl_status", e.target.value)}
-                    className="w-full bg-[#1b1c24] border border-gray-700 rounded-lg text-white py-3 px-4 focus:outline-none focus:border-indigo-500"
-                  >
-                    {STATUS_OPTIONS.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                {apple ? (
+                  <div>
+                    <label className="block text-sm text-gray-400 mb-1">Metal Status</label>
+                    <select
+                      required
+                      value={soc.metal_status}
+                      onChange={(e) => updateSoc(index, "metal_status", e.target.value)}
+                      className="w-full bg-[#1b1c24] border border-gray-700 rounded-lg text-white py-3 px-4 focus:outline-none focus:border-indigo-500"
+                    >
+                      {STATUS_OPTIONS.map((status) => (
+                        <option key={status} value={status}>
+                          {status}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-1">Vulkan Status</label>
+                      <select
+                        required
+                        value={soc.vulkan_status}
+                        onChange={(e) => updateSoc(index, "vulkan_status", e.target.value)}
+                        className="w-full bg-[#1b1c24] border border-gray-700 rounded-lg text-white py-3 px-4 focus:outline-none focus:border-indigo-500"
+                      >
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm text-gray-400 mb-1">OpenGL Status</label>
+                      <select
+                        required
+                        value={soc.opengl_status}
+                        onChange={(e) => updateSoc(index, "opengl_status", e.target.value)}
+                        className="w-full bg-[#1b1c24] border border-gray-700 rounded-lg text-white py-3 px-4 focus:outline-none focus:border-indigo-500"
+                      >
+                        {STATUS_OPTIONS.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </>
+                )}
 
                 {formData.testedSocs.length > 1 && (
                   <div className="md:col-span-3 flex justify-end">
@@ -475,7 +542,7 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
                       onClick={() => removeSocRow(index)}
                       className="text-sm text-red-400 hover:text-red-300"
                     >
-                      Remove SoC
+                      {apple ? "Remove device" : "Remove SoC"}
                     </button>
                   </div>
                 )}
@@ -496,7 +563,7 @@ const CompatibilitySubmitModal = ({ isOpen, onClose, onSubmitted, socOptions = [
               <span className="p-1 rounded bg-indigo-500/20 text-indigo-300">
                 <FaPlus />
               </span>
-              Add another SoC
+              {apple ? "Add another device" : "Add another SoC"}
             </button>
           </div>
 

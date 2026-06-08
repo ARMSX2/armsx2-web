@@ -1,39 +1,61 @@
 /** @file useDownloadData.jsx
- * @description: Custom hook to retrieve versions and download URLs from GitHub
-
- * @returns {{
- * latestVersion: string,
- * latestDownloadURL: string | null,
- * allReleases: Array<object>,
- * playURL: string,
- * isLoading: boolean
- * }} */
+ * @description: Custom hook to retrieve versions and download URLs from GitHub */
 
 import { useState, useEffect } from "react";
 
-const ANDROID_EXT = ".apk";
-const IOS_EXT = ".ipa";
 const PLAY_URL =
   "https://play.google.com/store/apps/details?id=come.nanodata.armsx2";
-const GITHUB_API_URL = "https://api.github.com/repos/ARMSX2/ARMSX2/releases";
+const GITHUB_API_URL =
+  "https://api.github.com/repos/ARMSX2/ARMSX2/releases?per_page=100";
 const BACKUP_APK_URL = "/ARMSX2_12_202510271921-release.apk";
 
-const cleanVersionTag = (tagName) => {
-  const stripped = (tagName || "0").replace(/^ios\s*v?/i, "");
-  const match = stripped.match(/(\d+\.\d+\.\d+)/);
-  if (match && match[1]) return match[1];
-  if (stripped.startsWith("v")) return stripped.substring(1);
-  return stripped;
+const getPlatform = (release, asset) => {
+  const name = (asset.name || "").toLowerCase();
+  const haystack = `${asset.name || ""} ${release.tag_name || ""} ${
+    release.name || ""
+  }`.toLowerCase();
+  if (name.endsWith(".apk")) return "android";
+  if (name.endsWith(".ipa")) return "ios";
+  if (
+    name.endsWith(".dmg") ||
+    name.endsWith(".pkg") ||
+    name.endsWith(".app.zip")
+  )
+    return "macos";
+  if (haystack.includes("macos") || haystack.includes("mac os")) return "macos";
+  return null;
 };
 
-const findAsset = (release, ext) =>
-  release.assets?.find((asset) =>
-    asset.browser_download_url.toLowerCase().endsWith(ext)
-  );
+const extractVersion = (release, asset) => {
+  const sources = [release.tag_name, release.name, asset.name];
+  for (const source of sources) {
+    const match = (source || "").match(/(\d+\.\d+(?:\.\d+)?)/);
+    if (match) return match[1];
+  }
+  return "0";
+};
 
-const buildEntry = (release, asset, platform) => ({
+const isNightlyRelease = (release) =>
+  `${release.tag_name || ""} ${release.name || ""}`
+    .toLowerCase()
+    .includes("nightly");
+
+const isRefreshRelease = (release, version) => {
+  const haystack = `${release.tag_name || ""} ${release.name || ""}`.toLowerCase();
+  if (haystack.includes("refresh")) return true;
+  const major = parseInt((version || "0").split(".")[0], 10);
+  return Number.isFinite(major) && major >= 2;
+};
+
+const getChannel = (release, version) => {
+  if (isRefreshRelease(release, version)) return "refresh";
+  if (release.prerelease || isNightlyRelease(release)) return "nightly";
+  return "stable";
+};
+
+const buildEntry = (release, asset, platform, version) => ({
   id: `${release.id}_${platform}`,
-  version: cleanVersionTag(release.tag_name || "0"),
+  version,
   name: release.name || release.tag_name,
   url: asset.browser_download_url,
   date: release.published_at,
@@ -50,8 +72,16 @@ export const useDownloadData = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [allReleases, setAllReleases] = useState([]);
   const [allNightlyReleases, setAllNightlyReleases] = useState([]);
+  const [allRefreshReleases, setAllRefreshReleases] = useState([]);
   const [allIosReleases, setAllIosReleases] = useState([]);
   const [allIosNightlyReleases, setAllIosNightlyReleases] = useState([]);
+  const [allIosRefreshReleases, setAllIosRefreshReleases] = useState([]);
+  const [allMacReleases, setAllMacReleases] = useState([]);
+  const [platformVersions, setPlatformVersions] = useState({
+    android: null,
+    ios: null,
+    macos: null,
+  });
   const playURL = PLAY_URL;
 
   useEffect(() => {
@@ -62,22 +92,40 @@ export const useDownloadData = () => {
           throw new Error(`GitHub API returned status: ${response.status}`);
         }
         const data = await response.json();
+        const buckets = {
+          android: { stable: [], nightly: [], refresh: [] },
+          ios: { stable: [], nightly: [], refresh: [] },
+          macos: [],
+        };
         const androidEntries = [];
-        const iosEntries = [];
+        const latest = { android: null, ios: null, macos: null };
+
         data.forEach((release) => {
-          const apk = findAsset(release, ANDROID_EXT);
-          const ipa = findAsset(release, IOS_EXT);
-          if (apk) androidEntries.push(buildEntry(release, apk, "android"));
-          if (ipa) iosEntries.push(buildEntry(release, ipa, "ios"));
+          (release.assets || []).forEach((asset) => {
+            const platform = getPlatform(release, asset);
+            if (!platform) return;
+            const version = extractVersion(release, asset);
+            const channel = getChannel(release, version);
+            const entry = buildEntry(release, asset, platform, version);
+            if (!latest[platform]) latest[platform] = { version, channel };
+            if (platform === "macos") {
+              buckets.macos.push(entry);
+              return;
+            }
+            buckets[platform][channel].push(entry);
+            if (platform === "android") androidEntries.push(entry);
+          });
         });
-        const androidStable = androidEntries.filter((r) => !r.isPrerelease);
-        const androidNightly = androidEntries.filter((r) => r.isPrerelease);
-        const iosStable = iosEntries.filter((r) => !r.isPrerelease);
-        const iosNightly = iosEntries.filter((r) => r.isPrerelease);
-        setAllReleases(androidStable);
-        setAllNightlyReleases(androidNightly);
-        setAllIosReleases(iosStable);
-        setAllIosNightlyReleases(iosNightly);
+
+        setAllReleases(buckets.android.stable);
+        setAllNightlyReleases(buckets.android.nightly);
+        setAllRefreshReleases(buckets.android.refresh);
+        setAllIosReleases(buckets.ios.stable);
+        setAllIosNightlyReleases(buckets.ios.nightly);
+        setAllIosRefreshReleases(buckets.ios.refresh);
+        setAllMacReleases(buckets.macos);
+        setPlatformVersions(latest);
+
         if (androidEntries.length > 0) {
           const latest = androidEntries[0];
           setLatestApkUrl(latest.url);
@@ -119,8 +167,12 @@ export const useDownloadData = () => {
     latestVersionData,
     allReleases,
     allNightlyReleases,
+    allRefreshReleases,
     allIosReleases,
     allIosNightlyReleases,
+    allIosRefreshReleases,
+    allMacReleases,
+    platformVersions,
     isLoading,
   };
 };

@@ -5,11 +5,13 @@
  * @returns {Object} Contains the status of the filters, the functions to modify them and the paginated game array for rendering. */
 
 import { useState, useMemo, useEffect } from 'react';
+import { getGamePlatforms } from '../utils/compat';
 const GAMES_PER_PAGE = 10;
 
 export const useFilteredGames = (games) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setFilterTo] = useState("all");
+  const [platformFilter, setPlatformFilter] = useState("all");
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredGames = useMemo(() => {
@@ -18,7 +20,7 @@ export const useFilteredGames = (games) => {
     const sortedGames = [...currentGames].sort((a, b) => {
       const titleA = a.title ? a.title.toUpperCase() : '';
       const titleB = b.title ? b.title.toUpperCase() : '';
-      
+
       if (titleA < titleB) {
         return -1;
       }
@@ -28,21 +30,30 @@ export const useFilteredGames = (games) => {
       return 0;
     });
 
-    const statusFiltered = statusFilter === "all"
+    const platformFiltered = platformFilter === "all"
       ? sortedGames
-      : sortedGames.filter(game => game.status.toLowerCase() === statusFilter);
+      : sortedGames.filter((game) => Boolean(getGamePlatforms(game)[platformFilter]));
+
+    const statusOf = (game) => {
+      if (platformFilter === "all") return game.status;
+      return getGamePlatforms(game)[platformFilter]?.status;
+    };
+
+    const statusFiltered = statusFilter === "all"
+      ? platformFiltered
+      : platformFiltered.filter((game) => (statusOf(game) || "").toLowerCase() === statusFilter);
     if (!searchTerm.trim()) {
       return statusFiltered;
     }
 
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    
-    return statusFiltered.filter(game => 
+
+    return statusFiltered.filter(game =>
       game.title.toLowerCase().includes(lowerCaseSearchTerm) ||
       game["title-id"].toLowerCase().includes(lowerCaseSearchTerm) ||
       game.region.toLowerCase().includes(lowerCaseSearchTerm)
     );
-  }, [games, statusFilter, searchTerm]);
+  }, [games, statusFilter, searchTerm, platformFilter]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -77,6 +88,8 @@ export const useFilteredGames = (games) => {
     setSearchTerm,
     statusFilter,
     setFilterTo,
+    platformFilter,
+    setPlatformFilter,
     filteredGames,
     paginatedGames,
     currentPage,

@@ -6,11 +6,38 @@
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from 'react-router-dom';
-import { FaFilter, FaPlus } from "react-icons/fa6";
+import { FaFilter, FaPlus, FaAndroid, FaApple, FaLaptop } from "react-icons/fa6";
 import GameDetailModal from '../components/GameDetailModal';
-import { useGameData } from '../hooks/useGameData'; 
-import { useFilteredGames } from '../hooks/useFilteredGames'; 
+import { useGameData } from '../hooks/useGameData';
+import { useFilteredGames } from '../hooks/useFilteredGames';
 import CompatibilitySubmitModal from "./CompatibilitySubmitModal";
+import { getGamePlatforms, PLATFORM_KEYS, PLATFORM_LABELS } from "../utils/compat";
+
+const PLATFORM_TABS = [
+  { key: "all", label: "All", Icon: null },
+  { key: "android", label: "Android", Icon: FaAndroid },
+  { key: "ios", label: "iOS", Icon: FaApple },
+  { key: "macos", label: "Mac OS", Icon: FaLaptop },
+];
+
+const PLATFORM_ICONS = { android: FaAndroid, ios: FaApple, macos: FaLaptop };
+
+const statusTextColor = (status) => {
+  switch ((status || "").toLowerCase()) {
+    case "perfect":
+      return "text-green-400";
+    case "playable":
+      return "text-yellow-400";
+    case "in-game":
+      return "text-orange-400";
+    case "menu":
+      return "text-blue-400";
+    case "crash":
+      return "text-red-400";
+    default:
+      return "text-gray-400";
+  }
+};
 
 const CompatibilityList = ({
   isthetransitioninghappening,
@@ -19,15 +46,17 @@ const CompatibilityList = ({
   const navigate = useNavigate();
   const { games, isLoading, error, reload } = useGameData();
   const mainContentRef = useRef(null);
-  const { 
-    searchTerm, 
-    setSearchTerm, 
-    statusFilter, 
-    setFilterTo, 
-    filteredGames, 
+  const {
+    searchTerm,
+    setSearchTerm,
+    statusFilter,
+    setFilterTo,
+    platformFilter,
+    setPlatformFilter,
+    filteredGames,
     paginatedGames,
-    currentPage, 
-    totalPages, 
+    currentPage,
+    totalPages,
     paginate,
     nextPage,
     prevPage,
@@ -57,8 +86,11 @@ const CompatibilityList = ({
     return Array.from(socNames).filter(Boolean).sort();
   }, [games]);
   const stats = useMemo(() => {
-    const allGames = games || []; 
-    const totalGames = allGames.length;
+    const allGames = games || [];
+    const relevant = platformFilter === "all"
+      ? allGames
+      : allGames.filter((game) => getGamePlatforms(game)[platformFilter]);
+    const totalGames = relevant.length;
     const initialCounts = {
       perfect: 0,
       playable: 0,
@@ -67,13 +99,16 @@ const CompatibilityList = ({
       crash: 0,
       "not-tested": 0,
     };
-    
+
     if (totalGames === 0) {
       return { total: 0, ...initialCounts };
     }
-    
-    const counts = allGames.reduce((acc, game) => {
-      const status = game.status ? game.status.toLowerCase() : "not-tested";
+
+    const counts = relevant.reduce((acc, game) => {
+      const rawStatus = platformFilter === "all"
+        ? game.status
+        : getGamePlatforms(game)[platformFilter]?.status;
+      const status = rawStatus ? rawStatus.toLowerCase() : "not-tested";
       if (status === "perfect") acc.perfect += 1;
       else if (status === "playable") acc.playable += 1;
       else if (status === "in-game") acc["in-game"] += 1;
@@ -98,7 +133,7 @@ const CompatibilityList = ({
       crash: formatStat(counts.crash),
       nottested: formatStat(counts["not-tested"]),
     };
-  }, [games]);
+  }, [games, platformFilter]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -114,10 +149,10 @@ const CompatibilityList = ({
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isFilterOpen, selectedSocs]);
-  
+
   const getFilterClasses = (status, type) => {
     const statusLower = status.toLowerCase();
-    
+
     const colors = {
       background: {
         "all": "bg-[#2a2a2f] hover:bg-[#323237]",
@@ -184,10 +219,10 @@ const CompatibilityList = ({
         top: 0,
         behavior: 'auto'
     });
-    document.documentElement.scrollTop = 0; 
+    document.documentElement.scrollTop = 0;
     setTimeout(() => {
         setIsModalOpen(true);
-    }, 50); 
+    }, 50);
   };
 
   if (isLoading) {
@@ -340,15 +375,33 @@ const CompatibilityList = ({
               <span className="hidden sm:inline">Submit</span>
             </button>
           </div>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {PLATFORM_TABS.map(({ key, label, Icon }) => (
+              <button
+                key={key}
+                onClick={() => setPlatformFilter(key)}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  platformFilter === key
+                    ? "bg-purple-600/20 text-purple-300 ring-1 ring-purple-500/40"
+                    : "bg-[#2a2a2f] text-gray-300 hover:bg-[#323237]"
+                }`}
+              >
+                {Icon && <Icon className="text-base" />}
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
-        {stats.total > 0 && ( 
+        {stats.total > 0 && (
           <div className="mb-8 p-6 bg-[#1a1a1f] rounded-lg shadow-xl border border-gray-800">
             <h3 className="text-xl font-semibold text-white mb-3">
-              Total Games Tested: {stats.total}
+              {platformFilter === "all"
+                ? `Total Games Tested: ${stats.total}`
+                : `${PLATFORM_LABELS[platformFilter]} Games Tested: ${stats.total}`}
             </h3>
             <div className="flex flex-wrap gap-4 justify-between">
               {Object.entries(stats).map(([key, stat]) => {
-                if (key === "total" || stat.count === 0) return null; 
+                if (key === "total" || stat.count === 0) return null;
                 let label = "";
                 let colorClass = "";
                 switch (key) {
@@ -419,11 +472,21 @@ const CompatibilityList = ({
                   </div>
                 ) : (
                   paginatedGames.map((game, index) => {
-                    const submissions = game.submissions || [];
-                    const latestSubmission = submissions[submissions.length - 1];
+                    const platforms = getGamePlatforms(game);
+                    const activeData = platformFilter === "all" ? null : platforms[platformFilter];
+                    const submissionsForDisplay = activeData
+                      ? activeData.submissions
+                      : (game.submissions || []);
+                    const latestSubmission = submissionsForDisplay[submissionsForDisplay.length - 1];
                     const reporter = latestSubmission?.submittedBy || "community";
-                    const submissionCount = game.submissionCount || submissions.length || 1;
-                    const globalScore = typeof game.globalScore === "number" ? game.globalScore.toFixed(2) : "—";
+                    const displayStatus = activeData ? activeData.status : game.status;
+                    const displayNotes = (activeData ? activeData.notes : game.notes) || "No notes yet.";
+                    const displayCount = activeData
+                      ? activeData.submissionCount
+                      : (game.submissionCount || (game.submissions || []).length || 1);
+                    const rawScore = activeData ? activeData.globalScore : game.globalScore;
+                    const globalScore = typeof rawScore === "number" ? rawScore.toFixed(2) : "—";
+                    const presentPlatforms = PLATFORM_KEYS.filter((key) => platforms[key]);
 
                     return (
                       <div
@@ -438,7 +501,7 @@ const CompatibilityList = ({
                                 {game.title}
                               </h2>
                             </div>
-                            
+
                             <div className="space-y-1 mb-3">
                               <p className="text-gray-400 text-sm md:text-base flex items-center gap-2">
                                 <span>Region: {game.region}</span>
@@ -452,23 +515,45 @@ const CompatibilityList = ({
                                 Title ID: <span className="font-mono text-xs opacity-80">{game["title-id"]}</span>
                               </p>
                               <p className="text-gray-400 text-xs md:text-sm italic line-clamp-2">
-                                Latest note by @{reporter}: {game.notes || "No notes yet."}
+                                Latest note by @{reporter}: {displayNotes}
                               </p>
                             </div>
+
+                            {presentPlatforms.length > 0 && (
+                              <div className="flex flex-wrap items-center gap-3 pt-1">
+                                {presentPlatforms.map((key) => {
+                                  const PlatformIcon = PLATFORM_ICONS[key];
+                                  const pStatus = platforms[key].status;
+                                  const isActive = platformFilter === key;
+                                  return (
+                                    <span
+                                      key={key}
+                                      title={`${PLATFORM_LABELS[key]}: ${pStatus}`}
+                                      className={`flex items-center gap-1 text-xs ${statusTextColor(pStatus)} ${
+                                        isActive ? "opacity-100" : "opacity-80"
+                                      }`}
+                                    >
+                                      <PlatformIcon className="text-sm" />
+                                      <span className="hidden sm:inline">{pStatus}</span>
+                                    </span>
+                                  );
+                                })}
+                              </div>
+                            )}
                           </div>
 
                           <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto pt-3 sm:pt-0 border-t border-white/5 sm:border-none">
                             <span
-                              className={`${getcorrespondingColor(game.status)} font-bold text-sm md:text-lg inline-block tracking-wide px-5 py-2 rounded-md`}
+                              className={`${getcorrespondingColor(displayStatus)} font-bold text-sm md:text-lg inline-block tracking-wide px-5 py-2 rounded-md`}
                             >
-                              {game.status}
+                              {displayStatus}
                             </span>
                             <div className="text-right">
                               <div className="text-[10px] md:text-sm text-blue-300 font-medium sm:mt-2">
                                 Score: {globalScore} / 5
                               </div>
                               <div className="text-[9px] md:text-xs text-gray-500">
-                                {submissionCount} report{submissionCount !== 1 ? "s" : ""}
+                                {displayCount} report{displayCount !== 1 ? "s" : ""}
                               </div>
                             </div>
                           </div>
@@ -481,7 +566,7 @@ const CompatibilityList = ({
               {totalPages > 1 && (
                 <div className="flex flex-wrap justify-center items-center mt-6 md:mt-10 mb-8 gap-1.5">
                   <button
-                    onClick={prevPage} 
+                    onClick={prevPage}
                     disabled={currentPage === 1}
                     className="px-3 py-2 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-30 text-xs font-semibold hover:bg-[#323237] transition-colors"
                   >
@@ -529,7 +614,7 @@ const CompatibilityList = ({
                     ));
                   })()}
                   <button
-                    onClick={nextPage} 
+                    onClick={nextPage}
                     disabled={currentPage === totalPages}
                     className="px-3 py-2 rounded-lg bg-[#2a2a2f] text-white disabled:opacity-30 text-xs font-semibold hover:bg-[#323237] transition-colors"
                   >
@@ -544,6 +629,7 @@ const CompatibilityList = ({
       <GameDetailModal
         isOpen={isModalOpen}
         game={selectedGame}
+        defaultPlatform={platformFilter}
         onClose={() => setIsModalOpen(false)}
       />
       <CompatibilitySubmitModal
