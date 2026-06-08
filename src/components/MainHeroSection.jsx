@@ -8,7 +8,7 @@
 
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGooglePlay } from "@fortawesome/free-brands-svg-icons";
+import { faApple, faGooglePlay } from "@fortawesome/free-brands-svg-icons";
 import {
   FaDownload,
   FaDiscord,
@@ -159,7 +159,7 @@ const MainHeroSection = ({
                   setIsVersionSwapperOpen(true);
                 }
               }}
-              className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[#8d76cc] hover:bg-[#7c69b7] text-white duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[80%] md:w-auto text-center ${isDownloadLocked ? "disabledAPK" : ""
+              className={`ring-glow glint rounded-xl px-11 py-3 text-sm font-medium bg-[linear-gradient(135deg,#102a7a_0%,#2a1a66_100%)] hover:bg-[linear-gradient(135deg,#163496_0%,#382285_100%)] text-white duration-300 ease-out shadow-[0_0_16px_rgba(141,118,204,0.25)] hover:shadow-[0_0_28px_rgba(141,118,204,0.4)] transition-shadow w-[60%] md:w-auto text-center ${isDownloadLocked ? "disabledAPK" : ""
                 }`}
               style={{
                 transform: `translate(${primaryButtonPosition.x}px, ${primaryButtonPosition.y}px) scale(${primaryButtonScale})`,
@@ -186,16 +186,15 @@ const MainHeroSection = ({
                 {isDownloadLocked ? "Download Unavailable" : "Download Emu"}
               </div>
             </a>
+            <div className="w-1 h-1 bg-white/20 rounded-full mx-2 hidden md:block self-center" />
             <a
               href={isDownloadLocked ? "#" : playURL}
+              target={isDownloadLocked ? undefined : "_blank"}
+              rel="noopener noreferrer"
               onClick={(e) => {
                 if (isDownloadLocked) {
                   e.preventDefault();
                   e.stopPropagation();
-                } else if (hasMultipleVersions) {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setIsVersionSwapperOpen(true);
                 }
               }}
               className={`ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center ${isDownloadLocked ? "disabledAPK" : ""
@@ -210,6 +209,27 @@ const MainHeroSection = ({
                 icon={faGooglePlay}
                 style={{
                   fontSize: "17px",
+                  color: "#f2eaeaff",
+                }}
+              />
+            </a>
+            <div className="w-1 h-1 bg-white/20 rounded-full mx-2 hidden md:block self-center" />
+            <a
+              href="https://ios.armsx2.net"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center"
+              style={{
+                transition: "all 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
+                animation: "subtleSway 12s ease-in-out infinite",
+                cursor: "pointer",
+              }}
+              aria-label="ARMSX2 for iOS"
+            >
+              <FontAwesomeIcon
+                icon={faApple}
+                style={{
+                  fontSize: "18px",
                   color: "#f2eaeaff",
                 }}
               />

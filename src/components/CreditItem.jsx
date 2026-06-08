@@ -22,6 +22,10 @@ const CreditItem = ({ member }) => {
       <img
         src={member.image}
         alt={`${member.name} avatar`}
+        onError={(e) => {
+          e.currentTarget.onerror = null;
+          e.currentTarget.src = "/icon.png";
+        }}
         className="w-12 h-12 rounded-full object-cover border-2 border-[#8d76cc]"
       />
       <div className="text-left">

@@ -13,6 +13,20 @@
 			"image": "https://github.com/jpolo1224.png"
 		}
 	],
+	"leadDevs": [
+		{
+			"name": "Zeruth",
+			"role": "Refresh - Android",
+			"github": "https://github.com/zeruth",
+			"image": "https://github.com/zeruth.png"
+		},
+		{
+			"name": "isztldav aka Trakons",
+			"role": "Refresh - Mac & iOS",
+			"github": "https://github.com/isztldav",
+			"image": "https://github.com/isztldav.png"
+		}
+	],
 	"devTeam": [
 		{
 			"name": "tanosshi aka tanos",
