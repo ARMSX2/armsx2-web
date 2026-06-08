@@ -27,6 +27,16 @@ const CreditsSection = () => {
                 ))}
               </div>
             </div>
+            <div className="w-full md:w-1/2 text-center">
+              <h3 className="text-2xl font-bold text-[#8d76cc] mb-4">
+                Lead Devs
+              </h3>
+              <div className="space-y-3 items-center">
+                {projectMembers.leadDevs.map((member) => (
+                  <CreditItem key={member.name} member={member} />
+                ))}
+              </div>
+            </div>
           </div>
           <div className="pt-2">
             <div className="flex flex-col md:flex-row gap-8 md:gap-12">
