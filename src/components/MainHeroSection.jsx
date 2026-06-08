@@ -16,7 +16,18 @@ import {
   FaRocket,
   FaChevronRight,
   FaLock,
+  FaAndroid,
+  FaApple,
+  FaLaptop,
 } from "react-icons/fa6";
+
+const PLATFORM_BADGES = [
+  { key: "android", label: "Android", icon: FaAndroid },
+  { key: "ios", label: "iOS", icon: FaApple },
+  { key: "macos", label: "Mac OS", icon: FaLaptop },
+];
+
+const CHANNEL_SUFFIX = { stable: "(s)", nightly: "(n)", refresh: "(r)" };
 import { useDownloadData } from "../hooks/useDownloadData";
 import Carousel from "./Carousel";
 import images from "../data/images.json";
@@ -41,12 +52,14 @@ const MainHeroSection = ({
   const {
     latestDownloadURL,
     playURL,
-    latestVersion,
     allReleases,
     allNightlyReleases,
     isLoading,
-    latestVersionData,
+    platformVersions,
   } = useDownloadData();
+  const hasAnyPlatformVersion = PLATFORM_BADGES.some(
+    ({ key }) => platformVersions?.[key]
+  );
   const hasMultipleVersions = (allReleases.length + allNightlyReleases.length) > 1;
   const isDownloadLocked = latestDownloadURL === null || isLoading;
   const [primaryButtonScale, setPrimaryButtonScale] = useState(1);
@@ -93,34 +106,33 @@ const MainHeroSection = ({
       id="main"
     >
       <div className="w-full max-w-2xl center-content snap-start px-6 md:w-3/5 lg:w-1/2">
-        <div className="flex items-center gap-3 mt-5 md:mt-5">
+        <div className="flex flex-wrap items-center gap-2 md:gap-3 mt-5 md:mt-5">
           <h1 className="title text-4xl md:text-5xl font-semibold leading-tight text-white text-glow">
             ARMSX2
           </h1>
-          {latestVersionData?.version === "0" || latestVersion?.includes("Fallback") ? (
+          {!hasAnyPlatformVersion ? (
             <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
               unreleased
             </span>
           ) : (
-            <>
-              {(() => {
-                const versionSuffix = latestVersionData.isPrerelease ? " (n)" : " (s)";
-                const fullVersion = "v" + latestVersionData.version + versionSuffix;
+            <div className="flex flex-wrap items-center gap-2">
+              {PLATFORM_BADGES.map(({ key, label, icon: Icon }) => {
+                const info = platformVersions?.[key];
+                if (!info) return null;
                 return (
-                  <span className="inline-block rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow">
-                    <span className="hidden md:inline">
-                      ARMSX2 is currently {fullVersion}
-                    </span>
-                    <span className="md:hidden">
-                      {window.innerWidth < 380
-                        ? "currently on " + fullVersion
-                        : "latest release on " + fullVersion
-                      }
+                  <span
+                    key={key}
+                    title={`${label} latest`}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/15 px-3 py-1 text-xs text-white/70 ring-glow"
+                  >
+                    <Icon className="text-[#8d76cc]" aria-hidden="true" />
+                    <span>
+                      v{info.version} {CHANNEL_SUFFIX[info.channel]}
                     </span>
                   </span>
                 );
-              })()}
-            </>
+              })}
+            </div>
           )}
         </div>
         <p className="mt-4 text-base md:text-lg text-white/80">

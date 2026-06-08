@@ -164,7 +164,8 @@
         }
       ],
       "version": "1.0.0 Debug"
-    },{
+    },
+    {
       "title": "Castlevania: Curse of Darkness",
       "status": "Playable",
       "title-id": "SLUS-21168",
@@ -808,6 +809,96 @@
         }
       ],
       "version": "1.0.2"
+    },
+    {
+      "title": "God of War",
+      "status": "Perfect",
+      "title-id": "SCUS-97399",
+      "notes": "Runs at full speed on Metal with no noticeable issues on A17 Pro.",
+      "region": "NTSC-U",
+      "platform": "ios",
+      "tested_socs": [
+        {
+          "soc_name": "iPhone 15 Pro (A17 Pro)",
+          "metal_status": "Perfect"
+        }
+      ],
+      "version": "2.0"
+    },
+    {
+      "title": "God of War",
+      "status": "Playable",
+      "title-id": "SCUS-97399",
+      "notes": "Mostly full speed on iPad Air M1, minor frame pacing in heavy scenes.",
+      "region": "NTSC-U",
+      "platform": "ios",
+      "tested_socs": [
+        {
+          "soc_name": "iPad Air (M1)",
+          "metal_status": "Playable"
+        }
+      ],
+      "version": "2.0"
+    },
+    {
+      "title": "God of War",
+      "status": "Perfect",
+      "title-id": "SCUS-97399",
+      "notes": "Excellent on Apple Silicon via Metal, full speed at high upscale.",
+      "region": "NTSC-U",
+      "platform": "macos",
+      "tested_socs": [
+        {
+          "soc_name": "MacBook Air (M2)",
+          "metal_status": "Perfect"
+        }
+      ],
+      "version": "2.0"
+    },
+    {
+      "title": "Tekken 5",
+      "status": "Playable",
+      "title-id": "SLUS-21059",
+      "notes": "Full speed in matches on Metal, small graphical glitch on stage select.",
+      "region": "NTSC-U",
+      "platform": "ios",
+      "tested_socs": [
+        {
+          "soc_name": "iPhone 14 (A15)",
+          "metal_status": "Playable"
+        }
+      ],
+      "version": "2.0"
+    },
+    {
+      "title": "Gran Turismo 4",
+      "status": "In-Game",
+      "title-id": "SCUS-97328",
+      "notes": "Boots into races on Metal but heavy slowdowns during full grids.",
+      "region": "NTSC-U",
+      "platform": "macos",
+      "tested_socs": [
+        {
+          "soc_name": "Mac mini (M2)",
+          "metal_status": "In-Game"
+        }
+      ],
+      "version": "2.0"
+    },
+    {
+      "title": "Kingdom Hearts II Final Mix",
+      "status": "In-Game",
+      "title-id": "SLPM-66675",
+      "notes": "Reaches gameplay on Metal, frame drops in busy battles.",
+      "region": "NTSC-J",
+      "platform": "ios",
+      "tested_socs": [
+        {
+          "soc_name": "iPhone 13 (A15)",
+          "metal_status": "In-Game"
+        }
+      ],
+      "version": "2.0"
     }
   ]
 }
