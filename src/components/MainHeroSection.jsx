@@ -216,8 +216,6 @@ const MainHeroSection = ({
             <div className="w-1 h-1 bg-white/20 rounded-full mx-2 hidden md:block self-center" />
             <a
               href="https://ios.armsx2.net"
-              target="_blank"
-              rel="noopener noreferrer"
               className="ring-glow glint rounded-xl px-4 py-3 text-sm font-medium text-white bg-[#4a5a97] hover:bg-[#425189] transition-all duration-300 ease-out shadow-[0_0_14px_rgba(74,90,151,0.25)] hover:shadow-[0_0_24px_rgba(74,90,151,0.4)] hover:scale-105 w-[20%] md:w-auto text-center flex items-center justify-center"
               style={{
                 transition: "all 260ms cubic-bezier(0.22, 1.61, 0.36, 1)",
